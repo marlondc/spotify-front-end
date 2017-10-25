@@ -1,0 +1,324 @@
+
+.info__modal {
+  background-color: #000;
+  opacity: 0.9;
+  display: none;
+  height: 100%;
+  left: 0;
+  overflow: auto;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 2;
+}
+
+.info__modal--show {
+  display: block;
+}
+
+.info__modal__content {
+  padding: 30px 10px 0;
+}
+
+.info__modal__image {
+  padding-bottom: 30px;
+  text-align: center;
+}
+
+.info__modal__image img {
+  max-width: 400px;
+  width: 100%;
+}
+
+.info__modal__cross {
+  display: inline-block;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.container {
+  height: 100%;
+  width: 100%;
+}
+
+.top {
+  background: #fef394;
+  overflow: hidden;
+  padding: 30px 0 20px;
+  position: relative;
+}
+
+.top--login {
+  height: 100vh;
+}
+
+.fixed-height {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.content {
+  margin: 0 auto;
+  max-width: 320px;
+  padding: 0 15px;
+}
+
+.content--login {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+}
+
+.top__decoration {
+  background: #ef9783;
+  border-radius: 15px;
+  height: 50%;
+  position: absolute;
+  width: 10px;
+}
+
+.top__decoration--1 {
+  left: 20%;
+  top: -80px;
+}
+
+.top__decoration--2 {
+  right: 14%;
+  bottom: -70px;
+  -ms-transform: rotate(-10deg);
+  -webkit-transform: rotate(-10deg);
+  transform: rotate(-10deg);
+}
+
+.top__decoration--3 {
+  right: 2%;
+  bottom: -5px;
+  -ms-transform: rotate(-60deg);
+  -webkit-transform: rotate(-60deg);
+  transform: rotate(-60deg);
+}
+
+.input {
+  padding-bottom: 35px;
+  position: relative;
+}
+
+.input--login {
+  padding: 0;
+}
+
+.input__spotifyURI {
+  border: 1px solid lightgrey;
+  height: 50px;
+  outline: none;
+  padding: 0 10px;
+  width: 100%;
+}
+
+.input__button {
+  background: #ef9783;
+  border-radius: 20px;
+  border-style: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  margin: 15px 0 0;
+  outline: none;
+  padding: 12px 20px;
+}
+
+.input__button:hover {
+  text-decoration: underline;
+}
+
+.input__button--login {
+  color: black;
+  margin: 0;
+  text-decoration: none;
+}
+
+.input__button--disabled {
+  opacity: 0.4;
+  cursor: auto;
+}
+
+.input__button--play {
+  text-align: center;
+}
+
+.info__text {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 12px;
+  margin: 0;
+  outline: none;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.bottom {
+  padding-bottom: 40px;
+}
+
+.title {
+  margin: 30px 0;
+  position: relative;
+}
+
+.title__text {
+  background: #fff;
+  color: #000;
+  display: inline-block;
+  margin: 0;
+  padding-right: 8px;
+  position: absolute;
+  top: 4px;
+}
+
+.title__line {
+  background: #000;
+  display: inline-block;
+  width: 100%;
+  height: 1px;
+}
+
+.track {
+  width: 100%;
+}
+
+.track__image {
+  display: inline-block;
+  height: 70px;
+  margin-right: 10px;
+  width: 70px;
+}
+
+.track__details {
+  display: inline-block;
+  vertical-align: top;
+  width: 210px;
+}
+
+.track__details p {
+  margin: 0;
+}
+
+.track__marquee {
+	line-height: 20px;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.track__marquee p {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 15s linear infinite;
+}
+
+@keyframes marquee {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(-100%, 0); }
+}
+
+.track__name {
+  font-size: 22px;
+  font-weight: bold;
+  padding-bottom: 1px;
+}
+
+.track__artist {
+  font-size: 16px;
+  padding-bottom: 8px;
+}
+
+.track__album {
+  color: grey;
+  font-size: 16px;
+}
+
+.track--in-list {
+  border-bottom: 1px solid grey;
+  padding: 10px 0;
+}
+
+.track--in-list:first-of-type {
+  padding-top: 0;
+}
+
+.track--in-list:last-of-type {
+  border: none;
+}
+
+.track--current {
+  padding-bottom: 20px;
+}
+
+.track__progress {
+  width: 100%;
+}
+
+.track__status {
+  position: relative;
+}
+
+.track__status__progress-bar {
+  background: black;
+  float: left;
+  height: 1px;
+  opacity: 0.5;
+  position: absolute;
+  top: 10px;
+  width: 75%;
+}
+
+.track__status__progress-bar--fill {
+  background: #ef9783;
+  border-radius: 10px;
+  height: 11px;
+  left: -1px;
+  opacity: 1;
+  top: 5px;
+  z-index: 1;
+}
+
+.track__status__time {
+  float: right;
+  font-weight: bold;
+  margin: 0;
+}
+
+.track__status__time span {
+  font-weight: normal;
+}
+
+.cross__svg {
+  border-radius: 50%;
+  float: right;
+  height: 40px;
+  stroke-width: 3;
+}
+
+.cross__path {
+  stroke: #ef9783;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  transform-origin: 50% 50% 0;
+}
+
+.cross__path--right {
+  animation: ease 0.8s normal forwards 1 running stroke;
+}
+
+.cross__path--left {
+  animation: ease 0.8s normal forwards 1 running stroke;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
