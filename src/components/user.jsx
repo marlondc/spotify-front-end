@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { test } from 'ramda';
 
 import Loader from './atoms/loader';
 import Track from './atoms/track';
@@ -8,15 +7,11 @@ import TitleDivider from './atoms/title-divider';
 import TrackStatus from './atoms/track-status';
 import StartButton from './atoms/start-button';
 import TopDecoration from './atoms/top-decoration';
+import InputUri from './atoms/input-uri';
 
 import firstInstruction from '../images/first.png';
 import secondInstruction from '../images/second.png';
 import thirdInstruction from '../images/third.png';
-
-const invalidURI = (uri) => {
-  const spotifyRegex = /^spotify:(track|album):([a-z,A-Z,0-9]{22})$/;
-  return !test(spotifyRegex, uri)
-}
 
 class User extends Component {
   constructor(props) {
@@ -28,9 +23,7 @@ class User extends Component {
       loading: true,
     }
 
-    this.handleInputChange = this.handleInputChange.bind(this);
     this.handleModal = this.handleModal.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentWillMount() {
@@ -59,29 +52,10 @@ class User extends Component {
     clearInterval(this.currentPlaylistTracks);
   }
 
-  handleInputChange(event) {
-    const value = event.target.value;
-
-    this.setState({
-      spotifyURI: value
-    });
-  }
-
   handleModal() {
     this.setState({
       showModal: !this.state.showModal,
     })
-  }
-
-  handleSubmit() {
-    const { spotifyURI } = this.state;
-    const { accessToken } = this.props;
-    if (!invalidURI(spotifyURI)) {
-      this.props.addToPlaylist(spotifyURI, accessToken)
-      this.setState({
-        spotifyURI: '',
-      })
-    }
   }
 
   render() {
@@ -90,6 +64,7 @@ class User extends Component {
       currentTrack,
       tracks,
       startPlayback,
+      addToPlaylist,
     } = this.props;
 
     const {
@@ -111,24 +86,7 @@ class User extends Component {
           <div className="top">
             <div className="content">
               <TopDecoration />
-              <div className="input">
-                <input
-                  type="text"
-                  name="spotifyURI"
-                  className="input__spotifyURI"
-                  value={this.state.spotifyURI}
-                  placeholder="Add spotify track / album uri ..."
-                  onChange={this.handleInputChange}
-                />
-                <input
-                  type="submit"
-                  value="Add to playlist"
-                  className={
-                    classnames('input__button', { 'input__button--disabled': invalidURI(spotifyURI) })
-                  }
-                  onClick={this.handleSubmit}
-                />
-              </div>
+              <InputUri accessToken={accessToken} addToPlaylist={addToPlaylist}/>
               <div className="info">
                 <button onClick={this.handleModal} className="info__text">How do I find a Spotify URI?</button>
               </div>
