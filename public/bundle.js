@@ -47429,6 +47429,10 @@ var _inputUri = __webpack_require__(502);
 
 var _inputUri2 = _interopRequireDefault(_inputUri);
 
+var _modal = __webpack_require__(535);
+
+var _modal2 = _interopRequireDefault(_modal);
+
 var _first = __webpack_require__(503);
 
 var _first2 = _interopRequireDefault(_first);
@@ -47458,12 +47462,8 @@ var User = function (_Component) {
     var _this = _possibleConstructorReturn(this, (User.__proto__ || Object.getPrototypeOf(User)).call(this, props));
 
     _this.state = {
-      spotifyURI: '',
-      showModal: false,
-      loading: true
+      showModal: false
     };
-
-    _this.handleModal = _this.handleModal.bind(_this);
     return _this;
   }
 
@@ -47501,13 +47501,6 @@ var User = function (_Component) {
       clearInterval(this.currentPlaylistTracks);
     }
   }, {
-    key: 'handleModal',
-    value: function handleModal() {
-      this.setState({
-        showModal: !this.state.showModal
-      });
-    }
-  }, {
     key: 'render',
     value: function render() {
       var _props = this.props,
@@ -47516,9 +47509,6 @@ var User = function (_Component) {
           tracks = _props.tracks,
           startPlayback = _props.startPlayback,
           addToPlaylist = _props.addToPlaylist;
-      var _state = this.state,
-          spotifyURI = _state.spotifyURI,
-          showModal = _state.showModal;
 
 
       if (this.state.loading) {
@@ -47530,9 +47520,7 @@ var User = function (_Component) {
         { className: 'container' },
         _react2.default.createElement(
           'div',
-          { className: (0, _classnames2.default)({
-              'fixed-height': showModal
-            }) },
+          { idName: 'page-content' },
           _react2.default.createElement(
             'div',
             { className: 'top' },
@@ -47541,15 +47529,7 @@ var User = function (_Component) {
               { className: 'content' },
               _react2.default.createElement(_topDecoration2.default, null),
               _react2.default.createElement(_inputUri2.default, { accessToken: accessToken, addToPlaylist: addToPlaylist }),
-              _react2.default.createElement(
-                'div',
-                { className: 'info' },
-                _react2.default.createElement(
-                  'button',
-                  { onClick: this.handleModal, className: 'info__text' },
-                  'How do I find a Spotify URI?'
-                )
-              )
+              _react2.default.createElement(_modal2.default, null)
             )
           ),
           _react2.default.createElement(
@@ -47590,40 +47570,6 @@ var User = function (_Component) {
                   _react2.default.createElement(_track2.default, { track: track })
                 );
               })
-            )
-          )
-        ),
-        _react2.default.createElement(
-          'div',
-          { className: (0, _classnames2.default)('info__modal', { 'info__modal--show': showModal }) },
-          _react2.default.createElement(
-            'div',
-            { className: 'info__modal__content' },
-            _react2.default.createElement(
-              'div',
-              { className: 'info__modal__cross', onClick: this.handleModal },
-              _react2.default.createElement(
-                'svg',
-                { className: 'cross__svg', xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 52 52' },
-                _react2.default.createElement('circle', { className: 'cross__circle', cx: '26', cy: '26', r: '25', fill: 'none' }),
-                _react2.default.createElement('path', { className: 'cross__path cross__path--right', fill: 'none', d: 'M16,16 l20,20' }),
-                _react2.default.createElement('path', { className: 'cross__path cross__path--right', fill: 'none', d: 'M16,36 l20,-20' })
-              )
-            ),
-            _react2.default.createElement(
-              'div',
-              { className: 'info__modal__image' },
-              _react2.default.createElement('img', { src: _first2.default, alt: 'Instruction 1' })
-            ),
-            _react2.default.createElement(
-              'div',
-              { className: 'info__modal__image' },
-              _react2.default.createElement('img', { src: _second2.default, alt: 'Instruction 2' })
-            ),
-            _react2.default.createElement(
-              'div',
-              { className: 'info__modal__image' },
-              _react2.default.createElement('img', { src: _third2.default, alt: 'Instruction 3' })
             )
           )
         )
@@ -50081,6 +50027,132 @@ function reduce() {
       return state;
   }
 }
+
+/***/ }),
+/* 535 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(4);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _classnames = __webpack_require__(98);
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _first = __webpack_require__(503);
+
+var _first2 = _interopRequireDefault(_first);
+
+var _second = __webpack_require__(504);
+
+var _second2 = _interopRequireDefault(_second);
+
+var _third = __webpack_require__(505);
+
+var _third2 = _interopRequireDefault(_third);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Modal = function (_Component) {
+  _inherits(Modal, _Component);
+
+  function Modal() {
+    _classCallCheck(this, Modal);
+
+    var _this = _possibleConstructorReturn(this, (Modal.__proto__ || Object.getPrototypeOf(Modal)).call(this));
+
+    _this.state = {
+      showModal: false
+    };
+
+    _this.handleModal = _this.handleModal.bind(_this);
+    return _this;
+  }
+
+  _createClass(Modal, [{
+    key: 'handleModal',
+    value: function handleModal() {
+      this.setState({
+        showModal: !this.state.showModal
+      });
+
+      this.state.showModal ? document.body.style.overflow = 'auto' : document.body.style.overflow = 'hidden';
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      var showModal = this.state.showModal;
+
+      return _react2.default.createElement(
+        'div',
+        null,
+        _react2.default.createElement(
+          'div',
+          { className: 'info' },
+          _react2.default.createElement(
+            'button',
+            { onClick: this.handleModal, className: 'info__text' },
+            'How do I find a Spotify URI?'
+          )
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: (0, _classnames2.default)('info__modal', { 'info__modal--show': showModal }) },
+          _react2.default.createElement(
+            'div',
+            { className: 'info__modal__content' },
+            _react2.default.createElement(
+              'div',
+              { className: 'info__modal__cross', onClick: this.handleModal },
+              _react2.default.createElement(
+                'svg',
+                { className: 'cross__svg', xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 52 52' },
+                _react2.default.createElement('circle', { className: 'cross__circle', cx: '26', cy: '26', r: '25', fill: 'none' }),
+                _react2.default.createElement('path', { className: 'cross__path cross__path--right', fill: 'none', d: 'M16,16 l20,20' }),
+                _react2.default.createElement('path', { className: 'cross__path cross__path--right', fill: 'none', d: 'M16,36 l20,-20' })
+              )
+            ),
+            _react2.default.createElement(
+              'div',
+              { className: 'info__modal__image' },
+              _react2.default.createElement('img', { src: _first2.default, alt: 'Instruction 1' })
+            ),
+            _react2.default.createElement(
+              'div',
+              { className: 'info__modal__image' },
+              _react2.default.createElement('img', { src: _second2.default, alt: 'Instruction 2' })
+            ),
+            _react2.default.createElement(
+              'div',
+              { className: 'info__modal__image' },
+              _react2.default.createElement('img', { src: _third2.default, alt: 'Instruction 3' })
+            )
+          )
+        )
+      );
+    }
+  }]);
+
+  return Modal;
+}(_react.Component);
+
+exports.default = Modal;
 
 /***/ })
 /******/ ]);

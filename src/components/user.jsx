@@ -8,6 +8,7 @@ import TrackStatus from './atoms/track-status';
 import StartButton from './atoms/start-button';
 import TopDecoration from './atoms/top-decoration';
 import InputUri from './atoms/input-uri';
+import Modal from './atoms/modal';
 
 import firstInstruction from '../images/first.png';
 import secondInstruction from '../images/second.png';
@@ -18,12 +19,8 @@ class User extends Component {
     super(props);
 
     this.state = {
-      spotifyURI: '',
       showModal: false,
-      loading: true,
     }
-
-    this.handleModal = this.handleModal.bind(this);
   }
 
   componentWillMount() {
@@ -52,12 +49,6 @@ class User extends Component {
     clearInterval(this.currentPlaylistTracks);
   }
 
-  handleModal() {
-    this.setState({
-      showModal: !this.state.showModal,
-    })
-  }
-
   render() {
     const {
       accessToken,
@@ -67,11 +58,6 @@ class User extends Component {
       addToPlaylist,
     } = this.props;
 
-    const {
-      spotifyURI,
-      showModal
-    } = this.state
-
     if (this.state.loading) {
       return (
         <Loader />
@@ -80,16 +66,12 @@ class User extends Component {
 
     return (
       <div className="container">
-        <div className={classnames({
-          'fixed-height': showModal,
-        })}>
+        <div idName="page-content">
           <div className="top">
             <div className="content">
               <TopDecoration />
               <InputUri accessToken={accessToken} addToPlaylist={addToPlaylist}/>
-              <div className="info">
-                <button onClick={this.handleModal} className="info__text">How do I find a Spotify URI?</button>
-              </div>
+              <Modal />
             </div>
           </div>
           <div className="bottom">
@@ -120,26 +102,6 @@ class User extends Component {
                   </div>
                 ))
               }
-            </div>
-          </div>
-        </div>
-        <div className={classnames('info__modal', { 'info__modal--show': showModal })}>
-          <div className="info__modal__content">
-            <div className="info__modal__cross" onClick={this.handleModal} >
-              <svg className="cross__svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                <circle className="cross__circle" cx="26" cy="26" r="25" fill="none"/>
-                <path className="cross__path cross__path--right" fill="none" d="M16,16 l20,20" />
-                <path className="cross__path cross__path--right" fill="none" d="M16,36 l20,-20" />
-              </svg>
-            </div>
-            <div className="info__modal__image">
-              <img src={firstInstruction} alt="Instruction 1" />
-            </div>
-            <div className="info__modal__image" >
-              <img src={secondInstruction} alt="Instruction 2" />
-            </div>
-            <div className="info__modal__image">
-              <img src={thirdInstruction} alt="Instruction 3" />
             </div>
           </div>
         </div>
