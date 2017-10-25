@@ -144,6 +144,10 @@
   cursor: auto;
 }
 
+.input__button--disabled:hover {
+  text-decoration: none;
+}
+
 .input__button--play {
   text-align: center;
 }
