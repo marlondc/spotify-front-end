@@ -8,7 +8,7 @@
     "dev": "node_modules/.bin/nodemon server.js",
     "build": "node_modules/.bin/webpack",
     "watch": "node_modules/.bin/webpack --watch",
-    "start": "node server.js"
+    "start": "node_modules/.bin/webpack && node server.js"
   },
   "keywords": [],
   "author": "",
