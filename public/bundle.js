@@ -41888,57 +41888,53 @@ var User = function (_Component) {
         { className: 'container' },
         _react2.default.createElement(
           'div',
-          { idName: 'page-content' },
+          { className: 'top' },
           _react2.default.createElement(
             'div',
-            { className: 'top' },
-            _react2.default.createElement(
-              'div',
-              { className: 'content' },
-              _react2.default.createElement(_topDecoration2.default, null),
-              _react2.default.createElement(_inputUri2.default, { accessToken: accessToken, addToPlaylist: addToPlaylist }),
-              _react2.default.createElement(_modal2.default, null)
-            )
-          ),
+            { className: 'content' },
+            _react2.default.createElement(_topDecoration2.default, null),
+            _react2.default.createElement(_inputUri2.default, { accessToken: accessToken, addToPlaylist: addToPlaylist }),
+            _react2.default.createElement(_modal2.default, null)
+          )
+        ),
+        _react2.default.createElement(
+          'div',
+          { className: 'bottom' },
           _react2.default.createElement(
             'div',
-            { className: 'bottom' },
-            _react2.default.createElement(
+            { className: 'content' },
+            _react2.default.createElement(_titleDivider2.default, { titleText: 'Currently playing' }),
+            currentTrack ? _react2.default.createElement(
               'div',
-              { className: 'content' },
-              _react2.default.createElement(_titleDivider2.default, { titleText: 'Currently playing' }),
-              currentTrack ? _react2.default.createElement(
+              null,
+              _react2.default.createElement(
                 'div',
-                null,
-                _react2.default.createElement(
-                  'div',
-                  { className: 'track track--current' },
-                  _react2.default.createElement(_track2.default, { track: currentTrack })
-                ),
-                currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : _react2.default.createElement(_startButton2.default, { clickHandler: function clickHandler() {
-                    return startPlayback(accessToken, currentTrack.position);
-                  } })
-              ) : _react2.default.createElement(
-                'div',
-                null,
-                _react2.default.createElement(
-                  'p',
-                  { className: 'track__name' },
-                  'No currently playing track'
-                ),
-                _react2.default.createElement(_startButton2.default, { clickHandler: function clickHandler() {
-                    return startPlayback(accessToken, 0);
-                  } })
+                { className: 'track track--current' },
+                _react2.default.createElement(_track2.default, { track: currentTrack })
               ),
-              _react2.default.createElement(_titleDivider2.default, { titleText: 'Up next' }),
-              tracks.map(function (track) {
-                return _react2.default.createElement(
-                  'div',
-                  { className: 'track track--in-list', key: track.id },
-                  _react2.default.createElement(_track2.default, { track: track })
-                );
-              })
-            )
+              currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : _react2.default.createElement(_startButton2.default, { clickHandler: function clickHandler() {
+                  return startPlayback(accessToken, currentTrack.position);
+                } })
+            ) : _react2.default.createElement(
+              'div',
+              null,
+              _react2.default.createElement(
+                'p',
+                { className: 'track__name' },
+                'No currently playing track'
+              ),
+              _react2.default.createElement(_startButton2.default, { clickHandler: function clickHandler() {
+                  return startPlayback(accessToken, 0);
+                } })
+            ),
+            _react2.default.createElement(_titleDivider2.default, { titleText: 'Up next' }),
+            tracks.map(function (track) {
+              return _react2.default.createElement(
+                'div',
+                { className: 'track track--in-list', key: track.id },
+                _react2.default.createElement(_track2.default, { track: track })
+              );
+            })
           )
         )
       );

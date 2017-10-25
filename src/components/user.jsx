@@ -66,43 +66,41 @@ class User extends Component {
 
     return (
       <div className="container">
-        <div idName="page-content">
-          <div className="top">
-            <div className="content">
-              <TopDecoration />
-              <InputUri accessToken={accessToken} addToPlaylist={addToPlaylist}/>
-              <Modal />
-            </div>
+        <div className="top">
+          <div className="content">
+            <TopDecoration />
+            <InputUri accessToken={accessToken} addToPlaylist={addToPlaylist}/>
+            <Modal />
           </div>
-          <div className="bottom">
-            <div className="content">
-              <TitleDivider titleText="Currently playing" />
-                {
-                  currentTrack
-                    ? <div>
-                      <div className="track track--current">
-                        <Track track={currentTrack} />
-                      </div>
-                      {
-                        currentTrack.isPlaying
-                          ? <TrackStatus track={currentTrack} />
-                          : <StartButton clickHandler={() => startPlayback(accessToken, currentTrack.position)} />
-                      }
-                    </div>
-                    : <div>
-                      <p className="track__name">No currently playing track</p>
-                      <StartButton clickHandler={() => startPlayback(accessToken, 0)} />
-                    </div>
-                }
-              <TitleDivider titleText="Up next" />
+        </div>
+        <div className="bottom">
+          <div className="content">
+            <TitleDivider titleText="Currently playing" />
               {
-                tracks.map(track => (
-                  <div className="track track--in-list" key={track.id}>
-                    <Track track={track} />
+                currentTrack
+                  ? <div>
+                    <div className="track track--current">
+                      <Track track={currentTrack} />
+                    </div>
+                    {
+                      currentTrack.isPlaying
+                        ? <TrackStatus track={currentTrack} />
+                        : <StartButton clickHandler={() => startPlayback(accessToken, currentTrack.position)} />
+                    }
                   </div>
-                ))
+                  : <div>
+                    <p className="track__name">No currently playing track</p>
+                    <StartButton clickHandler={() => startPlayback(accessToken, 0)} />
+                  </div>
               }
-            </div>
+            <TitleDivider titleText="Up next" />
+            {
+              tracks.map(track => (
+                <div className="track track--in-list" key={track.id}>
+                  <Track track={track} />
+                </div>
+              ))
+            }
           </div>
         </div>
       </div>
