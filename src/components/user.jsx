@@ -2,6 +2,13 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { test } from 'ramda';
 
+import Loader from './atoms/loader';
+import Track from './atoms/track';
+import TitleDivider from './atoms/title-divider';
+import TrackStatus from './atoms/track-status';
+import StartButton from './atoms/start-button';
+import TopDecoration from './atoms/top-decoration';
+
 import firstInstruction from '../images/first.png';
 import secondInstruction from '../images/second.png';
 import thirdInstruction from '../images/third.png';
@@ -9,13 +16,6 @@ import thirdInstruction from '../images/third.png';
 const invalidURI = (uri) => {
   const spotifyRegex = /^spotify:(track|album):([a-z,A-Z,0-9]{22})$/;
   return !test(spotifyRegex, uri)
-}
-
-const timeLeft = (track) => {
-  const millis = track.duration - track.progress;
-  const minutes = Math.floor(millis / 60000);
-  const seconds = ((millis % 60000) / 1000).toFixed(0);
-  return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
 }
 
 class User extends Component {
@@ -99,13 +99,7 @@ class User extends Component {
 
     if (this.state.loading) {
       return (
-        <div className="loader-container">
-          <div className="loader">
-            <div className="dot"></div>
-            <div className="dot"></div>
-            <div className="dot"></div>
-          </div>
-        </div>
+        <Loader />
       );
     }
 
@@ -116,9 +110,7 @@ class User extends Component {
         })}>
           <div className="top">
             <div className="content">
-              <div className="top__decoration top__decoration--1"></div>
-              <div className="top__decoration top__decoration--2"></div>
-              <div className="top__decoration top__decoration--3"></div>
+              <TopDecoration />
               <div className="input">
                 <input
                   type="text"
@@ -144,98 +136,29 @@ class User extends Component {
           </div>
           <div className="bottom">
             <div className="content">
-              <div className="title">
-                <p className="title__text">Currently playing</p>
-                <div className="title__line"></div>
-              </div>
+              <TitleDivider titleText="Currently playing" />
                 {
                   currentTrack
                     ? <div>
                       <div className="track track--current">
-                        <img src={currentTrack.image} alt={currentTrack.album} className="track__image" />
-                        <div className="track__details">
-                          {
-                            currentTrack.name.length > 15
-                              ? <div className="track__marquee">
-                                <p className="track__name">{currentTrack.name}</p>
-                              </div>
-                              : <p className="track__name">{currentTrack.name}</p>
-                          }
-                          <p className="track__artist">{currentTrack.artist}</p>
-                          {
-                            currentTrack.album.length > 22
-                              ? <div className="track__marquee">
-                                <p className="track__album">{currentTrack.album}</p>
-                              </div>
-                              : <p className="track__album">{currentTrack.album}</p>
-                          }
-                        </div>
+                        <Track track={currentTrack} />
                       </div>
                       {
                         currentTrack.isPlaying
-                          ? <div className="track__status">
-                            <div className="track__status__progress-bar"></div>
-                            <div
-                              className="track__status__progress-bar track__status__progress-bar--fill"
-                              style={
-                                {
-                                  width: currentTrack.progress / currentTrack.duration * 75 > 5
-                                    ? `${currentTrack.progress / currentTrack.duration * 75}%`
-                                    : '2%'
-                                }
-                              }
-                            />
-                            <p className="track__status__time">{timeLeft(currentTrack)} <span>left</span></p>
-                          </div>
-                          : <div className="input__button--play">
-                            <button
-                              className="input__button"
-                              onClick={() => startPlayback(accessToken, currentTrack.position)}
-                            > Play </button>
-                          </div>
+                          ? <TrackStatus track={currentTrack} />
+                          : <StartButton clickHandler={() => startPlayback(accessToken, currentTrack.position)} />
                       }
                     </div>
                     : <div>
                       <p className="track__name">No currently playing track</p>
-                      <div className="input__button--play">
-                        <button
-                          className="input__button"
-                          onClick={() => startPlayback(accessToken, 0)}
-                        > Play </button>
-                      </div>
+                      <StartButton clickHandler={() => startPlayback(accessToken, 0)} />
                     </div>
                 }
-              <div className="title">
-                <p className="title__text">Up next</p>
-                <div className="title__line"></div>
-              </div>
+              <TitleDivider titleText="Up next" />
               {
                 tracks.map(track => (
                   <div className="track track--in-list" key={track.id}>
-                    <img src={track.image} alt={track.album} className="track__image" />
-                    <div className="track__details">
-                      {
-                        track.name.length > 17
-                          ? <div className="track__marquee">
-                            <p className="track__name">{track.name}</p>
-                          </div>
-                          : <p className="track__name">{track.name}</p>
-                      }
-                      {
-                        track.artist.length > 30
-                          ? <div className="track__marquee">
-                            <p className="track__artist">{track.artist}</p>
-                          </div>
-                          : <p className="track__artist">{track.artist}</p>
-                      }
-                      {
-                        track.album.length > 22
-                          ? <div className="track__marquee">
-                            <p className="track__album">{track.album}</p>
-                          </div>
-                          : <p className="track__album">{track.album}</p>
-                      }
-                    </div>
+                    <Track track={track} />
                   </div>
                 ))
               }

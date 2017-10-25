@@ -11761,8 +11761,7 @@ var getCurrentTrack = exports.getCurrentTrack = function getCurrentTrack(accessT
         }
       });
     }).catch(function () {
-      console.log('hello');
-      // dispatch({ type: BAD_TOKEN })
+      dispatch({ type: BAD_TOKEN });
     });
   };
 };
@@ -11793,8 +11792,7 @@ var getPlaylistTracks = exports.getPlaylistTracks = function getPlaylistTracks(a
         tracks: tracks
       });
     }).catch(function (err) {
-      console.log('bye');
-      // dispatch({ type: BAD_TOKEN })
+      console.log(err);
     });
   };
 };
@@ -11805,7 +11803,6 @@ var getTokens = exports.getTokens = function getTokens() {
       type: REQUEST_TOKENS
     });
     _axios2.default.get("https://mdc-jukebox.herokuapp.com" + '/tokens').then(function (response) {
-      console.log(response);
       dispatch({
         type: RECEIVE_TOKENS,
         data: response.data
@@ -47351,6 +47348,30 @@ var _classnames2 = _interopRequireDefault(_classnames);
 
 var _ramda = __webpack_require__(49);
 
+var _loader = __webpack_require__(534);
+
+var _loader2 = _interopRequireDefault(_loader);
+
+var _track = __webpack_require__(535);
+
+var _track2 = _interopRequireDefault(_track);
+
+var _titleDivider = __webpack_require__(536);
+
+var _titleDivider2 = _interopRequireDefault(_titleDivider);
+
+var _trackStatus = __webpack_require__(537);
+
+var _trackStatus2 = _interopRequireDefault(_trackStatus);
+
+var _startButton = __webpack_require__(538);
+
+var _startButton2 = _interopRequireDefault(_startButton);
+
+var _topDecoration = __webpack_require__(539);
+
+var _topDecoration2 = _interopRequireDefault(_topDecoration);
+
 var _first = __webpack_require__(496);
 
 var _first2 = _interopRequireDefault(_first);
@@ -47374,13 +47395,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var invalidURI = function invalidURI(uri) {
   var spotifyRegex = /^spotify:(track|album):([a-z,A-Z,0-9]{22})$/;
   return !(0, _ramda.test)(spotifyRegex, uri);
-};
-
-var timeLeft = function timeLeft(track) {
-  var millis = track.duration - track.progress;
-  var minutes = Math.floor(millis / 60000);
-  var seconds = (millis % 60000 / 1000).toFixed(0);
-  return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
 };
 
 var User = function (_Component) {
@@ -47479,17 +47493,7 @@ var User = function (_Component) {
 
 
       if (this.state.loading) {
-        return _react2.default.createElement(
-          'div',
-          { className: 'loader-container' },
-          _react2.default.createElement(
-            'div',
-            { className: 'loader' },
-            _react2.default.createElement('div', { className: 'dot' }),
-            _react2.default.createElement('div', { className: 'dot' }),
-            _react2.default.createElement('div', { className: 'dot' })
-          )
-        );
+        return _react2.default.createElement(_loader2.default, null);
       }
 
       return _react2.default.createElement(
@@ -47506,9 +47510,7 @@ var User = function (_Component) {
             _react2.default.createElement(
               'div',
               { className: 'content' },
-              _react2.default.createElement('div', { className: 'top__decoration top__decoration--1' }),
-              _react2.default.createElement('div', { className: 'top__decoration top__decoration--2' }),
-              _react2.default.createElement('div', { className: 'top__decoration top__decoration--3' }),
+              _react2.default.createElement(_topDecoration2.default, null),
               _react2.default.createElement(
                 'div',
                 { className: 'input' },
@@ -47544,94 +47546,18 @@ var User = function (_Component) {
             _react2.default.createElement(
               'div',
               { className: 'content' },
-              _react2.default.createElement(
-                'div',
-                { className: 'title' },
-                _react2.default.createElement(
-                  'p',
-                  { className: 'title__text' },
-                  'Currently playing'
-                ),
-                _react2.default.createElement('div', { className: 'title__line' })
-              ),
+              _react2.default.createElement(_titleDivider2.default, { titleText: 'Currently playing' }),
               currentTrack ? _react2.default.createElement(
                 'div',
                 null,
                 _react2.default.createElement(
                   'div',
                   { className: 'track track--current' },
-                  _react2.default.createElement('img', { src: currentTrack.image, alt: currentTrack.album, className: 'track__image' }),
-                  _react2.default.createElement(
-                    'div',
-                    { className: 'track__details' },
-                    currentTrack.name.length > 15 ? _react2.default.createElement(
-                      'div',
-                      { className: 'track__marquee' },
-                      _react2.default.createElement(
-                        'p',
-                        { className: 'track__name' },
-                        currentTrack.name
-                      )
-                    ) : _react2.default.createElement(
-                      'p',
-                      { className: 'track__name' },
-                      currentTrack.name
-                    ),
-                    _react2.default.createElement(
-                      'p',
-                      { className: 'track__artist' },
-                      currentTrack.artist
-                    ),
-                    currentTrack.album.length > 22 ? _react2.default.createElement(
-                      'div',
-                      { className: 'track__marquee' },
-                      _react2.default.createElement(
-                        'p',
-                        { className: 'track__album' },
-                        currentTrack.album
-                      )
-                    ) : _react2.default.createElement(
-                      'p',
-                      { className: 'track__album' },
-                      currentTrack.album
-                    )
-                  )
+                  _react2.default.createElement(_track2.default, { track: currentTrack })
                 ),
-                currentTrack.isPlaying ? _react2.default.createElement(
-                  'div',
-                  { className: 'track__status' },
-                  _react2.default.createElement('div', { className: 'track__status__progress-bar' }),
-                  _react2.default.createElement('div', {
-                    className: 'track__status__progress-bar track__status__progress-bar--fill',
-                    style: {
-                      width: currentTrack.progress / currentTrack.duration * 75 > 5 ? currentTrack.progress / currentTrack.duration * 75 + '%' : '2%'
-                    }
-                  }),
-                  _react2.default.createElement(
-                    'p',
-                    { className: 'track__status__time' },
-                    timeLeft(currentTrack),
-                    ' ',
-                    _react2.default.createElement(
-                      'span',
-                      null,
-                      'left'
-                    )
-                  )
-                ) : _react2.default.createElement(
-                  'div',
-                  { className: 'input__button--play' },
-                  _react2.default.createElement(
-                    'button',
-                    {
-                      className: 'input__button',
-                      onClick: function onClick() {
-                        return startPlayback(accessToken, currentTrack.position);
-                      }
-                    },
-                    ' Play '
-                  )
-                )
+                currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : _react2.default.createElement(_startButton2.default, { clickHandler: function clickHandler() {
+                    return startPlayback(accessToken, currentTrack.position);
+                  } })
               ) : _react2.default.createElement(
                 'div',
                 null,
@@ -47640,79 +47566,16 @@ var User = function (_Component) {
                   { className: 'track__name' },
                   'No currently playing track'
                 ),
-                _react2.default.createElement(
-                  'div',
-                  { className: 'input__button--play' },
-                  _react2.default.createElement(
-                    'button',
-                    {
-                      className: 'input__button',
-                      onClick: function onClick() {
-                        return startPlayback(accessToken, 0);
-                      }
-                    },
-                    ' Play '
-                  )
-                )
+                _react2.default.createElement(_startButton2.default, { clickHandler: function clickHandler() {
+                    return startPlayback(accessToken, 0);
+                  } })
               ),
-              _react2.default.createElement(
-                'div',
-                { className: 'title' },
-                _react2.default.createElement(
-                  'p',
-                  { className: 'title__text' },
-                  'Up next'
-                ),
-                _react2.default.createElement('div', { className: 'title__line' })
-              ),
+              _react2.default.createElement(_titleDivider2.default, { titleText: 'Up next' }),
               tracks.map(function (track) {
                 return _react2.default.createElement(
                   'div',
                   { className: 'track track--in-list', key: track.id },
-                  _react2.default.createElement('img', { src: track.image, alt: track.album, className: 'track__image' }),
-                  _react2.default.createElement(
-                    'div',
-                    { className: 'track__details' },
-                    track.name.length > 17 ? _react2.default.createElement(
-                      'div',
-                      { className: 'track__marquee' },
-                      _react2.default.createElement(
-                        'p',
-                        { className: 'track__name' },
-                        track.name
-                      )
-                    ) : _react2.default.createElement(
-                      'p',
-                      { className: 'track__name' },
-                      track.name
-                    ),
-                    track.artist.length > 30 ? _react2.default.createElement(
-                      'div',
-                      { className: 'track__marquee' },
-                      _react2.default.createElement(
-                        'p',
-                        { className: 'track__artist' },
-                        track.artist
-                      )
-                    ) : _react2.default.createElement(
-                      'p',
-                      { className: 'track__artist' },
-                      track.artist
-                    ),
-                    track.album.length > 22 ? _react2.default.createElement(
-                      'div',
-                      { className: 'track__marquee' },
-                      _react2.default.createElement(
-                        'p',
-                        { className: 'track__album' },
-                        track.album
-                      )
-                    ) : _react2.default.createElement(
-                      'p',
-                      { className: 'track__album' },
-                      track.album
-                    )
-                  )
+                  _react2.default.createElement(_track2.default, { track: track })
                 );
               })
             )
@@ -49896,6 +49759,271 @@ function reduce() {
       return state;
   }
 }
+
+/***/ }),
+/* 528 */,
+/* 529 */,
+/* 530 */,
+/* 531 */,
+/* 532 */,
+/* 533 */,
+/* 534 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(7);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Loader = function Loader() {
+  return _react2.default.createElement(
+    "div",
+    { className: "loader-container" },
+    _react2.default.createElement(
+      "div",
+      { className: "loader" },
+      _react2.default.createElement("div", { className: "dot" }),
+      _react2.default.createElement("div", { className: "dot" }),
+      _react2.default.createElement("div", { className: "dot" })
+    )
+  );
+};
+
+exports.default = Loader;
+
+/***/ }),
+/* 535 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(7);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _classnames = __webpack_require__(495);
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Track = function Track(_ref) {
+  var track = _ref.track;
+  return _react2.default.createElement(
+    'div',
+    null,
+    _react2.default.createElement('img', { src: track.image, alt: track.album, className: 'track__image' }),
+    _react2.default.createElement(
+      'div',
+      { className: 'track__details' },
+      track.name.length > 17 ? _react2.default.createElement(
+        'div',
+        { className: 'track__marquee' },
+        _react2.default.createElement(
+          'p',
+          { className: 'track__name' },
+          track.name
+        )
+      ) : _react2.default.createElement(
+        'p',
+        { className: 'track__name' },
+        track.name
+      ),
+      track.artist.length > 30 ? _react2.default.createElement(
+        'div',
+        { className: 'track__marquee' },
+        _react2.default.createElement(
+          'p',
+          { className: 'track__artist' },
+          track.artist
+        )
+      ) : _react2.default.createElement(
+        'p',
+        { className: 'track__artist' },
+        track.artist
+      ),
+      track.album.length > 22 ? _react2.default.createElement(
+        'div',
+        { className: 'track__marquee' },
+        _react2.default.createElement(
+          'p',
+          { className: 'track__album' },
+          track.album
+        )
+      ) : _react2.default.createElement(
+        'p',
+        { className: 'track__album' },
+        track.album
+      )
+    )
+  );
+};
+
+exports.default = Track;
+
+/***/ }),
+/* 536 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(7);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TitleDivider = function TitleDivider(_ref) {
+  var titleText = _ref.titleText;
+  return _react2.default.createElement(
+    "div",
+    { className: "title" },
+    _react2.default.createElement(
+      "p",
+      { className: "title__text" },
+      titleText
+    ),
+    _react2.default.createElement("div", { className: "title__line" })
+  );
+};
+
+exports.default = TitleDivider;
+
+/***/ }),
+/* 537 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(7);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var timeLeft = function timeLeft(track) {
+  var millis = track.duration - track.progress;
+  var minutes = Math.floor(millis / 60000);
+  var seconds = (millis % 60000 / 1000).toFixed(0);
+  return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+};
+
+var TrackStatus = function TrackStatus(_ref) {
+  var track = _ref.track;
+  return _react2.default.createElement(
+    'div',
+    { className: 'track__status' },
+    _react2.default.createElement('div', { className: 'track__status__progress-bar' }),
+    _react2.default.createElement('div', {
+      className: 'track__status__progress-bar track__status__progress-bar--fill',
+      style: {
+        width: track.progress / track.duration * 75 > 5 ? track.progress / track.duration * 75 + '%' : '2%'
+      }
+    }),
+    _react2.default.createElement(
+      'p',
+      { className: 'track__status__time' },
+      timeLeft(track),
+      ' ',
+      _react2.default.createElement(
+        'span',
+        null,
+        'left'
+      )
+    )
+  );
+};
+
+exports.default = TrackStatus;
+
+/***/ }),
+/* 538 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(7);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var StartButton = function StartButton(_ref) {
+  var clickHandler = _ref.clickHandler;
+  return _react2.default.createElement(
+    "div",
+    { className: "input__button--play" },
+    _react2.default.createElement(
+      "button",
+      {
+        className: "input__button",
+        onClick: function onClick() {
+          return clickHandler();
+        }
+      },
+      " Play "
+    )
+  );
+};
+
+exports.default = StartButton;
+
+/***/ }),
+/* 539 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _react = __webpack_require__(7);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var TopDecoration = function TopDecoration() {
+  return _react2.default.createElement(
+    "div",
+    null,
+    _react2.default.createElement("div", { className: "top__decoration top__decoration--1" }),
+    _react2.default.createElement("div", { className: "top__decoration top__decoration--2" }),
+    _react2.default.createElement("div", { className: "top__decoration top__decoration--3" })
+  );
+};
+
+exports.default = TopDecoration;
 
 /***/ })
 /******/ ]);

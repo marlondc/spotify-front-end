@@ -91,8 +91,7 @@ export const getCurrentTrack = (accessToken) => (dispatch) => {
       }
     })
   }).catch(() => {
-    console.log('hello');
-    // dispatch({ type: BAD_TOKEN })
+    dispatch({ type: BAD_TOKEN })
   })
 }
 
@@ -119,8 +118,7 @@ export const getPlaylistTracks = (accessToken) => (dispatch) => {
       tracks,
     })
   }).catch(err => {
-    console.log('bye');
-    // dispatch({ type: BAD_TOKEN })
+    console.log(err);
   });
 }
 
@@ -131,7 +129,6 @@ export const getTokens = () => (dispatch) => {
   axios
     .get(`${process.env.BACKEND_LOGIN}/tokens`)
     .then((response) => {
-      console.log(response);
       dispatch({
         type: RECEIVE_TOKENS,
         data: response.data
