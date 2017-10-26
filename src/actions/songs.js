@@ -75,6 +75,22 @@ export const addToPlaylist = (url, accessToken) => (dispatch) => {
           type: ADDED_TO_PLAYLIST,
         });
         dispatch(getPlaylistTracks(accessToken));
+      }).then(() => {
+        axios(`https://api.spotify.com/v1/albums/${spotifyID}`, {
+          method: 'get',
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            Accept: 'application/json'
+          }
+        }).then(({ data }) => {
+          dispatch({
+            type: SHOW_NOTIFICATION,
+            notification: {
+              text: `${data.name} by ${data.artists[0].name}`,
+              type: 'album',
+            },
+          })
+        });
       }).catch((err) => {
         dispatch({ type: ADDED_TO_PLAYLIST })
       })

@@ -19,7 +19,7 @@ class Notification extends Component {
           'notification--show': !isEmpty(this.props.text) && !isEmpty(this.props.type),
         })}
       >
-        <p className="notification__text"><span className="jukebox-ok" />{`You just added "${this.props.type} by ${this.props.text}"`}</p>
+        <p className="notification__text"><span className="jukebox-ok" />{`You just added "${this.props.type} ${this.props.text}"`}</p>
       </div>    
     )
   }

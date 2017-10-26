@@ -9119,6 +9119,24 @@ var addToPlaylist = exports.addToPlaylist = function addToPlaylist(url, accessTo
             type: ADDED_TO_PLAYLIST
           });
           dispatch(getPlaylistTracks(accessToken));
+        }).then(function () {
+          (0, _axios2.default)('https://api.spotify.com/v1/albums/' + spotifyID, {
+            method: 'get',
+            headers: {
+              Authorization: 'Bearer ' + accessToken,
+              Accept: 'application/json'
+            }
+          }).then(function (_ref3) {
+            var data = _ref3.data;
+
+            dispatch({
+              type: SHOW_NOTIFICATION,
+              notification: {
+                text: data.name + ' by ' + data.artists[0].name,
+                type: 'album'
+              }
+            });
+          });
         }).catch(function (err) {
           dispatch({ type: ADDED_TO_PLAYLIST });
         });
@@ -9144,8 +9162,8 @@ var getCurrentTrack = exports.getCurrentTrack = function getCurrentTrack(accessT
       headers: {
         Authorization: 'Bearer ' + accessToken
       }
-    }).then(function (_ref3) {
-      var data = _ref3.data;
+    }).then(function (_ref4) {
+      var data = _ref4.data;
       var item = data.item;
 
       dispatch({
@@ -9176,8 +9194,8 @@ var getPlaylistTracks = exports.getPlaylistTracks = function getPlaylistTracks(a
       headers: {
         Authorization: 'Bearer ' + accessToken
       }
-    }).then(function (_ref4) {
-      var data = _ref4.data;
+    }).then(function (_ref5) {
+      var data = _ref5.data;
 
       var tracks = data.tracks.items.map(function (item) {
         return {
@@ -44666,7 +44684,7 @@ var Notification = function (_Component) {
           'p',
           { className: 'notification__text' },
           _react2.default.createElement('span', { className: 'jukebox-ok' }),
-          'You just added "' + this.props.type + ' by ' + this.props.text + '"'
+          'You just added "' + this.props.type + ' ' + this.props.text + '"'
         )
       );
     }
