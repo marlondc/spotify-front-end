@@ -5,7 +5,7 @@ const StartButton = ({ clickHandler }) => (
     <button
       className="input__button"
       onClick={() => clickHandler()}
-    > Play </button>
+    > PLAY </button>
   </div>
 );
 

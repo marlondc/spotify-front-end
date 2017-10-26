@@ -100,69 +100,6 @@
   transform: rotate(-60deg);
 }
 
-.input {
-  padding-bottom: 35px;
-  position: relative;
-}
-
-.input--login {
-  padding: 0;
-}
-
-.input__spotifyURI {
-  border: 1px solid lightgrey;
-  height: 50px;
-  outline: none;
-  padding: 0 10px;
-  width: 100%;
-}
-
-.input__button {
-  background: #ef9783;
-  border-radius: 20px;
-  border-style: none;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 16px;
-  margin: 15px 0 0;
-  outline: none;
-  padding: 12px 20px;
-}
-
-.input__button:hover {
-  text-decoration: underline;
-}
-
-.input__button--login {
-  color: black;
-  margin: 0;
-  text-decoration: none;
-}
-
-.input__button--disabled {
-  opacity: 0.4;
-  cursor: auto;
-}
-
-.input__button--disabled:hover {
-  text-decoration: none;
-}
-
-.input__button--play {
-  text-align: center;
-}
-
-.info__text {
-  border: none;
-  background: none;
-  cursor: pointer;
-  font-size: 12px;
-  margin: 0;
-  outline: none;
-  padding: 0;
-  text-decoration: underline;
-}
-
 .bottom {
   padding-bottom: 40px;
 }

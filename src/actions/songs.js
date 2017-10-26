@@ -5,6 +5,7 @@ import { test } from 'ramda';
 // our constants
 export const ADDED_TO_PLAYLIST = 'ADDED_TO_PLAYLIST';
 export const BAD_TOKEN = 'BAD_TOKEN';
+export const CLEAR_NOTIFICATION = 'CLEAR_NOTIFICATION';
 export const LOGGED_IN = 'LOGGED_IN';
 export const REQUEST_CURRENT_TRACK = 'REQUEST_CURRENT_TRACK';
 export const REQUEST_PLAYLIST = 'REQUEST_PLAYLIST';
@@ -13,7 +14,8 @@ export const RECEIVE_CURRENT_TRACK = 'RECEIVE_CURRENT_TRACK';
 export const RECEIVE_PLAYLIST = 'RECEIVE_PLAYLIST';
 export const RECEIVE_TOKENS = 'RECEIVE_TOKENS';
 export const RECEIVE_TOKENS_ERROR = 'RECEIVE_TOKENS_ERROR';
-export const START_PLAYBACK = "START_PLAYBACK";
+export const START_PLAYBACK = 'START_PLAYBACK';
+export const SHOW_NOTIFICATION = 'SHOW_NOTIFICATION';
 
 export const addToPlaylist = (url, accessToken) => (dispatch) => {
   const spotifyRegex = /([a-z,A-Z,0-9]{22})$/;
@@ -29,10 +31,23 @@ export const addToPlaylist = (url, accessToken) => (dispatch) => {
         Accept: 'application/json'
       },
     }).then(() => {
-      dispatch({
-        type: ADDED_TO_PLAYLIST,
-      });
       dispatch(getPlaylistTracks(accessToken));
+    }).then(() => {
+      axios(`https://api.spotify.com/v1/tracks/${spotifyID}`, {
+        method: 'get',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          Accept: 'application/json'
+        }
+      }).then(({ data }) => {
+        dispatch({
+          type: SHOW_NOTIFICATION,
+          notification: {
+            text: `${data.name} by ${data.artists[0].name}`,
+            type: 'track',
+          },
+        })
+      });
     }).catch((err) => {
       dispatch({
         type: ADDED_TO_PLAYLIST,
@@ -66,6 +81,12 @@ export const addToPlaylist = (url, accessToken) => (dispatch) => {
     });
   }
 }
+
+export const clearNotification = () => (dispatch) => (
+  dispatch({
+    type: CLEAR_NOTIFICATION,
+  })
+);
 
 export const getCurrentTrack = (accessToken) => (dispatch) => {
   dispatch({

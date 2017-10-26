@@ -39,6 +39,19 @@ module.exports = {
           name: '/images/[name].[ext]'
         }
       },
+      {
+        test: /\.woff$|\.woff2$|\.ttf$|\.otf$|\.eot$/,
+        include: SRC_DIR,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              limit: 100000,
+              name: '/name=/fonts/[name].[ext]'
+            },
+          }
+        ]
+      },
     ],
   },
   resolve: {

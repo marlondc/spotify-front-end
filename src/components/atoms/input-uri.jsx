@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import { test } from 'ramda';
+import { test, isEmpty } from 'ramda';
 
 const invalidURI = (uri) => {
   const spotifyRegex = /^spotify:(track|album):([a-z,A-Z,0-9]{22})$/;
@@ -44,17 +44,33 @@ class InputUri extends Component {
   render() {
     return (
       <div className="input">
-        <input
-          type="text"
-          name="spotifyURI"
-          className="input__spotifyURI"
-          value={this.state.spotifyURI}
-          placeholder="Add spotify track / album uri ..."
-          onChange={this.handleInputChange}
-        />
+        <div className="input__field">
+          <input
+            type="text"
+            name="spotifyURI"
+            className="input__spotifyURI"
+            value={this.state.spotifyURI}
+            placeholder="Add spotify track / album uri ..."
+            onChange={this.handleInputChange}
+          />
+          <span
+            className={
+              classnames('jukebox-ok', 'input__tick', {
+                'input__tick--show': !invalidURI(this.state.spotifyURI),
+              })
+            }
+          />
+          <span
+            className={
+              classnames('jukebox-cancel', 'input__cancel', {
+                'input__cancel--show': invalidURI(this.state.spotifyURI) && !isEmpty(this.state.spotifyURI),
+              })
+            }
+          />
+        </div>
         <input
           type="submit"
-          value="Add to playlist"
+          value="ADD TO PLAYLIST"
           className={
             classnames('input__button', { 'input__button--disabled': invalidURI(this.state.spotifyURI) })
           }

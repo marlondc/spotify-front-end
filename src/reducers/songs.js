@@ -1,6 +1,7 @@
 import {
   ADDED_TO_PLAYLIST,
   BAD_TOKEN,
+  CLEAR_NOTIFICATION,
   LOGGED_IN,
   RECEIVE_CURRENT_TRACK,
   RECEIVE_PLAYLIST,
@@ -10,6 +11,7 @@ import {
   REQUEST_PLAYLIST,
   REQUEST_TOKENS,
   START_PLAYBACK,
+  SHOW_NOTIFICATION,
 } from '../actions/songs';
 
 const initialState = {
@@ -19,6 +21,10 @@ const initialState = {
   refreshToken: null,
   searchResults: [],
   tracks: [],
+  notification: {
+    text: '',
+    type: '',
+  },
 };
 
 export default function reduce(state = initialState, action) {
@@ -32,11 +38,20 @@ export default function reduce(state = initialState, action) {
   }
 
   case BAD_TOKEN: {
-    console.log(11111111);
     return {
       ...state,
       accessToken: null,
       refreshToken: null,
+    }
+  }
+
+  case CLEAR_NOTIFICATION: {
+    return {
+      ...state,
+      notification: {
+        text: '',
+        type: '',
+      },
     }
   }
 
@@ -89,6 +104,13 @@ export default function reduce(state = initialState, action) {
 
   case RECEIVE_TOKENS_ERROR : {
     return state;
+  }
+
+  case SHOW_NOTIFICATION: {
+    return {
+      ...state,
+      notification: action.notification,
+    };
   }
 
   case START_PLAYBACK: {

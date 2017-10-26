@@ -1,0 +1,18 @@
+.notification {
+  background: #7fd48a;
+  bottom: 0;
+  display: none;
+  height: 40px;
+  position: fixed;
+  width: 100%;
+}
+
+.notification--show {
+  display: block;
+}
+
+.notification__text {
+  color: #fff;
+  line-height: 40px;
+  margin: 0 0 0 15px;
+}

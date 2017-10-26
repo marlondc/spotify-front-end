@@ -9,6 +9,7 @@ import StartButton from './atoms/start-button';
 import TopDecoration from './atoms/top-decoration';
 import InputUri from './atoms/input-uri';
 import Modal from './atoms/modal';
+import Notification from './atoms/notification';
 
 import firstInstruction from '../images/first.png';
 import secondInstruction from '../images/second.png';
@@ -36,10 +37,10 @@ class User extends Component {
         loading: false,
       })
     ), 2000)
-    this.infoInterval = setInterval(() => (
-      this.props.getCurrentTrack(accessToken)
-      this.props.getPlaylistTracks()
-    ), 1000);
+    this.infoInterval = setInterval(() => {
+      // this.props.getCurrentTrack(accessToken)
+      // this.props.getPlaylistTracks()
+    }, 1000);
   }
 
   componentWillUnmount() {
@@ -49,10 +50,12 @@ class User extends Component {
   render() {
     const {
       accessToken,
+      clearNotification,
       currentTrack,
       tracks,
       startPlayback,
       addToPlaylist,
+      notification,
     } = this.props;
 
     if (this.state.loading) {
@@ -100,6 +103,7 @@ class User extends Component {
             }
           </div>
         </div>
+        <Notification {...notification} clearNotification={() => clearNotification()}/>
       </div>
     );
   }
