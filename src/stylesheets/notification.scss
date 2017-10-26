@@ -1,14 +1,15 @@
 .notification {
   background: #7fd48a;
-  bottom: 0;
-  display: none;
   height: 40px;
   position: fixed;
   width: 100%;
 }
 
 .notification--show {
-  display: block;
+  bottom: 0;
+  -moz-transition: bottom 0.1s ease-in-out;
+  -webkit-transition: bottom 0.1s ease-in-out;
+  transition: bottom 0.1s ease-in-out;
 }
 
 .notification__text {
