@@ -90,8 +90,8 @@ export const getCurrentTrack = (accessToken) => (dispatch) => {
         progress: data.progress_ms,
       }
     })
-  }).catch(() => {
-    dispatch({ type: BAD_TOKEN })
+  }).catch((err) => {
+    // dispatch({ type: BAD_TOKEN })
   })
 }
 

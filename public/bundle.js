@@ -9136,8 +9136,8 @@ var getCurrentTrack = exports.getCurrentTrack = function getCurrentTrack(accessT
           progress: data.progress_ms
         }
       });
-    }).catch(function () {
-      dispatch({ type: BAD_TOKEN });
+    }).catch(function (err) {
+      // dispatch({ type: BAD_TOKEN })
     });
   };
 };
@@ -42559,7 +42559,7 @@ module.exports.default = axios;
 /*!
  * Determine if an object is a Buffer
  *
- * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @author   Feross Aboukhadijeh <https://feross.org>
  * @license  MIT
  */
 
@@ -44428,6 +44428,7 @@ function reduce() {
 
     case _songs.BAD_TOKEN:
       {
+        console.log(11111111);
         return _extends({}, state, {
           accessToken: null,
           refreshToken: null

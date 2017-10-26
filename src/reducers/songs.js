@@ -32,6 +32,7 @@ export default function reduce(state = initialState, action) {
   }
 
   case BAD_TOKEN: {
+    console.log(11111111);
     return {
       ...state,
       accessToken: null,
