@@ -19,7 +19,7 @@ class User extends Component {
     super(props);
 
     this.state = {
-      showModal: false,
+      loading: false,
     }
   }
 
@@ -36,17 +36,14 @@ class User extends Component {
         loading: false,
       })
     ), 2000)
-    this.currentTrackInterval = setInterval(() => (
+    this.infoInterval = setInterval(() => (
       this.props.getCurrentTrack(accessToken)
-    ), 1000);
-    this.currentPlaylistTracks = setInterval(() => (
       this.props.getPlaylistTracks()
-    ), 60000);
+    ), 1000);
   }
 
   componentWillUnmount() {
-    clearInterval(this.currentTrackInterval);
-    clearInterval(this.currentPlaylistTracks);
+    clearInterval(this.infoInterval);
   }
 
   render() {
