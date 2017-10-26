@@ -13,14 +13,18 @@ class Notification extends Component {
   }
 
   render() {
+    
     return (
-      <div
-        className={classnames('notification', {
-          'notification--show': !isEmpty(this.props.text) && !isEmpty(this.props.type),
-        })}
-      >
-        <p className="notification__text"><span className="jukebox-ok" />You just added <strong>{`"${this.props.type} ${this.props.text}"`}</strong></p>
-      </div>    
+      !isEmpty(this.props.text) && !isEmpty(this.props.type)
+        ? 
+          <div
+            className={classnames('notification', {
+              'notification--show': !isEmpty(this.props.text) && !isEmpty(this.props.type),
+            })}
+          >
+            <p className="notification__text"><span className="jukebox-ok" />{`${this.props.type} `}<strong>{`"${this.props.text}"`}</strong></p>
+          </div>
+        : null
     )
   }
 }

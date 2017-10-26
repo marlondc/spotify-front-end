@@ -38,7 +38,7 @@ class User extends Component {
       })
     ), 2000)
     this.infoInterval = setInterval(() => {
-      // this.props.getCurrentTrack(accessToken)
+      this.props.getCurrentTrack(accessToken)
       // this.props.getPlaylistTracks()
     }, 1000);
   }
