@@ -31,6 +31,7 @@ class User extends Component {
   }
 
   componentDidMount() {
+
     const { accessToken } = this.props;
     setTimeout(() => (
       this.setState({
