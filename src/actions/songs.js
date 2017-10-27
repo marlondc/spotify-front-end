@@ -128,7 +128,7 @@ export const getCurrentTrack = (accessToken) => (dispatch) => {
       }
     })
   }).catch((err) => {
-    dispatch({ type: BAD_TOKEN })
+    // dispatch({ type: BAD_TOKEN })
   })
 }
 
