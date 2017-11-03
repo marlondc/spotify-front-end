@@ -1,13 +1,20 @@
-@import url('https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,500,600,700,800,900');
+// @import url('https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,500,600,700,800,900');
 @import 'loader';
 @import 'app';
 @import 'input';
 @import 'font';
 @import 'notification';
 
+@mixin WorkSansRegular() {
+  font-family: 'Work Sans Regular', Helvetica, sans-serif;
+  font-weight: normal;
+  font-style: normal;
+}
+
 html,
 body {
-  font-family: 'Work Sans', sans-serif;
+  @include WorkSansRegular();
+  // font-family: 'Work Sans', sans-serif;
   margin: 0;
 }
 

@@ -7,7 +7,7 @@ import { createBrowserHistory } from 'history';
 import { syncHistoryWithStore, routerReducer, routerMiddleware } from 'react-router-redux';
 import thunkMiddleware from 'redux-thunk';
 
-import Home from './containers/home.jsx';
+import routes from './routes';
 import './stylesheets/main.scss';
 import songs from './reducers/songs';
 
@@ -29,9 +29,5 @@ const history = syncHistoryWithStore(createBrowserHistory(), store);
 
 render(
   <Provider store={store}>
-    <Router history={history}>
-      <div>
-        <Route path='/' component={Home} />
-      </div>
-    </Router>
+    <Router history={history} routes={routes} />
   </Provider>, document.getElementById('app'));

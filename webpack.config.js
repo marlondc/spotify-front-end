@@ -1,43 +1,63 @@
 const path = require('path');
 const Dotenv = require('dotenv-webpack');
+const merge = require('webpack-merge');
+const fs = require('fs');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const SRC_DIR = path.resolve(__dirname, 'src');
 const BUILD_DIR = path.resolve(__dirname, 'public');
 
-module.exports = {
-  entry: SRC_DIR + '/index.jsx',
+const server = {
+  entry: path.resolve(__dirname, 'server.jsx'),
   output: {
     path: BUILD_DIR,
-    filename: 'bundle.js',
+    filename: 'server.bundle.js',
   },
+  target: 'node',
+  node: {
+    __filename: false,
+    __dirname: false,
+  },
+  externals: fs.readdirSync(path.resolve(__dirname, 'node_modules'))
+    // keep node_module paths out of the bundle
+    .concat(['react-dom/server'])
+    .reduce((ext, mod) => {
+      const external = ext;
+      external[mod] = `commonjs ${mod}`;
+      return external;
+    }, {}),
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?$/,
-        include: SRC_DIR,
         exclude: /node_modules/,
-        loader: 'babel-loader',
-        options: {
-          presets: [
-            'es2015',
-            'react',
-            'stage-2',
-          ]
-        }
-      },
-      {
-        test: /\.scss$/,
-        exclude: /node_modules/,
-        loaders: ['style-loader', 'css-loader', 'sass-loader']
+        use: [{
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              'es2015',
+              'react',
+              'stage-2',
+            ],
+            plugins: []
+          }
+        }]
       },
       {
         test: /\.jpe?g$|\.gif$|\.png$|\.svg$/,
         include: SRC_DIR,
-        loader: 'file-loader',
-        options: {
-          limit: 100000,
-          name: '/images/[name].[ext]'
-        }
+        use: [{
+          loader: 'file-loader',
+          options: {
+            limit: 100000,
+            name: '/images/[name].[ext]'
+          },
+        }]
+      },
+      {
+        test: /\.scss$/,
+        include: SRC_DIR,
+        loader: ExtractTextPlugin.extract('css-loader!sass-loader'),
       },
       {
         test: /\.woff$|\.woff2$|\.ttf$|\.otf$|\.eot$/,
@@ -47,19 +67,24 @@ module.exports = {
             loader: 'file-loader',
             options: {
               limit: 100000,
-              name: '/name=/fonts/[name].[ext]'
-            },
+              name: '/fonts/[name].[ext]'
+            }
           }
         ]
       },
     ],
   },
   resolve: {
-    extensions: [".js", ".jsx"]
+    extensions: [".js", ".jsx", ".scss"]
   },
   plugins: [
-    new Dotenv({
-      path: path.resolve(__dirname, '.env'),
-    })
+    // Output extracted CSS to a file
+    new ExtractTextPlugin({ filename: 'main.css', disable: false, allChunks: true })
   ]
-};
+}
+
+const config = merge(
+  server
+);
+
+module.exports = config;
