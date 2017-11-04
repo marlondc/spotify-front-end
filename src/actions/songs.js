@@ -1,6 +1,7 @@
 import axios from 'axios';
 import qs from 'qs';
 import { test } from 'ramda';
+import io from 'socket.io-client';
 
 // our constants
 export const ADDED_TO_PLAYLIST = 'ADDED_TO_PLAYLIST';
@@ -16,6 +17,16 @@ export const RECEIVE_TOKENS = 'RECEIVE_TOKENS';
 export const RECEIVE_TOKENS_ERROR = 'RECEIVE_TOKENS_ERROR';
 export const START_PLAYBACK = 'START_PLAYBACK';
 export const SHOW_NOTIFICATION = 'SHOW_NOTIFICATION';
+
+const socket = io();
+
+socket.on('connnection', () => (
+  console.log('connected')
+))
+
+socket.on('get_playlist', (data) => {
+  console.log(data);
+})
 
 export const addToPlaylist = (url, accessToken) => (dispatch) => {
   const spotifyRegex = /([a-z,A-Z,0-9]{22})$/;
@@ -136,6 +147,7 @@ export const getPlaylistTracks = (accessToken) => (dispatch) => {
   dispatch({
     type: REQUEST_PLAYLIST,
   })
+
   return axios.get(`https://api.spotify.com/v1/users/${process.env.SPOTIFY_USER_NAME}/playlists/${process.env.SPOTIFY_PLAYLIST_ID}`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -150,6 +162,7 @@ export const getPlaylistTracks = (accessToken) => (dispatch) => {
         name: item.track.name,
       }
     });
+    socket.emit('playlist_change', tracks);
     dispatch({
       type: RECEIVE_PLAYLIST,
       tracks,
@@ -188,7 +201,6 @@ export const startPlayback = (accessToken, position) => (dispatch) => {
   dispatch({
     type: START_PLAYBACK,
   })
-
   axios({
     method: 'put',
     url: 'https://api.spotify.com/v1/me/player/play',

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { isNil } from 'ramda';
+import io from 'socket.io-client';
 
 import User from './user';
 import Login from './login';

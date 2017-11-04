@@ -9,6 +9,8 @@ const path = require('path');
 dotenv.config();
 
 const app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 const PORT = process.env.PORT || 3000;
 
@@ -21,6 +23,15 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '/index.html'));
 });
 
-app.listen(PORT, () => {
+io.on('connection', function(client){
+
+  client.on('playlist_change', function(data) {
+    client.emit('get_playlist', data);
+    client.broadcast.emit('get_playlist', data);
+  });
+
+});
+
+http.listen(PORT, () => {
   console.log(`listening on port ${PORT}`);
 });
