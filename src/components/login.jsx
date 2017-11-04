@@ -1,5 +1,7 @@
 import React from 'react';
 
+import '../stylesheets/main.scss';
+
 const Login = props => (
   <div className="container">
     <div className="top top--login">

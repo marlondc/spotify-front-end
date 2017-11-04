@@ -25,6 +25,10 @@ dotenv.config();
 
 const app = express();
 app.use(cookiesMiddleware());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, './public'), { index: false }));
+app.use(cookieParser());
 
 const PORT = process.env.PORT || 3000;
 
@@ -44,11 +48,6 @@ const renderPage = appHtml => (
   </html>
   `
 );
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
-app.use(express.static(__dirname + '/public'))
-app.use(cookieParser());
 
 app.get('*', (req, res) => {
   const context = {};

@@ -12,8 +12,9 @@ const server = {
   output: {
     path: BUILD_DIR,
     filename: 'server.bundle.js',
+    publicPath: '/static/',
   },
-  target: 'node',
+  target: 'web',
   node: {
     __filename: false,
     __dirname: false,
@@ -57,7 +58,7 @@ const server = {
       {
         test: /\.scss$/,
         include: SRC_DIR,
-        loader: ExtractTextPlugin.extract('css-loader!sass-loader'),
+        loader: ExtractTextPlugin.extract('css-loader!sass-loader!isomorphic-style-loader'),
       },
       {
         test: /\.woff$|\.woff2$|\.ttf$|\.otf$|\.eot$/,

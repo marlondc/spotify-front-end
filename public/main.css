@@ -1,0 +1,428 @@
+@charset "UTF-8";
+.loader-container {
+  background: #fef394;
+  height: 100vh;
+  width: 100%; }
+
+.loader {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%); }
+
+.dot {
+  -webkit-animation: fx 1000ms ease infinite 0ms;
+  animation: fx 1000ms ease infinite 0ms;
+  border: 2px solid #ef9783;
+  border-radius: 50%;
+  height: 10px;
+  float: left;
+  margin: 0 5px;
+  -webkit-transform: scale(0);
+  transform: scale(0);
+  width: 10px; }
+
+.dot:nth-child(2) {
+  -webkit-animation: fx 1000ms ease infinite 300ms;
+  animation: fx 1000ms ease infinite 300ms; }
+
+.dot:nth-child(3) {
+  -webkit-animation: fx 1000ms ease infinite 600ms;
+  animation: fx 1000ms ease infinite 600ms; }
+
+@-webkit-keyframes fx {
+  50% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1; }
+  100% {
+    opacity: 0; } }
+
+@keyframes fx {
+  50% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1; }
+  100% {
+    opacity: 0; } }
+
+.info__modal {
+  background-color: #000;
+  opacity: 0.9;
+  display: none;
+  height: 100%;
+  left: 0;
+  overflow: auto;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 2; }
+
+.info__modal--show {
+  display: block; }
+
+.info__modal__content {
+  padding: 30px 10px 0; }
+
+.info__modal__image {
+  padding-bottom: 30px;
+  text-align: center; }
+
+.info__modal__image img {
+  max-width: 400px;
+  width: 100%; }
+
+.info__modal__cross {
+  display: inline-block;
+  position: absolute;
+  right: 10px;
+  top: 10px; }
+
+.container {
+  height: 100%;
+  width: 100%; }
+
+.top {
+  background: #fef394;
+  overflow: hidden;
+  padding: 30px 0 20px;
+  position: relative; }
+
+.top--login {
+  height: 100vh; }
+
+.fixed-height {
+  height: 100vh;
+  overflow: hidden; }
+
+.content {
+  margin: 0 auto;
+  max-width: 320px;
+  padding: 0 15px; }
+
+.content--login {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center; }
+
+.top__decoration {
+  background: #ef9783;
+  border-radius: 15px;
+  height: 50%;
+  position: absolute;
+  width: 10px; }
+
+.top__decoration--1 {
+  left: 20%;
+  top: -80px; }
+
+.top__decoration--2 {
+  right: 14%;
+  bottom: -70px;
+  -ms-transform: rotate(-10deg);
+  -webkit-transform: rotate(-10deg);
+  transform: rotate(-10deg); }
+
+.top__decoration--3 {
+  right: 2%;
+  bottom: -5px;
+  -ms-transform: rotate(-60deg);
+  -webkit-transform: rotate(-60deg);
+  transform: rotate(-60deg); }
+
+.bottom {
+  padding-bottom: 40px; }
+
+.title {
+  margin: 30px 0;
+  position: relative; }
+
+.title__text {
+  background: #fff;
+  color: #000;
+  display: inline-block;
+  margin: 0;
+  padding-right: 8px;
+  position: absolute;
+  top: 4px; }
+
+.title__line {
+  background: #000;
+  display: inline-block;
+  width: 100%;
+  height: 1px; }
+
+.track {
+  width: 100%; }
+
+.track__image {
+  display: inline-block;
+  height: 70px;
+  margin-right: 10px;
+  width: 70px; }
+
+.track__details {
+  display: inline-block;
+  vertical-align: top;
+  width: 210px; }
+
+.track__details p {
+  margin: 0; }
+
+.track__marquee {
+  line-height: 20px;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 100%; }
+
+.track__marquee p {
+  display: inline-block;
+  padding-left: 100%;
+  animation: marquee 15s linear infinite; }
+
+@keyframes marquee {
+  0% {
+    transform: translate(0, 0); }
+  100% {
+    transform: translate(-100%, 0); } }
+
+.track__name {
+  font-size: 22px;
+  font-weight: bold;
+  padding-bottom: 1px; }
+
+.track__artist {
+  font-size: 16px;
+  padding-bottom: 8px; }
+
+.track__album {
+  color: grey;
+  font-size: 16px; }
+
+.track--in-list {
+  border-bottom: 1px solid grey;
+  padding: 10px 0; }
+
+.track--in-list:first-of-type {
+  padding-top: 0; }
+
+.track--in-list:last-of-type {
+  border: none; }
+
+.track--current {
+  padding-bottom: 20px; }
+
+.track__progress {
+  width: 100%; }
+
+.track__status {
+  position: relative; }
+
+.track__status__progress-bar {
+  background: black;
+  float: left;
+  height: 1px;
+  opacity: 0.5;
+  position: absolute;
+  top: 10px;
+  width: 75%; }
+
+.track__status__progress-bar--fill {
+  background: #ef9783;
+  border-radius: 10px;
+  height: 11px;
+  left: -1px;
+  opacity: 1;
+  top: 5px;
+  z-index: 1; }
+
+.track__status__time {
+  float: right;
+  font-weight: bold;
+  margin: 0; }
+
+.track__status__time span {
+  font-weight: normal; }
+
+.cross__svg {
+  border-radius: 50%;
+  float: right;
+  height: 40px;
+  stroke-width: 3; }
+
+.cross__path {
+  stroke: #ef9783;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  transform-origin: 50% 50% 0; }
+
+.cross__path--right {
+  animation: ease 0.8s normal forwards 1 running stroke; }
+
+.cross__path--left {
+  animation: ease 0.8s normal forwards 1 running stroke; }
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0; } }
+
+.input {
+  padding-bottom: 35px;
+  position: relative; }
+
+.input--login {
+  padding: 0; }
+
+.input__spotifyURI {
+  border: 0;
+  height: 50px;
+  outline: none;
+  padding: 0 10px;
+  width: 100%; }
+
+.input__button {
+  background: #ef9783;
+  border-radius: 20px;
+  border-style: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  margin: 15px 0 0;
+  outline: none;
+  padding: 12px 20px; }
+
+.input__button:hover {
+  text-decoration: underline; }
+
+.input__button--login {
+  color: black;
+  margin: 0;
+  text-decoration: none; }
+
+.input__button--disabled {
+  opacity: 0.4;
+  cursor: auto; }
+
+.input__button--disabled:hover {
+  text-decoration: none; }
+
+.input__button--play {
+  text-align: center; }
+
+.info__text {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 12px;
+  margin: 0;
+  outline: none;
+  padding: 0;
+  text-decoration: underline; }
+
+.input__field {
+  position: relative; }
+
+.input__tick {
+  color: #7fd48a;
+  display: none; }
+
+.input__cancel {
+  color: #ef9783;
+  display: none; }
+
+.input__tick--show,
+.input__cancel--show {
+  display: block; }
+
+.input__tick,
+.input__cancel {
+  position: absolute;
+  right: 15px;
+  top: 33%; }
+
+@font-face {
+  font-family: 'jukebox';
+  src: url(/fonts/jukebox.eot);
+  src: url(/fonts/jukebox.eot#iefix) format("embedded-opentype"), url(/fonts/jukebox.woff2) format("woff2"), url(/fonts/jukebox.woff) format("woff"), url(/fonts/jukebox.ttf) format("truetype"), url(/images/jukebox.svg#jukebox) format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */
+/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */
+/*
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: 'jukebox';
+    src: url('../font/jukebox.svg?1503957#jukebox') format('svg');
+  }
+}
+*/
+[class^="jukebox-"]:before, [class*=" jukebox-"]:before {
+  font-family: "jukebox";
+  font-style: normal;
+  font-weight: normal;
+  speak: none;
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  margin-right: .2em;
+  text-align: center;
+  /* opacity: .8; */
+  /* For safety - reset parent styles, that can break glyph codes*/
+  font-variant: normal;
+  text-transform: none;
+  /* fix buttons height, for twitter bootstrap */
+  line-height: 1em;
+  /* Animation center compensation - margins should be symmetric */
+  /* remove if not needed */
+  margin-left: .2em;
+  /* you can be more comfortable with increased icons size */
+  /* font-size: 120%; */
+  /* Font smoothing. That was taken from TWBS */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Uncomment for 3D effect */
+  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */ }
+
+.jukebox-ok:before {
+  content: '\E800'; }
+
+/* '' */
+.jukebox-cancel:before {
+  content: '\E801'; }
+
+/* '' */
+.notification {
+  background: #7fd48a;
+  height: 40px;
+  position: fixed;
+  width: 100%; }
+
+.notification--show {
+  bottom: 0;
+  -moz-transition: bottom 0.1s ease-in-out;
+  -webkit-transition: bottom 0.1s ease-in-out;
+  transition: bottom 0.1s ease-in-out; }
+
+.notification__text {
+  color: #fff;
+  font-size: 14px;
+  line-height: 40px;
+  margin: 0 auto;
+  padding-left: 10px;
+  text-align: left;
+  width: 320px; }
+
+html,
+body {
+  font-family: 'Work Sans Regular', Helvetica, sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  margin: 0; }
+
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box; }
