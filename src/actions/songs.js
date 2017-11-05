@@ -1,6 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
-import { test } from 'ramda';
+import { test, isEmpty } from 'ramda';
 import io from 'socket.io-client';
 
 // our constants
@@ -124,6 +124,12 @@ export const getCurrentTrack = (accessToken) => (dispatch) => {
       Authorization: `Bearer ${accessToken}`,
     }
   }).then(({data}) => {
+    if (isEmpty(data)) {
+      return dispatch({
+        type: RECEIVE_CURRENT_TRACK,
+        track: {},
+      })
+    }
     const { item } = data;
     dispatch({
       type: RECEIVE_CURRENT_TRACK,
@@ -139,7 +145,7 @@ export const getCurrentTrack = (accessToken) => (dispatch) => {
       }
     })
   }).catch((err) => {
-    // dispatch({ type: BAD_TOKEN })
+    dispatch({ type: BAD_TOKEN })
   })
 }
 
