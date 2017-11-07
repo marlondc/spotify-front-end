@@ -263,3 +263,25 @@
     stroke-dashoffset: 0;
   }
 }
+
+.track {
+  align-items: center;
+  display: flex;
+  position: relative;
+}
+
+.track__remove {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.5);
+  border: 0;
+  color: #808080;
+  cursor: pointer;
+  display: flex;
+  font-size: 16px;
+  height: 20px;
+  justify-content: center;
+  outline: none;
+  position: absolute;
+  right: 0;
+  width: 20px;
+}

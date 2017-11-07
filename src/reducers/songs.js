@@ -25,6 +25,7 @@ const initialState = {
     text: '',
     type: '',
   },
+  currentTrack: {},
 };
 
 export default function reduce(state = initialState, action) {
