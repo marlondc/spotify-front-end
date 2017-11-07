@@ -30,8 +30,6 @@ let accessToken;
 let refreshToken;
 
 io.on('connection', (socket) => {
-  socket.emit('joined', socket.id);
-
   socket.on('get_playlist', ({ token, refresh }) => {
     socket.emit('tokens', {
       token,
@@ -114,6 +112,7 @@ io.on('connection', (socket) => {
           Accept: 'application/json'
         }
       }).then(({ data }) => {
+        console.log(id);
         tracks.push({
           artist: data.artists[0].name,
           album: data.album.name,
@@ -122,6 +121,14 @@ io.on('connection', (socket) => {
           name: data.name,
           addedBy: id,
         })
+        socket.emit('notification', {
+          type: 'add track',
+          text: data.name,
+        });
+        socket.broadcast.emit('notification', {
+          type: 'add track',
+          text: data.name,
+        });
         socket.emit('playlist_tracks', tracks);
         socket.broadcast.emit('playlist_tracks', tracks);
       }).catch((err) => console.log(err));
@@ -163,7 +170,6 @@ io.on('connection', (socket) => {
   });
 
   socket.on('start_playback', ({ token, position }) => {
-    console.log(token, position);
     axios({
       method: 'put',
       url: 'https://api.spotify.com/v1/me/player/play',

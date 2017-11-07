@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import io from 'socket.io-client';
+import uuid from 'uuid';
 
 import Loader from './atoms/loader';
 import Track from './atoms/track';
@@ -24,8 +25,13 @@ class User extends Component {
 
     this.state = {
       loading: true,
-      id: '',
+      notification: {
+        type: '',
+        text: '',
+      }
     }
+
+    this.props.updateId(uuid());
 
     this.addTrack = this.addTrack.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
@@ -33,17 +39,11 @@ class User extends Component {
   }
 
   componentWillMount() {
-    const { accessToken, refreshToken } = this.props;
+    const { accessToken, refreshToken, id } = this.props;
 
     socket.emit('get_playlist', {
       token: accessToken,
       refresh: refreshToken,
-    });
-
-    socket.on('joined', id => {
-      this.setState({
-        id,
-      })
     });
 
     socket.on('bad_token', () => {
@@ -73,12 +73,29 @@ class User extends Component {
     socket.on('current_song', (song) => {
       this.props.updateCurrentSong(song);
     })
+
+    socket.on('notification', ({ type, text }) => {
+      this.setState({
+        notification: {
+          type,
+          text,
+        }
+      })
+      setTimeout(() => {
+        this.setState({
+          notification: {
+            type: '',
+            text: '',
+          }
+        })
+      }, 2000);
+    })
   }
 
   addTrack(spotifyUri) {
     socket.emit('add_track', {
       spotifyUri,
-      id: this.state.id,
+      id: this.props.id,
       token: this.props.accessToken,
     });
   }
@@ -86,7 +103,7 @@ class User extends Component {
   handleRemove(trackId) {
     socket.emit('remove_track', ({
       trackId,
-      userId: this.state.id,
+      userId: this.props.id,
       token: this.props.accessToken,
     }));
   }
@@ -104,13 +121,13 @@ class User extends Component {
   render() {
     const {
       accessToken,
-      clearNotification,
       currentTrack,
       tracks,
-      startPlayback,
-      addToPlaylist,
-      notification,
     } = this.props;
+
+    const {
+      notification
+    } = this.state;
 
     if (this.state.loading) {
       return (
@@ -153,7 +170,7 @@ class User extends Component {
                 {
                   tracks.map(track => (
                     <div className="track track--in-list" key={track.id}>
-                      <Track track={track} id={this.state.id} handleRemove={this.handleRemove} />
+                      <Track track={track} id={this.props.id} handleRemove={this.handleRemove} />
                     </div>
                   ))
                 }
@@ -162,7 +179,7 @@ class User extends Component {
             }
           </div>
         </div>
-        <Notification {...notification} clearNotification={() => clearNotification()}/>
+        <Notification type={notification.type} text={notification.text} />
       </div>
     );
   }

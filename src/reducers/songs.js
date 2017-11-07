@@ -1,42 +1,23 @@
 import {
-  ADDED_TO_PLAYLIST,
   BAD_TOKEN,
-  CLEAR_NOTIFICATION,
-  LOGGED_IN,
   RECEIVE_CURRENT_TRACK,
   RECEIVE_PLAYLIST,
   RECEIVE_TOKENS,
   RECEIVE_TOKENS_ERROR,
-  REQUEST_CURRENT_TRACK,
-  REQUEST_PLAYLIST,
   REQUEST_TOKENS,
-  START_PLAYBACK,
-  SHOW_NOTIFICATION,
+  UPDATE_ID,
 } from '../actions/songs';
 
 const initialState = {
   accessToken: null,
-  currentTrack: false,
-  logged_in: false,
   refreshToken: null,
-  searchResults: [],
   tracks: [],
-  notification: {
-    text: '',
-    type: '',
-  },
   currentTrack: {},
+  id: '',
 };
 
 export default function reduce(state = initialState, action) {
   switch (action.type) {
-
-  case ADDED_TO_PLAYLIST: {
-    return {
-      ...state,
-      searchResults: [],
-    }
-  }
 
   case BAD_TOKEN: {
     return {
@@ -44,31 +25,6 @@ export default function reduce(state = initialState, action) {
       accessToken: null,
       refreshToken: null,
     }
-  }
-
-  case CLEAR_NOTIFICATION: {
-    return {
-      ...state,
-      notification: {
-        text: '',
-        type: '',
-      },
-    }
-  }
-
-  case LOGGED_IN: {
-    return {
-      ...state,
-      logged_in: true,
-    }
-  }
-
-  case REQUEST_CURRENT_TRACK: {
-    return state;
-  }
-
-  case REQUEST_PLAYLIST: {
-    return state;
   }
 
   case REQUEST_TOKENS: {
@@ -107,15 +63,12 @@ export default function reduce(state = initialState, action) {
     return state;
   }
 
-  case SHOW_NOTIFICATION: {
+  case UPDATE_ID: {
+    const { id } = action;
     return {
       ...state,
-      notification: action.notification,
-    };
-  }
-
-  case START_PLAYBACK: {
-    return state;
+      id,
+    }
   }
 
   default:

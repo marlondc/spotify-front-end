@@ -3,25 +3,13 @@ import qs from 'qs';
 import { test, isEmpty } from 'ramda';
 
 // our constants
-export const ADDED_TO_PLAYLIST = 'ADDED_TO_PLAYLIST';
 export const BAD_TOKEN = 'BAD_TOKEN';
-export const CLEAR_NOTIFICATION = 'CLEAR_NOTIFICATION';
-export const LOGGED_IN = 'LOGGED_IN';
-export const REQUEST_CURRENT_TRACK = 'REQUEST_CURRENT_TRACK';
-export const REQUEST_PLAYLIST = 'REQUEST_PLAYLIST';
 export const REQUEST_TOKENS = 'REQUEST_TOKENS'
 export const RECEIVE_CURRENT_TRACK = 'RECEIVE_CURRENT_TRACK';
 export const RECEIVE_PLAYLIST = 'RECEIVE_PLAYLIST';
 export const RECEIVE_TOKENS = 'RECEIVE_TOKENS';
 export const RECEIVE_TOKENS_ERROR = 'RECEIVE_TOKENS_ERROR';
-export const START_PLAYBACK = 'START_PLAYBACK';
-export const SHOW_NOTIFICATION = 'SHOW_NOTIFICATION';
-
-export const clearNotification = () => (dispatch) => (
-  dispatch({
-    type: CLEAR_NOTIFICATION,
-  })
-);
+export const UPDATE_ID = 'UPDATE_ID';
 
 export const getTokens = () => (dispatch) => {
   dispatch({
@@ -42,8 +30,6 @@ export const getTokens = () => (dispatch) => {
     })
 }
 
-// new
-
 export const updatePlaylist = tracks => ({
   type: RECEIVE_PLAYLIST,
   tracks,
@@ -61,4 +47,9 @@ export const refreshTokens = data => ({
 export const updateCurrentSong = track => ({
   type: RECEIVE_CURRENT_TRACK,
   track,
+})
+
+export const updateId = id => ({
+  type: UPDATE_ID,
+  id,
 })
