@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import io from 'socket.io-client';
 
 import Loader from './atoms/loader';
 import Track from './atoms/track';
@@ -15,39 +16,87 @@ import firstInstruction from '../images/first.png';
 import secondInstruction from '../images/second.png';
 import thirdInstruction from '../images/third.png';
 
+const socket = io();
+
 class User extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       loading: true,
+      id: '',
     }
+
+    this.addTrack = this.addTrack.bind(this);
+    this.handleRemove = this.handleRemove.bind(this);
+    this.handleStartPlayback = this.handleStartPlayback.bind(this);
   }
 
   componentWillMount() {
-    const { accessToken } = this.props;
-    this.props.getPlaylistTracks(accessToken);
-    this.props.getCurrentTrack(accessToken);
-  }
+    const { accessToken, refreshToken } = this.props;
 
-  componentDidMount() {
-    const { accessToken } = this.props;
-    setTimeout(() => (
+    socket.emit('get_playlist', {
+      token: accessToken,
+      refresh: refreshToken,
+    });
+
+    socket.on('joined', id => {
+      this.setState({
+        id,
+      })
+    });
+
+    socket.on('bad_token', () => {
+      socket.emit('get_playlist', accessToken);
+    })
+    
+    socket.on('tokens', ({ token, refresh }) => {
+      this.props.refreshTokens({
+        accessToken: token,
+        refreshToken: refresh,
+      })
+    })
+    
+    socket.on('playlist_tracks', (tracks) => {
+      this.props.updatePlaylist(tracks)
       this.setState({
         loading: false,
       })
-    ), 2000)
-    this.infoInterval = setInterval(() => {
-      this.props.getCurrentTrack(accessToken)
-    }, 1000);
-    this.playlistInterval = setInterval(() => {
-      this.props.getPlaylistTracks(accessToken)
-    }, 5000);
+    })
+
+    socket.on('token_error', (data) => {
+      this.props.clearInvalidTokens();
+    })
+
+    socket.on('current_song', (song) => {
+      this.props.updateCurrentSong(song);
+    })
   }
 
-  componentWillUnmount() {
-    clearInterval(this.infoInterval);
-    clearInterval(this.playlistInterval);
+  addTrack(spotifyUri) {
+    socket.emit('add_track', {
+      spotifyUri,
+      id: this.state.id,
+      token: this.props.accessToken,
+    });
+  }
+
+  handleRemove(trackId) {
+    socket.emit('remove_track', ({
+      trackId,
+      userId: this.state.id,
+      token: this.props.accessToken,
+    }));
+  }
+
+  handleStartPlayback() {
+    const playPosition = this.props.currentTrack.position
+      ? this.props.currentTrack.position
+      : 0
+    socket.emit('start_playback', {
+      token: this.props.accessToken,
+      position: playPosition,
+    });
   }
 
   render() {
@@ -72,7 +121,7 @@ class User extends Component {
         <div className="top">
           <div className="content">
             <TopDecoration />
-            <InputUri accessToken={accessToken} addToPlaylist={addToPlaylist}/>
+            <InputUri accessToken={accessToken} addToPlaylist={this.addTrack}/>
             <Modal />
           </div>
         </div>
@@ -88,21 +137,26 @@ class User extends Component {
                     {
                       currentTrack.isPlaying
                         ? <TrackStatus track={currentTrack} />
-                        : <StartButton clickHandler={() => startPlayback(accessToken, currentTrack.position)} />
+                        : null
                     }
                   </div>
                   : <div>
                     <p className="track__name">No currently playing track</p>
-                    <StartButton clickHandler={() => startPlayback(accessToken, 0)} />
                   </div>
               }
-            <TitleDivider titleText="Up next" />
             {
-              tracks.map(track => (
-                <div className="track track--in-list" key={track.id}>
-                  <Track track={track} />
-                </div>
-              ))
+              tracks.length > 0
+              ? <div>
+                <TitleDivider titleText="Up next" />
+                {
+                  tracks.map(track => (
+                    <div className="track track--in-list" key={track.id}>
+                      <Track track={track} id={this.state.id} handleRemove={this.handleRemove} />
+                    </div>
+                  ))
+                }
+              </div>
+                : null
             }
           </div>
         </div>
