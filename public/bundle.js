@@ -48363,7 +48363,7 @@ var Track = function Track(_ref) {
         track.album
       )
     ),
-    track.addedBy === id && !(0, _ramda.isNil)(track.addedBy) ? _react2.default.createElement('button', {
+    track.addedBy === id && !(0, _ramda.isEmpty)(track.addedBy) ? _react2.default.createElement('button', {
       onClick: function onClick() {
         return handleRemove(track.id);
       },
