@@ -146,3 +146,8 @@ export const updatePlaylist = tracks => ({
 export const clearInvalidTokens = () => ({
   type: BAD_TOKEN,
 });
+
+export const refreshTokens = (data) => ({
+  type: RECEIVE_TOKENS,
+  data,
+})

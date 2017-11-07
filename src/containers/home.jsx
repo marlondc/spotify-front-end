@@ -12,6 +12,7 @@ import {
   // new
   updatePlaylist,
   clearInvalidTokens,
+  refreshTokens,
  } from '../actions/songs';
 
 const mapStateToProps = ({ songs }) => {
@@ -55,6 +56,7 @@ const mapDispatchToProps = dispatch => ({
   // new
   updatePlaylist: tracks => dispatch(updatePlaylist(tracks)),
   clearInvalidTokens: () => dispatch(clearInvalidTokens()),
+  refreshTokens: (data) => dispatch(refreshTokens(data)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Page);

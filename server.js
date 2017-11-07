@@ -32,7 +32,20 @@ let refreshToken;
 io.on('connection', (socket) => {
   socket.emit('joined', socket.id);
 
-  socket.on('get_playlist', token => {
+  socket.on('get_playlist', ({ token, refresh }) => {
+    socket.emit('tokens', {
+      token,
+      refresh,
+    });
+    accessToken = token;
+    refreshToken = refresh;
+    setInterval(() => {
+
+    }, 1000);
+    socket.broadcast.emit('tokens', {
+      token,
+      refresh,
+    });
     axios.get(`https://api.spotify.com/v1/users/${process.env.SPOTIFY_USER_NAME}/playlists/${process.env.SPOTIFY_PLAYLIST_ID}`, {
       headers: {
         Authorization: `Bearer ${token}`,

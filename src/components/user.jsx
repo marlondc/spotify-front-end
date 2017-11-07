@@ -32,7 +32,7 @@ class User extends Component {
   }
 
   componentWillMount() {
-    const { accessToken } = this.props;
+    const { accessToken, refreshToken } = this.props;
     socket.on('joined', id => {
       this.setState({
         id,
@@ -42,7 +42,17 @@ class User extends Component {
       socket.emit('get_playlist', accessToken);
     })
 
-    socket.emit('get_playlist', accessToken);
+    socket.on('tokens', ({ token, refresh }) => {
+      this.props.refreshTokens({
+        accessToken: token,
+        refreshToken: refresh,
+      })
+    })
+
+    socket.emit('get_playlist', {
+      token: accessToken,
+      refresh: refreshToken,
+    });
 
     socket.on('playlist_tracks', (tracks) => {
       this.props.updatePlaylist(tracks)
