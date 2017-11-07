@@ -49070,21 +49070,21 @@ exports.default = Notification;
 
 /***/ }),
 /* 493 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-module.exports = __webpack_require__.p + "/images/first.png";
+throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/Users/marlondc/Code/spotify-front-end/src/images/first.png'");
 
 /***/ }),
 /* 494 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-module.exports = __webpack_require__.p + "/images/second.png";
+throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/Users/marlondc/Code/spotify-front-end/src/images/second.png'");
 
 /***/ }),
 /* 495 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-module.exports = __webpack_require__.p + "/images/third.png";
+throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/Users/marlondc/Code/spotify-front-end/src/images/third.png'");
 
 /***/ }),
 /* 496 */
