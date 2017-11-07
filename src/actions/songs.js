@@ -23,40 +23,6 @@ export const clearNotification = () => (dispatch) => (
   })
 );
 
-export const getCurrentTrack = (accessToken) => (dispatch) => {
-  dispatch({
-    type: REQUEST_CURRENT_TRACK,
-  });
-  axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    }
-  }).then(({data}) => {
-    if (isEmpty(data)) {
-      return dispatch({
-        type: RECEIVE_CURRENT_TRACK,
-        track: {},
-      })
-    }
-    const { item } = data;
-    dispatch({
-      type: RECEIVE_CURRENT_TRACK,
-      track: {
-        album: item.album.name,
-        artist: item.artists[0].name,
-        duration: item.duration_ms,
-        id: item.id,
-        image: item.album.images[0].url,
-        isPlaying: data.is_playing,
-        name: item.name,
-        progress: data.progress_ms,
-      }
-    })
-  }).catch((err) => {
-    dispatch({ type: BAD_TOKEN })
-  })
-}
-
 export const getTokens = () => (dispatch) => {
   dispatch({
     type: REQUEST_TOKENS,
@@ -74,38 +40,6 @@ export const getTokens = () => (dispatch) => {
         type: RECEIVE_TOKENS_ERROR,
       })
     })
-}
-
-export const login = () => {
-  return {
-    type: LOGGED_IN,
-  }
-};
-
-export const startPlayback = (accessToken, position) => (dispatch) => {
-  dispatch({
-    type: START_PLAYBACK,
-  })
-  axios({
-    method: 'put',
-    url: 'https://api.spotify.com/v1/me/player/play',
-    data: {
-      context_uri: process.env.SPOTIFY_PLAYLIST_URI,
-      offset: {
-        position,
-      }
-    },
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${accessToken}`,
-    }
-  }).then(() => {
-    setTimeout(() => (
-      dispatch(getCurrentTrack(accessToken))
-    ), 500)
-  }).catch((err) => {
-    console.log(err)
-  })
 }
 
 // new

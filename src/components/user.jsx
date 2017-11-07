@@ -29,10 +29,17 @@ class User extends Component {
 
     this.addTrack = this.addTrack.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
+    this.handleStartPlayback = this.handleStartPlayback.bind(this);
   }
 
   componentWillMount() {
     const { accessToken, refreshToken } = this.props;
+
+    socket.emit('get_playlist', {
+      token: accessToken,
+      refresh: refreshToken,
+    });
+
     socket.on('joined', id => {
       this.setState({
         id,
@@ -49,11 +56,6 @@ class User extends Component {
         refreshToken: refresh,
       })
     })
-    
-    socket.emit('get_playlist', {
-      token: accessToken,
-      refresh: refreshToken,
-    });
     
     socket.on('playlist_tracks', (tracks) => {
       this.props.updatePlaylist(tracks)
@@ -85,6 +87,16 @@ class User extends Component {
       userId: this.state.id,
       token: this.props.accessToken,
     }));
+  }
+
+  handleStartPlayback() {
+    const playPosition = this.props.currentTrack.position
+      ? this.props.currentTrack.position
+      : 0
+    socket.emit('start_playback', {
+      token: this.props.accessToken,
+      position: playPosition,
+    });
   }
 
   render() {
@@ -125,12 +137,12 @@ class User extends Component {
                     {
                       currentTrack.isPlaying
                         ? <TrackStatus track={currentTrack} />
-                        : <StartButton clickHandler={() => startPlayback(accessToken, currentTrack.position)} />
+                        : <StartButton clickHandler={this.handleStartPlayback} />
                     }
                   </div>
                   : <div>
                     <p className="track__name">No currently playing track</p>
-                    <StartButton clickHandler={() => startPlayback(accessToken, 0)} />
+                    <StartButton clickHandler={this.handleStartPlayback} />
                   </div>
               }
             <TitleDivider titleText="Up next" />

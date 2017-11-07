@@ -4,11 +4,8 @@ import { filter, isEmpty, equals, addIndex, map } from 'ramda';
 import Page from '../components/page';
 import {
   clearNotification,
-  getCurrentTrack,
   getPlaylistTracks,
   getTokens,
-  login,
-  startPlayback,
   // new
   updatePlaylist,
   clearInvalidTokens,
@@ -49,11 +46,8 @@ const mapStateToProps = ({ songs }) => {
 
 const mapDispatchToProps = dispatch => ({
   clearNotification: () => dispatch(clearNotification()),
-  getCurrentTrack: accessToken => dispatch(getCurrentTrack(accessToken)),
   getPlaylistTracks: accessToken => dispatch(getPlaylistTracks(accessToken)),
   getTokens: () => dispatch(getTokens()),
-  login: () => login(),
-  startPlayback: (accessToken, position) => dispatch(startPlayback(accessToken, position)),
   // new
   updatePlaylist: tracks => dispatch(updatePlaylist(tracks)),
   clearInvalidTokens: () => dispatch(clearInvalidTokens()),

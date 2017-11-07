@@ -12292,7 +12292,7 @@ module.exports = __webpack_require__.p + "/images/third.png";
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateCurrentSong = exports.refreshTokens = exports.clearInvalidTokens = exports.updatePlaylist = exports.startPlayback = exports.login = exports.getTokens = exports.getCurrentTrack = exports.clearNotification = exports.SHOW_NOTIFICATION = exports.START_PLAYBACK = exports.RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS = exports.RECEIVE_PLAYLIST = exports.RECEIVE_CURRENT_TRACK = exports.REQUEST_TOKENS = exports.REQUEST_PLAYLIST = exports.REQUEST_CURRENT_TRACK = exports.LOGGED_IN = exports.CLEAR_NOTIFICATION = exports.BAD_TOKEN = exports.ADDED_TO_PLAYLIST = undefined;
+exports.updateCurrentSong = exports.refreshTokens = exports.clearInvalidTokens = exports.updatePlaylist = exports.getTokens = exports.clearNotification = exports.SHOW_NOTIFICATION = exports.START_PLAYBACK = exports.RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS = exports.RECEIVE_PLAYLIST = exports.RECEIVE_CURRENT_TRACK = exports.REQUEST_TOKENS = exports.REQUEST_PLAYLIST = exports.REQUEST_CURRENT_TRACK = exports.LOGGED_IN = exports.CLEAR_NOTIFICATION = exports.BAD_TOKEN = exports.ADDED_TO_PLAYLIST = undefined;
 
 var _axios = __webpack_require__(492);
 
@@ -12329,45 +12329,6 @@ var clearNotification = exports.clearNotification = function clearNotification()
   };
 };
 
-var getCurrentTrack = exports.getCurrentTrack = function getCurrentTrack(accessToken) {
-  return function (dispatch) {
-    dispatch({
-      type: REQUEST_CURRENT_TRACK
-    });
-    _axios2.default.get('https://api.spotify.com/v1/me/player/currently-playing', {
-      headers: {
-        Authorization: 'Bearer ' + accessToken
-      }
-    }).then(function (_ref) {
-      var data = _ref.data;
-
-      if ((0, _ramda.isEmpty)(data)) {
-        return dispatch({
-          type: RECEIVE_CURRENT_TRACK,
-          track: {}
-        });
-      }
-      var item = data.item;
-
-      dispatch({
-        type: RECEIVE_CURRENT_TRACK,
-        track: {
-          album: item.album.name,
-          artist: item.artists[0].name,
-          duration: item.duration_ms,
-          id: item.id,
-          image: item.album.images[0].url,
-          isPlaying: data.is_playing,
-          name: item.name,
-          progress: data.progress_ms
-        }
-      });
-    }).catch(function (err) {
-      dispatch({ type: BAD_TOKEN });
-    });
-  };
-};
-
 var getTokens = exports.getTokens = function getTokens() {
   return function (dispatch) {
     dispatch({
@@ -12382,40 +12343,6 @@ var getTokens = exports.getTokens = function getTokens() {
       dispatch({
         type: RECEIVE_TOKENS_ERROR
       });
-    });
-  };
-};
-
-var login = exports.login = function login() {
-  return {
-    type: LOGGED_IN
-  };
-};
-
-var startPlayback = exports.startPlayback = function startPlayback(accessToken, position) {
-  return function (dispatch) {
-    dispatch({
-      type: START_PLAYBACK
-    });
-    (0, _axios2.default)({
-      method: 'put',
-      url: 'https://api.spotify.com/v1/me/player/play',
-      data: {
-        context_uri: "spotify:user:mdc268:playlist:5OZy1yWBn4hXerzAWmCpxh",
-        offset: {
-          position: position
-        }
-      },
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + accessToken
-      }
-    }).then(function () {
-      setTimeout(function () {
-        return dispatch(getCurrentTrack(accessToken));
-      }, 500);
-    }).catch(function (err) {
-      console.log(err);
     });
   };
 };
@@ -36904,20 +36831,11 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     clearNotification: function clearNotification() {
       return dispatch((0, _songs.clearNotification)());
     },
-    getCurrentTrack: function getCurrentTrack(accessToken) {
-      return dispatch((0, _songs.getCurrentTrack)(accessToken));
-    },
     getPlaylistTracks: function getPlaylistTracks(accessToken) {
       return dispatch((0, _songs.getPlaylistTracks)(accessToken));
     },
     getTokens: function getTokens() {
       return dispatch((0, _songs.getTokens)());
-    },
-    login: function login() {
-      return (0, _songs.login)();
-    },
-    startPlayback: function startPlayback(accessToken, position) {
-      return dispatch((0, _songs.startPlayback)(accessToken, position));
     },
     // new
     updatePlaylist: function updatePlaylist(tracks) {
@@ -45062,6 +44980,7 @@ var User = function (_Component) {
 
     _this.addTrack = _this.addTrack.bind(_this);
     _this.handleRemove = _this.handleRemove.bind(_this);
+    _this.handleStartPlayback = _this.handleStartPlayback.bind(_this);
     return _this;
   }
 
@@ -45073,6 +44992,12 @@ var User = function (_Component) {
       var _props = this.props,
           accessToken = _props.accessToken,
           refreshToken = _props.refreshToken;
+
+
+      socket.emit('get_playlist', {
+        token: accessToken,
+        refresh: refreshToken
+      });
 
       socket.on('joined', function (id) {
         _this2.setState({
@@ -45092,11 +45017,6 @@ var User = function (_Component) {
           accessToken: token,
           refreshToken: refresh
         });
-      });
-
-      socket.emit('get_playlist', {
-        token: accessToken,
-        refresh: refreshToken
       });
 
       socket.on('playlist_tracks', function (tracks) {
@@ -45130,6 +45050,15 @@ var User = function (_Component) {
         trackId: trackId,
         userId: this.state.id,
         token: this.props.accessToken
+      });
+    }
+  }, {
+    key: 'handleStartPlayback',
+    value: function handleStartPlayback() {
+      var playPosition = this.props.currentTrack.position ? this.props.currentTrack.position : 0;
+      socket.emit('start_playback', {
+        token: this.props.accessToken,
+        position: playPosition
       });
     }
   }, {
@@ -45180,9 +45109,7 @@ var User = function (_Component) {
                 { className: 'track track--current' },
                 _react2.default.createElement(_track2.default, { track: currentTrack })
               ),
-              currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : _react2.default.createElement(_startButton2.default, { clickHandler: function clickHandler() {
-                  return startPlayback(accessToken, currentTrack.position);
-                } })
+              currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : _react2.default.createElement(_startButton2.default, { clickHandler: this.handleStartPlayback })
             ) : _react2.default.createElement(
               'div',
               null,
@@ -45191,9 +45118,7 @@ var User = function (_Component) {
                 { className: 'track__name' },
                 'No currently playing track'
               ),
-              _react2.default.createElement(_startButton2.default, { clickHandler: function clickHandler() {
-                  return startPlayback(accessToken, 0);
-                } })
+              _react2.default.createElement(_startButton2.default, { clickHandler: this.handleStartPlayback })
             ),
             _react2.default.createElement(_titleDivider2.default, { titleText: 'Up next' }),
             tracks.map(function (track) {
@@ -48379,6 +48304,8 @@ var _classnames = __webpack_require__(42);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
+var _ramda = __webpack_require__(35);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var Track = function Track(_ref) {
@@ -48436,7 +48363,7 @@ var Track = function Track(_ref) {
         track.album
       )
     ),
-    track.addedBy === id ? _react2.default.createElement('button', {
+    track.addedBy === id && !(0, _ramda.isNil)(track.addedBy) ? _react2.default.createElement('button', {
       onClick: function onClick() {
         return handleRemove(track.id);
       },
@@ -48558,9 +48485,7 @@ var StartButton = function StartButton(_ref) {
       "button",
       {
         className: "input__button",
-        onClick: function onClick() {
-          return clickHandler();
-        }
+        onClick: clickHandler
       },
       " PLAY "
     )

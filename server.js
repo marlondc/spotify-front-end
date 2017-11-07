@@ -156,6 +156,29 @@ io.on('connection', (socket) => {
       });
     }
   });
+
+  socket.on('start_playback', ({ token, position }) => {
+    console.log(token, position);
+    axios({
+      method: 'put',
+      url: 'https://api.spotify.com/v1/me/player/play',
+      data: {
+        context_uri: process.env.SPOTIFY_PLAYLIST_URI,
+        offset: {
+          position,
+        }
+      },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      }
+    }).then(() => {
+      console.log('start_playback');
+    }).catch((err) => {
+      socket.emit('token_error', 'start playback');
+      socket.broadcast.emit('token_error', 'start playback');
+    })
+  });
 });
 
 http.listen(PORT, () => {
