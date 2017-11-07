@@ -137,21 +137,26 @@ class User extends Component {
                     {
                       currentTrack.isPlaying
                         ? <TrackStatus track={currentTrack} />
-                        : <StartButton clickHandler={this.handleStartPlayback} id={this.state.id} />
+                        : null
                     }
                   </div>
                   : <div>
                     <p className="track__name">No currently playing track</p>
-                    <StartButton clickHandler={this.handleStartPlayback} id={this.state.id} />
                   </div>
               }
-            <TitleDivider titleText="Up next" />
             {
-              tracks.map(track => (
-                <div className="track track--in-list" key={track.id}>
-                  <Track track={track} id={this.state.id} handleRemove={this.handleRemove} />
-                </div>
-              ))
+              tracks.length > 0
+              ? <div>
+                <TitleDivider titleText="Up next" />
+                {
+                  tracks.map(track => (
+                    <div className="track track--in-list" key={track.id}>
+                      <Track track={track} id={this.state.id} handleRemove={this.handleRemove} />
+                    </div>
+                  ))
+                }
+              </div>
+                : null
             }
           </div>
         </div>

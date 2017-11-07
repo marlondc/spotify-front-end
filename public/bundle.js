@@ -45109,7 +45109,7 @@ var User = function (_Component) {
                 { className: 'track track--current' },
                 _react2.default.createElement(_track2.default, { track: currentTrack })
               ),
-              currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : _react2.default.createElement(_startButton2.default, { clickHandler: this.handleStartPlayback, id: this.state.id })
+              currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : null
             ) : _react2.default.createElement(
               'div',
               null,
@@ -45117,17 +45117,20 @@ var User = function (_Component) {
                 'p',
                 { className: 'track__name' },
                 'No currently playing track'
-              ),
-              _react2.default.createElement(_startButton2.default, { clickHandler: this.handleStartPlayback, id: this.state.id })
+              )
             ),
-            _react2.default.createElement(_titleDivider2.default, { titleText: 'Up next' }),
-            tracks.map(function (track) {
-              return _react2.default.createElement(
-                'div',
-                { className: 'track track--in-list', key: track.id },
-                _react2.default.createElement(_track2.default, { track: track, id: _this3.state.id, handleRemove: _this3.handleRemove })
-              );
-            })
+            tracks.length > 0 ? _react2.default.createElement(
+              'div',
+              null,
+              _react2.default.createElement(_titleDivider2.default, { titleText: 'Up next' }),
+              tracks.map(function (track) {
+                return _react2.default.createElement(
+                  'div',
+                  { className: 'track track--in-list', key: track.id },
+                  _react2.default.createElement(_track2.default, { track: track, id: _this3.state.id, handleRemove: _this3.handleRemove })
+                );
+              })
+            ) : null
           )
         ),
         _react2.default.createElement(_notification2.default, _extends({}, notification, { clearNotification: function clearNotification() {
