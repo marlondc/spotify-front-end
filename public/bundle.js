@@ -12292,7 +12292,7 @@ module.exports = __webpack_require__.p + "/images/third.png";
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.refreshTokens = exports.clearInvalidTokens = exports.updatePlaylist = exports.startPlayback = exports.login = exports.getTokens = exports.getPlaylistTracks = exports.getCurrentTrack = exports.clearNotification = exports.SHOW_NOTIFICATION = exports.START_PLAYBACK = exports.RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS = exports.RECEIVE_PLAYLIST = exports.RECEIVE_CURRENT_TRACK = exports.REQUEST_TOKENS = exports.REQUEST_PLAYLIST = exports.REQUEST_CURRENT_TRACK = exports.LOGGED_IN = exports.CLEAR_NOTIFICATION = exports.BAD_TOKEN = exports.ADDED_TO_PLAYLIST = undefined;
+exports.updateCurrentSong = exports.refreshTokens = exports.clearInvalidTokens = exports.updatePlaylist = exports.startPlayback = exports.login = exports.getTokens = exports.getCurrentTrack = exports.clearNotification = exports.SHOW_NOTIFICATION = exports.START_PLAYBACK = exports.RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS = exports.RECEIVE_PLAYLIST = exports.RECEIVE_CURRENT_TRACK = exports.REQUEST_TOKENS = exports.REQUEST_PLAYLIST = exports.REQUEST_CURRENT_TRACK = exports.LOGGED_IN = exports.CLEAR_NOTIFICATION = exports.BAD_TOKEN = exports.ADDED_TO_PLAYLIST = undefined;
 
 var _axios = __webpack_require__(492);
 
@@ -12361,38 +12361,6 @@ var getCurrentTrack = exports.getCurrentTrack = function getCurrentTrack(accessT
           name: item.name,
           progress: data.progress_ms
         }
-      });
-    }).catch(function (err) {
-      dispatch({ type: BAD_TOKEN });
-    });
-  };
-};
-
-var getPlaylistTracks = exports.getPlaylistTracks = function getPlaylistTracks(accessToken) {
-  return function (dispatch) {
-    dispatch({
-      type: REQUEST_PLAYLIST
-    });
-
-    return _axios2.default.get('https://api.spotify.com/v1/users/' + "mdc268" + '/playlists/' + "5OZy1yWBn4hXerzAWmCpxh", {
-      headers: {
-        Authorization: 'Bearer ' + accessToken
-      }
-    }).then(function (_ref2) {
-      var data = _ref2.data;
-
-      var tracks = data.tracks.items.map(function (item) {
-        return {
-          artist: item.track.artists[0].name,
-          album: item.track.album.name,
-          id: item.track.id,
-          image: item.track.album.images[0].url,
-          name: item.track.name
-        };
-      });
-      dispatch({
-        type: RECEIVE_PLAYLIST,
-        tracks: tracks
       });
     }).catch(function (err) {
       dispatch({ type: BAD_TOKEN });
@@ -12471,6 +12439,13 @@ var refreshTokens = exports.refreshTokens = function refreshTokens(data) {
   return {
     type: RECEIVE_TOKENS,
     data: data
+  };
+};
+
+var updateCurrentSong = exports.updateCurrentSong = function updateCurrentSong(track) {
+  return {
+    type: RECEIVE_CURRENT_TRACK,
+    track: track
   };
 };
 
@@ -36953,6 +36928,9 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     },
     refreshTokens: function refreshTokens(data) {
       return dispatch((0, _songs.refreshTokens)(data));
+    },
+    updateCurrentSong: function updateCurrentSong(song) {
+      return dispatch((0, _songs.updateCurrentSong)(song));
     }
   };
 };
@@ -45101,6 +45079,7 @@ var User = function (_Component) {
           id: id
         });
       });
+
       socket.on('bad_token', function () {
         socket.emit('get_playlist', accessToken);
       });
@@ -45129,6 +45108,10 @@ var User = function (_Component) {
 
       socket.on('token_error', function (data) {
         _this2.props.clearInvalidTokens();
+      });
+
+      socket.on('current_song', function (song) {
+        _this2.props.updateCurrentSong(song);
       });
     }
   }, {

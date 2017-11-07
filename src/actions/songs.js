@@ -57,34 +57,6 @@ export const getCurrentTrack = (accessToken) => (dispatch) => {
   })
 }
 
-export const getPlaylistTracks = (accessToken) => (dispatch) => {
-  dispatch({
-    type: REQUEST_PLAYLIST,
-  })
-
-  return axios.get(`https://api.spotify.com/v1/users/${process.env.SPOTIFY_USER_NAME}/playlists/${process.env.SPOTIFY_PLAYLIST_ID}`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    }
-  }).then(({ data }) => {
-    const tracks = data.tracks.items.map((item) => {
-      return {
-        artist: item.track.artists[0].name,
-        album: item.track.album.name,
-        id: item.track.id,
-        image: item.track.album.images[0].url,
-        name: item.track.name,
-      }
-    });
-    dispatch({
-      type: RECEIVE_PLAYLIST,
-      tracks,
-    })
-  }).catch(err => {
-    dispatch({ type: BAD_TOKEN })
-  });
-}
-
 export const getTokens = () => (dispatch) => {
   dispatch({
     type: REQUEST_TOKENS,
@@ -147,7 +119,12 @@ export const clearInvalidTokens = () => ({
   type: BAD_TOKEN,
 });
 
-export const refreshTokens = (data) => ({
+export const refreshTokens = data => ({
   type: RECEIVE_TOKENS,
   data,
+})
+
+export const updateCurrentSong = track => ({
+  type: RECEIVE_CURRENT_TRACK,
+  track,
 })

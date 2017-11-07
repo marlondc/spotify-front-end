@@ -38,22 +38,23 @@ class User extends Component {
         id,
       })
     });
+
     socket.on('bad_token', () => {
       socket.emit('get_playlist', accessToken);
     })
-
+    
     socket.on('tokens', ({ token, refresh }) => {
       this.props.refreshTokens({
         accessToken: token,
         refreshToken: refresh,
       })
     })
-
+    
     socket.emit('get_playlist', {
       token: accessToken,
       refresh: refreshToken,
     });
-
+    
     socket.on('playlist_tracks', (tracks) => {
       this.props.updatePlaylist(tracks)
       this.setState({
@@ -63,6 +64,10 @@ class User extends Component {
 
     socket.on('token_error', (data) => {
       this.props.clearInvalidTokens();
+    })
+
+    socket.on('current_song', (song) => {
+      this.props.updateCurrentSong(song);
     })
   }
 

@@ -40,8 +40,27 @@ io.on('connection', (socket) => {
     accessToken = token;
     refreshToken = refresh;
     setInterval(() => {
-
-    }, 1000);
+      axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        }
+      }).then(({ data }) => {
+        const { item } = data;
+        const song = {
+          album: item.album.name,
+          artist: item.artists[0].name,
+          duration: item.duration_ms,
+          id: item.id,
+          image: item.album.images[0].url,
+          isPlaying: data.is_playing,
+          name: item.name,
+          progress: data.progress_ms,
+        }
+        socket.emit('current_song', song);
+        socket.broadcast.emit('current_song', song);
+      })
+        .catch(err => console.log(err))
+    }, 1000)
     socket.broadcast.emit('tokens', {
       token,
       refresh,
