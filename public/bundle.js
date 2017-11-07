@@ -12392,7 +12392,7 @@ module.exports = __webpack_require__.p + "/images/third.png";
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.startPlayback = exports.login = exports.getTokens = exports.getPlaylistTracks = exports.getCurrentTrack = exports.clearNotification = exports.addToPlaylist = exports.SHOW_NOTIFICATION = exports.START_PLAYBACK = exports.RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS = exports.RECEIVE_PLAYLIST = exports.RECEIVE_CURRENT_TRACK = exports.REQUEST_TOKENS = exports.REQUEST_PLAYLIST = exports.REQUEST_CURRENT_TRACK = exports.LOGGED_IN = exports.CLEAR_NOTIFICATION = exports.BAD_TOKEN = exports.ADDED_TO_PLAYLIST = undefined;
+exports.updatePlaylist = exports.startPlayback = exports.login = exports.getTokens = exports.getPlaylistTracks = exports.getCurrentTrack = exports.clearNotification = exports.addToPlaylist = exports.SHOW_NOTIFICATION = exports.START_PLAYBACK = exports.RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS = exports.RECEIVE_PLAYLIST = exports.RECEIVE_CURRENT_TRACK = exports.REQUEST_TOKENS = exports.REQUEST_PLAYLIST = exports.REQUEST_CURRENT_TRACK = exports.LOGGED_IN = exports.CLEAR_NOTIFICATION = exports.BAD_TOKEN = exports.ADDED_TO_PLAYLIST = undefined;
 
 var _axios = __webpack_require__(492);
 
@@ -12403,10 +12403,6 @@ var _qs = __webpack_require__(511);
 var _qs2 = _interopRequireDefault(_qs);
 
 var _ramda = __webpack_require__(35);
-
-var _socket = __webpack_require__(177);
-
-var _socket2 = _interopRequireDefault(_socket);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12424,16 +12420,6 @@ var RECEIVE_TOKENS = exports.RECEIVE_TOKENS = 'RECEIVE_TOKENS';
 var RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS_ERROR = 'RECEIVE_TOKENS_ERROR';
 var START_PLAYBACK = exports.START_PLAYBACK = 'START_PLAYBACK';
 var SHOW_NOTIFICATION = exports.SHOW_NOTIFICATION = 'SHOW_NOTIFICATION';
-
-var socket = (0, _socket2.default)();
-
-socket.on('connnection', function () {
-  return console.log('connected');
-});
-
-socket.on('get_playlist', function (data) {
-  console.log(data);
-});
 
 var addToPlaylist = exports.addToPlaylist = function addToPlaylist(url, accessToken) {
   return function (dispatch) {
@@ -12595,7 +12581,6 @@ var getPlaylistTracks = exports.getPlaylistTracks = function getPlaylistTracks(a
           name: item.track.name
         };
       });
-      socket.emit('playlist_change', tracks);
       dispatch({
         type: RECEIVE_PLAYLIST,
         tracks: tracks
@@ -12655,6 +12640,15 @@ var startPlayback = exports.startPlayback = function startPlayback(accessToken, 
     }).catch(function (err) {
       console.log(err);
     });
+  };
+};
+
+// new
+
+var updatePlaylist = exports.updatePlaylist = function updatePlaylist(tracks) {
+  return {
+    type: RECEIVE_PLAYLIST,
+    tracks: tracks
   };
 };
 
@@ -37130,6 +37124,10 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     },
     startPlayback: function startPlayback(accessToken, position) {
       return dispatch((0, _songs.startPlayback)(accessToken, position));
+    },
+    // new
+    updatePlaylist: function updatePlaylist(tracks) {
+      return dispatch((0, _songs.updatePlaylist)(tracks));
     }
   };
 };
@@ -45112,10 +45110,6 @@ var _react2 = _interopRequireDefault(_react);
 
 var _ramda = __webpack_require__(35);
 
-var _socket = __webpack_require__(177);
-
-var _socket2 = _interopRequireDefault(_socket);
-
 var _user = __webpack_require__(481);
 
 var _user2 = _interopRequireDefault(_user);
@@ -48193,6 +48187,10 @@ var _classnames = __webpack_require__(42);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
+var _socket = __webpack_require__(177);
+
+var _socket2 = _interopRequireDefault(_socket);
+
 var _loader = __webpack_require__(482);
 
 var _loader2 = _interopRequireDefault(_loader);
@@ -48249,6 +48247,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var socket = (0, _socket2.default)();
+
 var User = function (_Component) {
   _inherits(User, _Component);
 
@@ -48258,7 +48258,8 @@ var User = function (_Component) {
     var _this = _possibleConstructorReturn(this, (User.__proto__ || Object.getPrototypeOf(User)).call(this, props));
 
     _this.state = {
-      loading: true
+      loading: true,
+      id: ''
     };
     return _this;
   }
@@ -48266,35 +48267,27 @@ var User = function (_Component) {
   _createClass(User, [{
     key: 'componentWillMount',
     value: function componentWillMount() {
-      var accessToken = this.props.accessToken;
-
-      this.props.getPlaylistTracks(accessToken);
-      this.props.getCurrentTrack(accessToken);
-    }
-  }, {
-    key: 'componentDidMount',
-    value: function componentDidMount() {
       var _this2 = this;
 
       var accessToken = this.props.accessToken;
 
-      setTimeout(function () {
-        return _this2.setState({
-          loading: false
+      socket.on('joined', function (id) {
+        _this2.setState({
+          id: id
         });
-      }, 2000);
-      this.infoInterval = setInterval(function () {
-        _this2.props.getCurrentTrack(accessToken);
-      }, 1000);
-      this.playlistInterval = setInterval(function () {
-        _this2.props.getPlaylistTracks(accessToken);
-      }, 5000);
-    }
-  }, {
-    key: 'componentWillUnmount',
-    value: function componentWillUnmount() {
-      clearInterval(this.infoInterval);
-      clearInterval(this.playlistInterval);
+      });
+      socket.on('bad_token', function () {
+        socket.emit('get_playlist', accessToken);
+      });
+      socket.emit('get_playlist', accessToken);
+      socket.on('playlist_tracks', function (tracks) {
+        _this2.props.updatePlaylist(tracks);
+        setTimeout(function () {
+          _this2.setState({
+            loading: false
+          });
+        }, 1500);
+      });
     }
   }, {
     key: 'render',

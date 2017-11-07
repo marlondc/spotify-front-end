@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
+import io from 'socket.io-client';
 
 import Loader from './atoms/loader';
 import Track from './atoms/track';
@@ -15,39 +16,37 @@ import firstInstruction from '../images/first.png';
 import secondInstruction from '../images/second.png';
 import thirdInstruction from '../images/third.png';
 
+const socket = io();
+
 class User extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       loading: true,
+      id: '',
     }
   }
 
   componentWillMount() {
     const { accessToken } = this.props;
-    this.props.getPlaylistTracks(accessToken);
-    this.props.getCurrentTrack(accessToken);
-  }
-
-  componentDidMount() {
-    const { accessToken } = this.props;
-    setTimeout(() => (
+    socket.on('joined', id => {
       this.setState({
-        loading: false,
+        id,
       })
-    ), 2000)
-    this.infoInterval = setInterval(() => {
-      this.props.getCurrentTrack(accessToken)
-    }, 1000);
-    this.playlistInterval = setInterval(() => {
-      this.props.getPlaylistTracks(accessToken)
-    }, 5000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.infoInterval);
-    clearInterval(this.playlistInterval);
+    });
+    socket.on('bad_token', () => {
+      socket.emit('get_playlist', accessToken);
+    })
+    socket.emit('get_playlist', accessToken);
+    socket.on('playlist_tracks', (tracks) => {
+      this.props.updatePlaylist(tracks)
+      setTimeout(() => {
+        this.setState({
+          loading: false,
+        })
+      }, 1500);
+    })
   }
 
   render() {
