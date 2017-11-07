@@ -59,9 +59,11 @@ class User extends Component {
     
     socket.on('playlist_tracks', (tracks) => {
       this.props.updatePlaylist(tracks)
-      this.setState({
-        loading: false,
-      })
+      setTimeout(() => {
+        this.setState({
+          loading: false,
+        })
+      }, 1500);
     })
 
     socket.on('token_error', (data) => {
