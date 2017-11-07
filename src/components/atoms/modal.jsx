@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 
-import firstInstruction from '../../images/first.png';
-import secondInstruction from '../../images/second.png';
-import thirdInstruction from '../../images/third.png';
+import instructionImage from '../../images/instruction.png';
 
 class Modal extends Component {
   constructor() {
@@ -41,16 +39,24 @@ class Modal extends Component {
                 <path className="cross__path cross__path--right" fill="none" d="M16,16 l20,20" />
                 <path className="cross__path cross__path--right" fill="none" d="M16,36 l20,-20" />
               </svg>
-            </div>
-            <div className="info__modal__image">
-              <img src={firstInstruction} alt="Instruction 1" />
-            </div>
-            <div className="info__modal__image" >
-              <img src={secondInstruction} alt="Instruction 2" />
-            </div>
-            <div className="info__modal__image">
-              <img src={thirdInstruction} alt="Instruction 3" />
-            </div>
+            </div>     
+          </div>
+          <div className="info__modal__top">
+            <h1>HOW DO I FIND A SPOTIFY URL?</h1>
+            <ol className="info__modal__top__list">
+              <li className="info__modal__top__list-item">
+                <p>Hover over a track and click the three dots <br /> (see image below)</p>
+              </li>
+              <li className="info__modal__top__list-item">
+                <p>Click <strong>Share ></strong></p>
+              </li>
+              <li className="info__modal__top__list-item">
+                <p>Click <strong>Spotify Uri</strong></p>
+              </li>
+            </ol>
+          </div>
+          <div className="info__modal__bottom">
+            <img src={instructionImage} alt="how to copy spotify URI" />
           </div>
         </div>
       </div>

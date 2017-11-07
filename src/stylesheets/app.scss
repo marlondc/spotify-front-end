@@ -1,6 +1,6 @@
 
 .info__modal {
-  background-color: #000;
+  background-color: #fff;
   display: none;
   height: 100%;
   left: 0;
@@ -16,7 +16,7 @@
 }
 
 .info__modal__content {
-  padding: 30px 10px 0;
+  padding: 10px 10px 0;
 }
 
 .info__modal__image {
@@ -24,16 +24,38 @@
   text-align: center;
 }
 
-.info__modal__image img {
-  max-width: 400px;
-  width: 100%;
-}
-
 .info__modal__cross {
   display: inline-block;
   position: absolute;
   right: 10px;
   top: 10px;
+}
+
+.info__modal__top {
+  font-size: 20px;
+  margin: 0 auto;
+  max-width: 320px;
+  padding: 0 15px;
+  text-align: left;
+}
+
+.info__modal__top__list {
+  padding-left: 25px;
+}
+
+.info__modal__top h1 {
+  border-bottom: 1px solid #000;
+  font-size: 16px;
+  padding-bottom: 20px;
+}
+
+.info__modal__bottom {
+  background: #000;
+  text-align: center;
+}
+
+.info__modal__bottom img {
+  width: 320px;
 }
 
 .container {
