@@ -26,6 +26,8 @@ class User extends Component {
       loading: true,
       id: '',
     }
+
+    this.addTrack = this.addTrack.bind(this);
   }
 
   componentWillMount() {
@@ -47,6 +49,14 @@ class User extends Component {
         })
       }, 1500);
     })
+  }
+
+  addTrack(spotifyUri) {
+    socket.emit('add_track', {
+      spotifyUri,
+      id: this.state.id,
+      token: this.props.accessToken,
+    });
   }
 
   render() {
@@ -71,7 +81,7 @@ class User extends Component {
         <div className="top">
           <div className="content">
             <TopDecoration />
-            <InputUri accessToken={accessToken} addToPlaylist={addToPlaylist}/>
+            <InputUri accessToken={accessToken} addToPlaylist={this.addTrack}/>
             <Modal />
           </div>
         </div>

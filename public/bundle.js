@@ -48261,6 +48261,8 @@ var User = function (_Component) {
       loading: true,
       id: ''
     };
+
+    _this.addTrack = _this.addTrack.bind(_this);
     return _this;
   }
 
@@ -48290,6 +48292,15 @@ var User = function (_Component) {
       });
     }
   }, {
+    key: 'addTrack',
+    value: function addTrack(spotifyUri) {
+      socket.emit('add_track', {
+        spotifyUri: spotifyUri,
+        id: this.state.id,
+        token: this.props.accessToken
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _props = this.props,
@@ -48316,7 +48327,7 @@ var User = function (_Component) {
             'div',
             { className: 'content' },
             _react2.default.createElement(_topDecoration2.default, null),
-            _react2.default.createElement(_inputUri2.default, { accessToken: accessToken, addToPlaylist: addToPlaylist }),
+            _react2.default.createElement(_inputUri2.default, { accessToken: accessToken, addToPlaylist: this.addTrack }),
             _react2.default.createElement(_modal2.default, null)
           )
         ),
