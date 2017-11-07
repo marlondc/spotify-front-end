@@ -137,12 +137,12 @@ class User extends Component {
                     {
                       currentTrack.isPlaying
                         ? <TrackStatus track={currentTrack} />
-                        : <StartButton clickHandler={this.handleStartPlayback} />
+                        : <StartButton clickHandler={this.handleStartPlayback} id={this.state.id} />
                     }
                   </div>
                   : <div>
                     <p className="track__name">No currently playing track</p>
-                    <StartButton clickHandler={this.handleStartPlayback} />
+                    <StartButton clickHandler={this.handleStartPlayback} id={this.state.id} />
                   </div>
               }
             <TitleDivider titleText="Up next" />

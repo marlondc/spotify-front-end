@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import { isEmpty } from 'ramda';
+import { isEmpty, isNil } from 'ramda';
 
 const Track = ({ track, id, handleRemove }) => (
   <div className="track">
@@ -33,7 +33,7 @@ const Track = ({ track, id, handleRemove }) => (
       }
     </div>
     {
-      (track.addedBy === id && !isEmpty(track.addedBy))
+      (track.addedBy === id && !isEmpty(track.addedBy) && !isNil(track.addedBy))
         ? <button
           onClick={() => handleRemove(track.id)}
           className="track__remove jukebox-cancel"

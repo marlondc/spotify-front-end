@@ -39,13 +39,17 @@ io.on('connection', (socket) => {
     });
     accessToken = token;
     refreshToken = refresh;
-    setInterval(() => {
+    setTimeout(() => {
       axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         }
       }).then(({ data }) => {
         const { item } = data;
+        track = tracks.filter((track) => track.id === item.id);
+        const addedBy = track[0]
+          ? track[0].addedBy
+          : ''
         const song = {
           album: item.album.name,
           artist: item.artists[0].name,
@@ -55,6 +59,7 @@ io.on('connection', (socket) => {
           isPlaying: data.is_playing,
           name: item.name,
           progress: data.progress_ms,
+          addedBy,
         }
         socket.emit('current_song', song);
         socket.broadcast.emit('current_song', song);

@@ -45109,7 +45109,7 @@ var User = function (_Component) {
                 { className: 'track track--current' },
                 _react2.default.createElement(_track2.default, { track: currentTrack })
               ),
-              currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : _react2.default.createElement(_startButton2.default, { clickHandler: this.handleStartPlayback })
+              currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : _react2.default.createElement(_startButton2.default, { clickHandler: this.handleStartPlayback, id: this.state.id })
             ) : _react2.default.createElement(
               'div',
               null,
@@ -45118,7 +45118,7 @@ var User = function (_Component) {
                 { className: 'track__name' },
                 'No currently playing track'
               ),
-              _react2.default.createElement(_startButton2.default, { clickHandler: this.handleStartPlayback })
+              _react2.default.createElement(_startButton2.default, { clickHandler: this.handleStartPlayback, id: this.state.id })
             ),
             _react2.default.createElement(_titleDivider2.default, { titleText: 'Up next' }),
             tracks.map(function (track) {
@@ -48363,7 +48363,7 @@ var Track = function Track(_ref) {
         track.album
       )
     ),
-    track.addedBy === id && !(0, _ramda.isEmpty)(track.addedBy) ? _react2.default.createElement('button', {
+    track.addedBy === id && !(0, _ramda.isEmpty)(track.addedBy) && !(0, _ramda.isNil)(track.addedBy) ? _react2.default.createElement('button', {
       onClick: function onClick() {
         return handleRemove(track.id);
       },
