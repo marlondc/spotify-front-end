@@ -51,7 +51,7 @@ class Modal extends Component {
                 <p>Click <strong>Share ></strong></p>
               </li>
               <li className="info__modal__top__list-item">
-                <p>Click <strong>Spotify Uri</strong></p>
+                <p>Click <strong>Spotify Share Link</strong></p>
               </li>
             </ol>
           </div>

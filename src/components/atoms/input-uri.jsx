@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { test, isEmpty } from 'ramda';
 
 const invalidURI = (uri) => {
-  const spotifyRegex = /^spotify:(track|album):([a-z,A-Z,0-9]{22})$/;
+  const spotifyRegex = /^https:\/\/open.spotify.com\/track\/([a-z,A-Z,0-9]{22})$/;
   return !test(spotifyRegex, uri)
 }
 
@@ -50,7 +50,7 @@ class InputUri extends Component {
             name="spotifyURI"
             className="input__spotifyURI"
             value={this.state.spotifyURI}
-            placeholder="Add spotify track / album uri ..."
+            placeholder="Add spotify share link..."
             onChange={this.handleInputChange}
           />
           <span

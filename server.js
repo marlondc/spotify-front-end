@@ -96,7 +96,7 @@ io.on('connection', (socket) => {
     const spotifyRegex = /([a-z,A-Z,0-9]{22})$/;
     const spotifyID = spotifyRegex.exec(spotifyUri)[1];
     const query = qs.stringify({
-      uris: spotifyUri,
+      uris: `spotify:track:${spotifyID}`,
     })
     axios(`https://api.spotify.com/v1/users/${process.env.SPOTIFY_USER_NAME}/playlists/${process.env.SPOTIFY_PLAYLIST_ID}/tracks?${query}`, {
       method: 'post',
