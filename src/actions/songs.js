@@ -17,87 +17,6 @@ export const RECEIVE_TOKENS_ERROR = 'RECEIVE_TOKENS_ERROR';
 export const START_PLAYBACK = 'START_PLAYBACK';
 export const SHOW_NOTIFICATION = 'SHOW_NOTIFICATION';
 
-export const addToPlaylist = (url, accessToken) => (dispatch) => {
-  const spotifyRegex = /([a-z,A-Z,0-9]{22})$/;
-  const spotifyID = spotifyRegex.exec(url)[1];
-  if (test(/track/, url)) {
-    const query = qs.stringify({
-      uris: url,
-    })
-    axios(`https://api.spotify.com/v1/users/${process.env.SPOTIFY_USER_NAME}/playlists/${process.env.SPOTIFY_PLAYLIST_ID}/tracks?${query}`, {
-      method: 'post',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        Accept: 'application/json'
-      },
-    }).then(() => {
-      dispatch(getPlaylistTracks(accessToken));
-    }).then(() => {
-      axios(`https://api.spotify.com/v1/tracks/${spotifyID}`, {
-        method: 'get',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          Accept: 'application/json'
-        }
-      }).then(({ data }) => {
-        dispatch({
-          type: SHOW_NOTIFICATION,
-          notification: {
-            text: `${data.name} by ${data.artists[0].name}`,
-            type: 'track',
-          },
-        })
-      });
-    }).catch((err) => {
-      dispatch({
-        type: ADDED_TO_PLAYLIST,
-      });
-    });
-  } else {
-    axios.get(`https://api.spotify.com/v1/albums/${spotifyID}/tracks`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        Accept: 'application/json',
-      }
-    }).then(({ data }) => {
-      const tracks = data.items.map(item => item.uri).join(',');
-      const query = qs.stringify({
-        uris: tracks,
-      })
-      axios(`https://api.spotify.com/v1/users/${process.env.SPOTIFY_USER_NAME}/playlists/${process.env.SPOTIFY_PLAYLIST_ID}/tracks?${query}`, {
-        method: 'post',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          Accept: 'application/json'
-        },
-      }).then(() => {
-        dispatch({
-          type: ADDED_TO_PLAYLIST,
-        });
-        dispatch(getPlaylistTracks(accessToken));
-      }).then(() => {
-        axios(`https://api.spotify.com/v1/albums/${spotifyID}`, {
-          method: 'get',
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            Accept: 'application/json'
-          }
-        }).then(({ data }) => {
-          dispatch({
-            type: SHOW_NOTIFICATION,
-            notification: {
-              text: `${data.name} by ${data.artists[0].name}`,
-              type: 'album',
-            },
-          })
-        });
-      }).catch((err) => {
-        dispatch({ type: ADDED_TO_PLAYLIST })
-      })
-    });
-  }
-}
-
 export const clearNotification = () => (dispatch) => (
   dispatch({
     type: CLEAR_NOTIFICATION,
@@ -162,7 +81,7 @@ export const getPlaylistTracks = (accessToken) => (dispatch) => {
       tracks,
     })
   }).catch(err => {
-    console.log(err);
+    dispatch({ type: BAD_TOKEN })
   });
 }
 

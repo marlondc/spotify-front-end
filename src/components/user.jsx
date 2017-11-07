@@ -28,6 +28,7 @@ class User extends Component {
     }
 
     this.addTrack = this.addTrack.bind(this);
+    this.handleRemove = this.handleRemove.bind(this);
   }
 
   componentWillMount() {
@@ -47,7 +48,11 @@ class User extends Component {
         this.setState({
           loading: false,
         })
-      }, 1500);
+      }, 10);
+    })
+
+    socket.on('error', (data) => {
+      console.log(data);
     })
   }
 
@@ -57,6 +62,14 @@ class User extends Component {
       id: this.state.id,
       token: this.props.accessToken,
     });
+  }
+
+  handleRemove(trackId) {
+    socket.emit('remove_track', ({
+      trackId,
+      userId: this.state.id,
+      token: this.props.accessToken,
+    }));
   }
 
   render() {
@@ -109,7 +122,7 @@ class User extends Component {
             {
               tracks.map(track => (
                 <div className="track track--in-list" key={track.id}>
-                  <Track track={track} />
+                  <Track track={track} id={this.state.id} handleRemove={this.handleRemove} />
                 </div>
               ))
             }

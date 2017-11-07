@@ -1,9 +1,13 @@
 import React from 'react';
 import classnames from 'classnames';
 
-const Track = ({ track }) => (
-  <div>
-    <img src={track.image} alt={track.album} className="track__image" />
+const Track = ({ track, id, handleRemove }) => (
+  <div className="track">
+    <img 
+      src={track.image}
+      alt={track.album}
+      className="track__image"
+    />
     <div className="track__details">
       {
         track.name.length > 17
@@ -27,6 +31,14 @@ const Track = ({ track }) => (
           : <p className="track__album">{track.album}</p>
       }
     </div>
+    {
+      track.addedBy === id
+        ? <button
+          onClick={() => handleRemove(track.id)}
+          className="track__remove jukebox-cancel"
+        />
+        : null
+    }
   </div>
 );
 

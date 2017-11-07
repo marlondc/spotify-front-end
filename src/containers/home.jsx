@@ -3,7 +3,6 @@ import { filter, isEmpty, equals, addIndex, map } from 'ramda';
 
 import Page from '../components/page';
 import {
-  addToPlaylist,
   clearNotification,
   getCurrentTrack,
   getPlaylistTracks,
@@ -46,7 +45,6 @@ const mapStateToProps = ({ songs }) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-  addToPlaylist: (url, accessToken) => dispatch(addToPlaylist(url, accessToken)),
   clearNotification: () => dispatch(clearNotification()),
   getCurrentTrack: accessToken => dispatch(getCurrentTrack(accessToken)),
   getPlaylistTracks: accessToken => dispatch(getPlaylistTracks(accessToken)),
