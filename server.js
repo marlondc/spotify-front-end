@@ -31,7 +31,7 @@ let refreshToken;
 
 io.on('connection', (socket) => {
   socket.on('get_playlist', ({ token, refresh }) => {
-    socket.emit('tokens', {
+    io.sockets.emit('tokens', {
       token,
       refresh,
     });
@@ -59,8 +59,7 @@ io.on('connection', (socket) => {
           progress: data.progress_ms,
           addedBy,
         }
-        socket.emit('current_song', song);
-        socket.broadcast.emit('current_song', song);
+        io.sockets.emit('current_song', song);
       })
         .catch(err => console.log(err))
     }, 1000)
@@ -83,12 +82,10 @@ io.on('connection', (socket) => {
           addedBy: '',
         }
       });
-      socket.emit('playlist_tracks', tracks);
-      socket.broadcast.emit('playlist_tracks', tracks);
+      io.sockets.emit('playlist_tracks', tracks);
     }).catch((err) => {
       console.log(err, 'token error');
-      socket.emit('token_error', 'bad_token');
-      socket.broadcast.emit('token_error', 'bad_token');
+      io.sockets.emit('token_error', 'bad_token');
     });
   })
 
@@ -121,19 +118,13 @@ io.on('connection', (socket) => {
           name: data.name,
           addedBy: id,
         })
-        socket.emit('notification', {
-          type: 'add track',
+        io.sockets.emit('notification', {
+          type: 'added track',
           text: data.name,
         });
-        socket.broadcast.emit('notification', {
-          type: 'add track',
-          text: data.name,
-        });
-        socket.emit('playlist_tracks', tracks);
-        socket.broadcast.emit('playlist_tracks', tracks);
+        io.sockets.emit('playlist_tracks', tracks);
       }).catch((err) => console.log(err));
     }).catch((err) => {
-      console.log(err);
       socket.emit('token_error', 'add track');
     });
   })
@@ -142,6 +133,7 @@ io.on('connection', (socket) => {
     const track = tracks.filter((track) => track.addedBy === userId);
     
     if (track.length === 1) {
+      const trackToRemove = tracks.filter(playlistTrack => playlistTrack.id === trackId);
       tracks = tracks.filter(playlistTrack => (
         playlistTrack.id !== trackId
       ));
@@ -159,12 +151,14 @@ io.on('connection', (socket) => {
           ]
         }
       }).then(() => {
-        socket.emit('playlist_tracks', tracks);
-        socket.broadcast.emit('playlist_tracks', tracks);
+        io.sockets.emit('playlist_tracks', tracks);
+        io.sockets.emit('notification', {
+          type: 'removed track',
+          text: trackToRemove[0].name,
+        });
       })
       .catch((err) => {
-        socket.emit('token_error', 'delete track');
-        socket.broadcast.emit('token_error', 'delete track');
+        io.sockets.emit('token_error', 'delete track');
       });
     }
   });
