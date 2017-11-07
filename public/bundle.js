@@ -12392,7 +12392,7 @@ module.exports = __webpack_require__.p + "/images/third.png";
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updatePlaylist = exports.startPlayback = exports.login = exports.getTokens = exports.getPlaylistTracks = exports.getCurrentTrack = exports.clearNotification = exports.SHOW_NOTIFICATION = exports.START_PLAYBACK = exports.RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS = exports.RECEIVE_PLAYLIST = exports.RECEIVE_CURRENT_TRACK = exports.REQUEST_TOKENS = exports.REQUEST_PLAYLIST = exports.REQUEST_CURRENT_TRACK = exports.LOGGED_IN = exports.CLEAR_NOTIFICATION = exports.BAD_TOKEN = exports.ADDED_TO_PLAYLIST = undefined;
+exports.clearInvalidTokens = exports.updatePlaylist = exports.startPlayback = exports.login = exports.getTokens = exports.getPlaylistTracks = exports.getCurrentTrack = exports.clearNotification = exports.SHOW_NOTIFICATION = exports.START_PLAYBACK = exports.RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS = exports.RECEIVE_PLAYLIST = exports.RECEIVE_CURRENT_TRACK = exports.REQUEST_TOKENS = exports.REQUEST_PLAYLIST = exports.REQUEST_CURRENT_TRACK = exports.LOGGED_IN = exports.CLEAR_NOTIFICATION = exports.BAD_TOKEN = exports.ADDED_TO_PLAYLIST = undefined;
 
 var _axios = __webpack_require__(492);
 
@@ -12558,6 +12558,12 @@ var updatePlaylist = exports.updatePlaylist = function updatePlaylist(tracks) {
   return {
     type: RECEIVE_PLAYLIST,
     tracks: tracks
+  };
+};
+
+var clearInvalidTokens = exports.clearInvalidTokens = function clearInvalidTokens() {
+  return {
+    type: BAD_TOKEN
   };
 };
 
@@ -37034,6 +37040,9 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     // new
     updatePlaylist: function updatePlaylist(tracks) {
       return dispatch((0, _songs.updatePlaylist)(tracks));
+    },
+    clearInvalidTokens: function clearInvalidTokens() {
+      return dispatch((0, _songs.clearInvalidTokens)());
     }
   };
 };
@@ -48188,18 +48197,18 @@ var User = function (_Component) {
       socket.on('bad_token', function () {
         socket.emit('get_playlist', accessToken);
       });
+
       socket.emit('get_playlist', accessToken);
+
       socket.on('playlist_tracks', function (tracks) {
         _this2.props.updatePlaylist(tracks);
-        setTimeout(function () {
-          _this2.setState({
-            loading: false
-          });
-        }, 10);
+        _this2.setState({
+          loading: false
+        });
       });
 
-      socket.on('error', function (data) {
-        console.log(data);
+      socket.on('token_error', function (data) {
+        _this2.props.clearInvalidTokens();
       });
     }
   }, {

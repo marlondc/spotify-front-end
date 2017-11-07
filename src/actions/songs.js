@@ -142,3 +142,7 @@ export const updatePlaylist = tracks => ({
   type: RECEIVE_PLAYLIST,
   tracks,
 })
+
+export const clearInvalidTokens = () => ({
+  type: BAD_TOKEN,
+});

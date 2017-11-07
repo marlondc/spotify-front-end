@@ -41,18 +41,18 @@ class User extends Component {
     socket.on('bad_token', () => {
       socket.emit('get_playlist', accessToken);
     })
+
     socket.emit('get_playlist', accessToken);
+
     socket.on('playlist_tracks', (tracks) => {
       this.props.updatePlaylist(tracks)
-      setTimeout(() => {
-        this.setState({
-          loading: false,
-        })
-      }, 10);
+      this.setState({
+        loading: false,
+      })
     })
 
-    socket.on('error', (data) => {
-      console.log(data);
+    socket.on('token_error', (data) => {
+      this.props.clearInvalidTokens();
     })
   }
 

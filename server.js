@@ -51,8 +51,9 @@ io.on('connection', (socket) => {
       socket.emit('playlist_tracks', tracks);
       socket.broadcast.emit('playlist_tracks', tracks);
     }).catch((err) => {
-      socket.emit('error', 'bad_token');
-      socket.broadcast.emit('error', 'bad_token');
+      console.log(err, 'token error');
+      socket.emit('token_error', 'bad_token');
+      socket.broadcast.emit('token_error', 'bad_token');
     });
   })
 
@@ -89,7 +90,7 @@ io.on('connection', (socket) => {
       }).catch((err) => console.log(err));
     }).catch((err) => {
       console.log(err);
-      socket.emit('error', 'add track');
+      socket.emit('token_error', 'add track');
     });
   })
 
@@ -118,8 +119,8 @@ io.on('connection', (socket) => {
         socket.broadcast.emit('playlist_tracks', tracks);
       })
       .catch((err) => {
-        socket.emit('error', 'delete track');
-        socket.broadcast.emit('error', 'delete track');
+        socket.emit('token_error', 'delete track');
+        socket.broadcast.emit('token_error', 'delete track');
       });
     }
   });

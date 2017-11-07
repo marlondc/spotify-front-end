@@ -11,6 +11,7 @@ import {
   startPlayback,
   // new
   updatePlaylist,
+  clearInvalidTokens,
  } from '../actions/songs';
 
 const mapStateToProps = ({ songs }) => {
@@ -53,6 +54,7 @@ const mapDispatchToProps = dispatch => ({
   startPlayback: (accessToken, position) => dispatch(startPlayback(accessToken, position)),
   // new
   updatePlaylist: tracks => dispatch(updatePlaylist(tracks)),
+  clearInvalidTokens: () => dispatch(clearInvalidTokens()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Page);
