@@ -810,7 +810,7 @@ var equals = /*#__PURE__*/Object(__WEBPACK_IMPORTED_MODULE_0__internal_curry2__[
 
 
 var bind = __webpack_require__(191);
-var isBuffer = __webpack_require__(499);
+var isBuffer = __webpack_require__(497);
 
 /*global toString:true*/
 
@@ -6687,7 +6687,7 @@ Transport.prototype.onClose = function () {
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(14);
-var normalizeHeaderName = __webpack_require__(501);
+var normalizeHeaderName = __webpack_require__(499);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -12345,11 +12345,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.updateId = exports.updateCurrentSong = exports.refreshTokens = exports.clearInvalidTokens = exports.updatePlaylist = exports.getTokens = exports.UPDATE_ID = exports.RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS = exports.RECEIVE_PLAYLIST = exports.RECEIVE_CURRENT_TRACK = exports.REQUEST_TOKENS = exports.BAD_TOKEN = undefined;
 
-var _axios = __webpack_require__(497);
+var _axios = __webpack_require__(495);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _qs = __webpack_require__(516);
+var _qs = __webpack_require__(514);
 
 var _qs2 = _interopRequireDefault(_qs);
 
@@ -12371,7 +12371,7 @@ var getTokens = exports.getTokens = function getTokens() {
     dispatch({
       type: REQUEST_TOKENS
     });
-    _axios2.default.get("http://mdc-jukebox.herokuapp.com" + '/tokens').then(function (response) {
+    _axios2.default.get("http://localhost:8000" + '/tokens').then(function (response) {
       dispatch({
         type: RECEIVE_TOKENS,
         data: response.data
@@ -12444,12 +12444,12 @@ module.exports = function bind(fn, thisArg) {
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(14);
-var settle = __webpack_require__(502);
-var buildURL = __webpack_require__(504);
-var parseHeaders = __webpack_require__(505);
-var isURLSameOrigin = __webpack_require__(506);
+var settle = __webpack_require__(500);
+var buildURL = __webpack_require__(502);
+var parseHeaders = __webpack_require__(503);
+var isURLSameOrigin = __webpack_require__(504);
 var createError = __webpack_require__(193);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(507);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(505);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -12547,7 +12547,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(508);
+      var cookies = __webpack_require__(506);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -12632,7 +12632,7 @@ module.exports = function xhrAdapter(config) {
 "use strict";
 
 
-var enhanceError = __webpack_require__(503);
+var enhanceError = __webpack_require__(501);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -12959,9 +12959,9 @@ var _home = __webpack_require__(257);
 
 var _home2 = _interopRequireDefault(_home);
 
-__webpack_require__(519);
+__webpack_require__(517);
 
-var _songs = __webpack_require__(528);
+var _songs = __webpack_require__(526);
 
 var _songs2 = _interopRequireDefault(_songs);
 
@@ -44873,7 +44873,7 @@ var _user = __webpack_require__(458);
 
 var _user2 = _interopRequireDefault(_user);
 
-var _login = __webpack_require__(496);
+var _login = __webpack_require__(494);
 
 var _login2 = _interopRequireDefault(_login);
 
@@ -44979,21 +44979,9 @@ var _modal = __webpack_require__(491);
 
 var _modal2 = _interopRequireDefault(_modal);
 
-var _notification = __webpack_require__(492);
+var _notification = __webpack_require__(493);
 
 var _notification2 = _interopRequireDefault(_notification);
-
-var _first = __webpack_require__(493);
-
-var _first2 = _interopRequireDefault(_first);
-
-var _second = __webpack_require__(494);
-
-var _second2 = _interopRequireDefault(_second);
-
-var _third = __webpack_require__(495);
-
-var _third2 = _interopRequireDefault(_third);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -48880,7 +48868,7 @@ var _classnames = __webpack_require__(42);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _instruction = __webpack_require__(529);
+var _instruction = __webpack_require__(492);
 
 var _instruction2 = _interopRequireDefault(_instruction);
 
@@ -49023,6 +49011,12 @@ exports.default = Modal;
 /* 492 */
 /***/ (function(module, exports, __webpack_require__) {
 
+module.exports = __webpack_require__.p + "/images/instruction.png";
+
+/***/ }),
+/* 493 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 
 
@@ -49069,25 +49063,7 @@ var Notification = function Notification(_ref) {
 exports.default = Notification;
 
 /***/ }),
-/* 493 */
-/***/ (function(module, exports) {
-
-throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/Users/marlondc/Code/spotify-front-end/src/images/first.png'");
-
-/***/ }),
 /* 494 */
-/***/ (function(module, exports) {
-
-throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/Users/marlondc/Code/spotify-front-end/src/images/second.png'");
-
-/***/ }),
-/* 495 */
-/***/ (function(module, exports) {
-
-throw new Error("Module build failed: Error: ENOENT: no such file or directory, open '/Users/marlondc/Code/spotify-front-end/src/images/third.png'");
-
-/***/ }),
-/* 496 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49118,7 +49094,7 @@ var Login = function Login(props) {
           { className: "input input--login" },
           _react2.default.createElement(
             "a",
-            { className: "input__button input__button--login", href: "http://mdc-jukebox.herokuapp.com" + "/login", onClick: function onClick() {
+            { className: "input__button input__button--login", href: "http://localhost:8000" + "/login", onClick: function onClick() {
                 return props.login();
               } },
             "LOGIN"
@@ -49132,13 +49108,13 @@ var Login = function Login(props) {
 exports.default = Login;
 
 /***/ }),
-/* 497 */
+/* 495 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(498);
+module.exports = __webpack_require__(496);
 
 /***/ }),
-/* 498 */
+/* 496 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49146,7 +49122,7 @@ module.exports = __webpack_require__(498);
 
 var utils = __webpack_require__(14);
 var bind = __webpack_require__(191);
-var Axios = __webpack_require__(500);
+var Axios = __webpack_require__(498);
 var defaults = __webpack_require__(96);
 
 /**
@@ -49181,14 +49157,14 @@ axios.create = function create(instanceConfig) {
 
 // Expose Cancel & CancelToken
 axios.Cancel = __webpack_require__(195);
-axios.CancelToken = __webpack_require__(514);
+axios.CancelToken = __webpack_require__(512);
 axios.isCancel = __webpack_require__(194);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(515);
+axios.spread = __webpack_require__(513);
 
 module.exports = axios;
 
@@ -49197,7 +49173,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 499 */
+/* 497 */
 /***/ (function(module, exports) {
 
 /*!
@@ -49224,7 +49200,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 500 */
+/* 498 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49232,8 +49208,8 @@ function isSlowBuffer (obj) {
 
 var defaults = __webpack_require__(96);
 var utils = __webpack_require__(14);
-var InterceptorManager = __webpack_require__(509);
-var dispatchRequest = __webpack_require__(510);
+var InterceptorManager = __webpack_require__(507);
+var dispatchRequest = __webpack_require__(508);
 
 /**
  * Create a new instance of Axios
@@ -49310,7 +49286,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 501 */
+/* 499 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49329,7 +49305,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 502 */
+/* 500 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49362,7 +49338,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 503 */
+/* 501 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49390,7 +49366,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 504 */
+/* 502 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49465,7 +49441,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 505 */
+/* 503 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49525,7 +49501,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 506 */
+/* 504 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49600,7 +49576,7 @@ module.exports = (
 
 
 /***/ }),
-/* 507 */
+/* 505 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49643,7 +49619,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 508 */
+/* 506 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49703,7 +49679,7 @@ module.exports = (
 
 
 /***/ }),
-/* 509 */
+/* 507 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49762,18 +49738,18 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 510 */
+/* 508 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(14);
-var transformData = __webpack_require__(511);
+var transformData = __webpack_require__(509);
 var isCancel = __webpack_require__(194);
 var defaults = __webpack_require__(96);
-var isAbsoluteURL = __webpack_require__(512);
-var combineURLs = __webpack_require__(513);
+var isAbsoluteURL = __webpack_require__(510);
+var combineURLs = __webpack_require__(511);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -49855,7 +49831,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 511 */
+/* 509 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49882,7 +49858,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 512 */
+/* 510 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49903,7 +49879,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 513 */
+/* 511 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49924,7 +49900,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 514 */
+/* 512 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49988,7 +49964,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 515 */
+/* 513 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -50022,14 +49998,14 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 516 */
+/* 514 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var stringify = __webpack_require__(517);
-var parse = __webpack_require__(518);
+var stringify = __webpack_require__(515);
+var parse = __webpack_require__(516);
 var formats = __webpack_require__(197);
 
 module.exports = {
@@ -50040,7 +50016,7 @@ module.exports = {
 
 
 /***/ }),
-/* 517 */
+/* 515 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -50257,7 +50233,7 @@ module.exports = function (object, opts) {
 
 
 /***/ }),
-/* 518 */
+/* 516 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -50438,13 +50414,13 @@ module.exports = function (str, opts) {
 
 
 /***/ }),
-/* 519 */
+/* 517 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(520);
+var content = __webpack_require__(518);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // Prepare cssTransformation
 var transform;
@@ -50452,7 +50428,7 @@ var transform;
 var options = {"hmr":true}
 options.transform = transform
 // add the styles to the DOM
-var update = __webpack_require__(526)(content, options);
+var update = __webpack_require__(524)(content, options);
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -50469,21 +50445,21 @@ if(false) {
 }
 
 /***/ }),
-/* 520 */
+/* 518 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(521)(undefined);
+exports = module.exports = __webpack_require__(519)(undefined);
 // imports
 exports.push([module.i, "@import url(https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,500,600,700,800,900);", ""]);
 
 // module
-exports.push([module.i, "@charset \"UTF-8\";\n.loader-container {\n  background: #fef394;\n  height: 100vh;\n  width: 100%; }\n\n.loader {\n  left: 50%;\n  position: absolute;\n  top: 50%;\n  -webkit-transform: translate(-50%, -50%);\n  transform: translate(-50%, -50%); }\n\n.dot {\n  -webkit-animation: fx 1000ms ease infinite 0ms;\n  animation: fx 1000ms ease infinite 0ms;\n  border: 2px solid #ef9783;\n  border-radius: 50%;\n  height: 10px;\n  float: left;\n  margin: 0 5px;\n  -webkit-transform: scale(0);\n  transform: scale(0);\n  width: 10px; }\n\n.dot:nth-child(2) {\n  -webkit-animation: fx 1000ms ease infinite 300ms;\n  animation: fx 1000ms ease infinite 300ms; }\n\n.dot:nth-child(3) {\n  -webkit-animation: fx 1000ms ease infinite 600ms;\n  animation: fx 1000ms ease infinite 600ms; }\n\n@-webkit-keyframes fx {\n  50% {\n    -webkit-transform: scale(1);\n    transform: scale(1);\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes fx {\n  50% {\n    -webkit-transform: scale(1);\n    transform: scale(1);\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n.info__modal {\n  background-color: #fff;\n  display: none;\n  height: 100%;\n  left: 0;\n  overflow: auto;\n  position: fixed;\n  top: 0;\n  width: 100%;\n  z-index: 2; }\n\n.info__modal--show {\n  display: block; }\n\n.info__modal__content {\n  padding: 10px 10px 0; }\n\n.info__modal__image {\n  padding-bottom: 30px;\n  text-align: center; }\n\n.info__modal__cross {\n  display: inline-block;\n  position: absolute;\n  right: 10px;\n  top: 10px; }\n\n.info__modal__top {\n  font-size: 20px;\n  margin: 0 auto;\n  max-width: 320px;\n  padding: 0 15px;\n  text-align: left; }\n\n.info__modal__top__list {\n  padding-left: 25px; }\n\n.info__modal__top h1 {\n  border-bottom: 1px solid #000;\n  font-size: 16px;\n  padding-bottom: 20px; }\n\n.info__modal__bottom {\n  background: #000;\n  text-align: center; }\n\n.info__modal__bottom img {\n  width: 320px; }\n\n.container {\n  height: 100%;\n  width: 100%; }\n\n.top {\n  background: #fef394;\n  overflow: hidden;\n  padding: 30px 0 20px;\n  position: relative; }\n\n.top--login {\n  height: 100vh; }\n\n.fixed-height {\n  height: 100vh;\n  overflow: hidden; }\n\n.content {\n  margin: 0 auto;\n  max-width: 320px;\n  padding: 0 15px; }\n\n.content--login {\n  align-items: center;\n  display: flex;\n  height: 100%;\n  justify-content: center; }\n\n.top__decoration {\n  background: #ef9783;\n  border-radius: 15px;\n  height: 50%;\n  position: absolute;\n  width: 10px; }\n\n.top__decoration--1 {\n  left: 20%;\n  top: -80px; }\n\n.top__decoration--2 {\n  right: 14%;\n  bottom: -70px;\n  -ms-transform: rotate(-10deg);\n  -webkit-transform: rotate(-10deg);\n  transform: rotate(-10deg); }\n\n.top__decoration--3 {\n  right: 2%;\n  bottom: -5px;\n  -ms-transform: rotate(-60deg);\n  -webkit-transform: rotate(-60deg);\n  transform: rotate(-60deg); }\n\n.bottom {\n  padding-bottom: 40px; }\n\n.title {\n  margin: 30px 0;\n  position: relative; }\n\n.title__text {\n  background: #fff;\n  color: #000;\n  display: inline-block;\n  margin: 0;\n  padding-right: 8px;\n  position: absolute;\n  top: 4px; }\n\n.title__line {\n  background: #000;\n  display: inline-block;\n  width: 100%;\n  height: 1px; }\n\n.track {\n  width: 100%; }\n\n.track__image {\n  display: inline-block;\n  height: 70px;\n  margin-right: 10px;\n  width: 70px; }\n\n.track__details {\n  display: inline-block;\n  vertical-align: top;\n  width: 210px; }\n\n.track__details p {\n  margin: 0; }\n\n.track__marquee {\n  line-height: 20px;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%; }\n\n.track__marquee p {\n  display: inline-block;\n  padding-left: 100%;\n  animation: marquee 15s linear infinite; }\n\n@keyframes marquee {\n  0% {\n    transform: translate(0, 0); }\n  100% {\n    transform: translate(-100%, 0); } }\n\n.track__name {\n  font-size: 22px;\n  font-weight: bold;\n  padding-bottom: 1px; }\n\n.track__artist {\n  font-size: 16px;\n  padding-bottom: 8px; }\n\n.track__album {\n  color: grey;\n  font-size: 16px; }\n\n.track--in-list {\n  border-bottom: 1px solid grey;\n  padding: 10px 0; }\n\n.track--in-list:first-of-type {\n  padding-top: 0; }\n\n.track--in-list:last-of-type {\n  border: none; }\n\n.track--current {\n  padding-bottom: 20px; }\n\n.track__progress {\n  width: 100%; }\n\n.track__status {\n  position: relative; }\n\n.track__status__progress-bar {\n  background: black;\n  float: left;\n  height: 1px;\n  opacity: 0.5;\n  position: absolute;\n  top: 10px;\n  width: 75%; }\n\n.track__status__progress-bar--fill {\n  background: #ef9783;\n  border-radius: 10px;\n  height: 11px;\n  left: -1px;\n  opacity: 1;\n  top: 5px;\n  z-index: 1; }\n\n.track__status__time {\n  float: right;\n  font-weight: bold;\n  margin: 0; }\n\n.track__status__time span {\n  font-weight: normal; }\n\n.cross__svg {\n  border-radius: 50%;\n  float: right;\n  height: 40px;\n  stroke-width: 3; }\n\n.cross__path {\n  stroke: #ef9783;\n  stroke-dasharray: 48;\n  stroke-dashoffset: 48;\n  transform-origin: 50% 50% 0; }\n\n.cross__path--right {\n  animation: ease 0.8s normal forwards 1 running stroke; }\n\n.cross__path--left {\n  animation: ease 0.8s normal forwards 1 running stroke; }\n\n@keyframes stroke {\n  100% {\n    stroke-dashoffset: 0; } }\n\n.track {\n  align-items: center;\n  display: flex;\n  position: relative; }\n\n.track__remove {\n  align-items: center;\n  background: rgba(255, 255, 255, 0.5);\n  border: 0;\n  color: #808080;\n  cursor: pointer;\n  display: flex;\n  font-size: 16px;\n  height: 20px;\n  justify-content: center;\n  outline: none;\n  position: absolute;\n  right: 0;\n  width: 20px; }\n\n.input {\n  padding-bottom: 35px;\n  position: relative; }\n\n.input--login {\n  padding: 0; }\n\n.input__spotifyURI {\n  border: 0;\n  height: 50px;\n  outline: none;\n  padding: 0 10px;\n  width: 100%; }\n\n.input__button {\n  background: #ef9783;\n  border-radius: 20px;\n  border-style: none;\n  cursor: pointer;\n  font-weight: bold;\n  font-size: 16px;\n  margin: 15px 0 0;\n  outline: none;\n  padding: 12px 20px; }\n\n.input__button:hover {\n  text-decoration: underline; }\n\n.input__button--login {\n  color: black;\n  margin: 0;\n  text-decoration: none; }\n\n.input__button--disabled {\n  opacity: 0.4;\n  cursor: auto; }\n\n.input__button--disabled:hover {\n  text-decoration: none; }\n\n.input__button--play {\n  text-align: center; }\n\n.info__text {\n  border: none;\n  background: none;\n  cursor: pointer;\n  font-size: 12px;\n  margin: 0;\n  outline: none;\n  padding: 0;\n  text-decoration: underline; }\n\n.input__field {\n  position: relative; }\n\n.input__tick {\n  color: #7fd48a;\n  display: none; }\n\n.input__cancel {\n  color: #ef9783;\n  display: none; }\n\n.input__tick--show,\n.input__cancel--show {\n  display: block; }\n\n.input__tick,\n.input__cancel {\n  position: absolute;\n  right: 15px;\n  top: 33%; }\n\n@font-face {\n  font-family: 'jukebox';\n  src: url(" + __webpack_require__(198) + ");\n  src: url(" + __webpack_require__(198) + "#iefix) format(\"embedded-opentype\"), url(" + __webpack_require__(522) + ") format(\"woff2\"), url(" + __webpack_require__(523) + ") format(\"woff\"), url(" + __webpack_require__(524) + ") format(\"truetype\"), url(" + __webpack_require__(525) + "#jukebox) format(\"svg\");\n  font-weight: normal;\n  font-style: normal; }\n\n/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */\n/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */\n/*\n@media screen and (-webkit-min-device-pixel-ratio:0) {\n  @font-face {\n    font-family: 'jukebox';\n    src: url('../font/jukebox.svg?1503957#jukebox') format('svg');\n  }\n}\n*/\n[class^=\"jukebox-\"]:before, [class*=\" jukebox-\"]:before {\n  font-family: \"jukebox\";\n  font-style: normal;\n  font-weight: normal;\n  speak: none;\n  display: inline-block;\n  text-decoration: inherit;\n  width: 1em;\n  margin-right: .2em;\n  text-align: center;\n  /* opacity: .8; */\n  /* For safety - reset parent styles, that can break glyph codes*/\n  font-variant: normal;\n  text-transform: none;\n  /* fix buttons height, for twitter bootstrap */\n  line-height: 1em;\n  /* Animation center compensation - margins should be symmetric */\n  /* remove if not needed */\n  margin-left: .2em;\n  /* you can be more comfortable with increased icons size */\n  /* font-size: 120%; */\n  /* Font smoothing. That was taken from TWBS */\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  /* Uncomment for 3D effect */\n  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */ }\n\n.jukebox-ok:before {\n  content: '\\E800'; }\n\n/* '' */\n.jukebox-cancel:before {\n  content: '\\E801'; }\n\n/* '' */\n.notification {\n  background: #7fd48a;\n  height: 40px;\n  position: fixed;\n  width: 100%; }\n\n.notification--show {\n  bottom: 0;\n  -moz-transition: bottom 0.1s ease-in-out;\n  -webkit-transition: bottom 0.1s ease-in-out;\n  transition: bottom 0.1s ease-in-out;\n  z-index: 10; }\n\n.notification__text {\n  color: #fff;\n  font-size: 14px;\n  line-height: 40px;\n  margin: 0 auto;\n  padding-left: 10px;\n  text-align: left;\n  width: 320px; }\n\nhtml,\nbody {\n  font-family: 'Work Sans', sans-serif;\n  margin: 0; }\n\n* {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box; }\n", ""]);
+exports.push([module.i, "@charset \"UTF-8\";\n.loader-container {\n  background: #fef394;\n  height: 100vh;\n  width: 100%; }\n\n.loader {\n  left: 50%;\n  position: absolute;\n  top: 50%;\n  -webkit-transform: translate(-50%, -50%);\n  transform: translate(-50%, -50%); }\n\n.dot {\n  -webkit-animation: fx 1000ms ease infinite 0ms;\n  animation: fx 1000ms ease infinite 0ms;\n  border: 2px solid #ef9783;\n  border-radius: 50%;\n  height: 10px;\n  float: left;\n  margin: 0 5px;\n  -webkit-transform: scale(0);\n  transform: scale(0);\n  width: 10px; }\n\n.dot:nth-child(2) {\n  -webkit-animation: fx 1000ms ease infinite 300ms;\n  animation: fx 1000ms ease infinite 300ms; }\n\n.dot:nth-child(3) {\n  -webkit-animation: fx 1000ms ease infinite 600ms;\n  animation: fx 1000ms ease infinite 600ms; }\n\n@-webkit-keyframes fx {\n  50% {\n    -webkit-transform: scale(1);\n    transform: scale(1);\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes fx {\n  50% {\n    -webkit-transform: scale(1);\n    transform: scale(1);\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n.info__modal {\n  background-color: #fff;\n  display: none;\n  height: 100%;\n  left: 0;\n  overflow: auto;\n  position: fixed;\n  top: 0;\n  width: 100%;\n  z-index: 2; }\n\n.info__modal--show {\n  display: block; }\n\n.info__modal__content {\n  padding: 10px 10px 0; }\n\n.info__modal__image {\n  padding-bottom: 30px;\n  text-align: center; }\n\n.info__modal__cross {\n  display: inline-block;\n  position: absolute;\n  right: 10px;\n  top: 10px; }\n\n.info__modal__top {\n  font-size: 20px;\n  margin: 0 auto;\n  max-width: 320px;\n  padding: 0 15px;\n  text-align: left; }\n\n.info__modal__top__list {\n  padding-left: 25px; }\n\n.info__modal__top h1 {\n  border-bottom: 1px solid #000;\n  font-size: 16px;\n  padding-bottom: 20px; }\n\n.info__modal__bottom {\n  background: #000;\n  text-align: center; }\n\n.info__modal__bottom img {\n  width: 320px; }\n\n.container {\n  height: 100%;\n  width: 100%; }\n\n.top {\n  background: #fef394;\n  overflow: hidden;\n  padding: 30px 0 20px;\n  position: relative; }\n\n.top--login {\n  height: 100vh; }\n\n.fixed-height {\n  height: 100vh;\n  overflow: hidden; }\n\n.content {\n  margin: 0 auto;\n  max-width: 320px;\n  padding: 0 15px; }\n\n.content--login {\n  align-items: center;\n  display: flex;\n  height: 100%;\n  justify-content: center; }\n\n.top__decoration {\n  background: #ef9783;\n  border-radius: 15px;\n  height: 50%;\n  position: absolute;\n  width: 10px; }\n\n.top__decoration--1 {\n  left: 20%;\n  top: -80px; }\n\n.top__decoration--2 {\n  right: 14%;\n  bottom: -70px;\n  -ms-transform: rotate(-10deg);\n  -webkit-transform: rotate(-10deg);\n  transform: rotate(-10deg); }\n\n.top__decoration--3 {\n  right: 2%;\n  bottom: -5px;\n  -ms-transform: rotate(-60deg);\n  -webkit-transform: rotate(-60deg);\n  transform: rotate(-60deg); }\n\n.bottom {\n  padding-bottom: 40px; }\n\n.title {\n  margin: 30px 0;\n  position: relative; }\n\n.title__text {\n  background: #fff;\n  color: #000;\n  display: inline-block;\n  margin: 0;\n  padding-right: 8px;\n  position: absolute;\n  top: 4px; }\n\n.title__line {\n  background: #000;\n  display: inline-block;\n  width: 100%;\n  height: 1px; }\n\n.track {\n  width: 100%; }\n\n.track__image {\n  display: inline-block;\n  height: 70px;\n  margin-right: 10px;\n  width: 70px; }\n\n.track__details {\n  display: inline-block;\n  vertical-align: top;\n  width: 210px; }\n\n.track__details p {\n  margin: 0; }\n\n.track__marquee {\n  line-height: 20px;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%; }\n\n.track__marquee p {\n  display: inline-block;\n  padding-left: 100%;\n  animation: marquee 15s linear infinite; }\n\n@keyframes marquee {\n  0% {\n    transform: translate(0, 0); }\n  100% {\n    transform: translate(-100%, 0); } }\n\n.track__name {\n  font-size: 22px;\n  font-weight: bold;\n  padding-bottom: 1px; }\n\n.track__artist {\n  font-size: 16px;\n  padding-bottom: 8px; }\n\n.track__album {\n  color: grey;\n  font-size: 16px; }\n\n.track--in-list {\n  border-bottom: 1px solid grey;\n  padding: 10px 0; }\n\n.track--in-list:first-of-type {\n  padding-top: 0; }\n\n.track--in-list:last-of-type {\n  border: none; }\n\n.track--current {\n  padding-bottom: 20px; }\n\n.track__progress {\n  width: 100%; }\n\n.track__status {\n  position: relative; }\n\n.track__status__progress-bar {\n  background: black;\n  float: left;\n  height: 1px;\n  opacity: 0.5;\n  position: absolute;\n  top: 10px;\n  width: 75%; }\n\n.track__status__progress-bar--fill {\n  background: #ef9783;\n  border-radius: 10px;\n  height: 11px;\n  left: -1px;\n  opacity: 1;\n  top: 5px;\n  z-index: 1; }\n\n.track__status__time {\n  float: right;\n  font-weight: bold;\n  margin: 0; }\n\n.track__status__time span {\n  font-weight: normal; }\n\n.cross__svg {\n  border-radius: 50%;\n  float: right;\n  height: 40px;\n  stroke-width: 3; }\n\n.cross__path {\n  stroke: #ef9783;\n  stroke-dasharray: 48;\n  stroke-dashoffset: 48;\n  transform-origin: 50% 50% 0; }\n\n.cross__path--right {\n  animation: ease 0.8s normal forwards 1 running stroke; }\n\n.cross__path--left {\n  animation: ease 0.8s normal forwards 1 running stroke; }\n\n@keyframes stroke {\n  100% {\n    stroke-dashoffset: 0; } }\n\n.track {\n  align-items: center;\n  display: flex;\n  position: relative; }\n\n.track__remove {\n  align-items: center;\n  background: rgba(255, 255, 255, 0.5);\n  border: 0;\n  color: #808080;\n  cursor: pointer;\n  display: flex;\n  font-size: 16px;\n  height: 20px;\n  justify-content: center;\n  outline: none;\n  position: absolute;\n  right: 0;\n  width: 20px; }\n\n.input {\n  padding-bottom: 35px;\n  position: relative; }\n\n.input--login {\n  padding: 0; }\n\n.input__spotifyURI {\n  border: 0;\n  height: 50px;\n  outline: none;\n  padding: 0 10px;\n  width: 100%; }\n\n.input__button {\n  background: #ef9783;\n  border-radius: 20px;\n  border-style: none;\n  cursor: pointer;\n  font-weight: bold;\n  font-size: 16px;\n  margin: 15px 0 0;\n  outline: none;\n  padding: 12px 20px; }\n\n.input__button:hover {\n  text-decoration: underline; }\n\n.input__button--login {\n  color: black;\n  margin: 0;\n  text-decoration: none; }\n\n.input__button--disabled {\n  opacity: 0.4;\n  cursor: auto; }\n\n.input__button--disabled:hover {\n  text-decoration: none; }\n\n.input__button--play {\n  text-align: center; }\n\n.info__text {\n  border: none;\n  background: none;\n  cursor: pointer;\n  font-size: 12px;\n  margin: 0;\n  outline: none;\n  padding: 0;\n  text-decoration: underline; }\n\n.input__field {\n  position: relative; }\n\n.input__tick {\n  color: #7fd48a;\n  display: none; }\n\n.input__cancel {\n  color: #ef9783;\n  display: none; }\n\n.input__tick--show,\n.input__cancel--show {\n  display: block; }\n\n.input__tick,\n.input__cancel {\n  position: absolute;\n  right: 15px;\n  top: 33%; }\n\n@font-face {\n  font-family: 'jukebox';\n  src: url(" + __webpack_require__(198) + ");\n  src: url(" + __webpack_require__(198) + "#iefix) format(\"embedded-opentype\"), url(" + __webpack_require__(520) + ") format(\"woff2\"), url(" + __webpack_require__(521) + ") format(\"woff\"), url(" + __webpack_require__(522) + ") format(\"truetype\"), url(" + __webpack_require__(523) + "#jukebox) format(\"svg\");\n  font-weight: normal;\n  font-style: normal; }\n\n/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */\n/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */\n/*\n@media screen and (-webkit-min-device-pixel-ratio:0) {\n  @font-face {\n    font-family: 'jukebox';\n    src: url('../font/jukebox.svg?1503957#jukebox') format('svg');\n  }\n}\n*/\n[class^=\"jukebox-\"]:before, [class*=\" jukebox-\"]:before {\n  font-family: \"jukebox\";\n  font-style: normal;\n  font-weight: normal;\n  speak: none;\n  display: inline-block;\n  text-decoration: inherit;\n  width: 1em;\n  margin-right: .2em;\n  text-align: center;\n  /* opacity: .8; */\n  /* For safety - reset parent styles, that can break glyph codes*/\n  font-variant: normal;\n  text-transform: none;\n  /* fix buttons height, for twitter bootstrap */\n  line-height: 1em;\n  /* Animation center compensation - margins should be symmetric */\n  /* remove if not needed */\n  margin-left: .2em;\n  /* you can be more comfortable with increased icons size */\n  /* font-size: 120%; */\n  /* Font smoothing. That was taken from TWBS */\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  /* Uncomment for 3D effect */\n  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */ }\n\n.jukebox-ok:before {\n  content: '\\E800'; }\n\n/* '' */\n.jukebox-cancel:before {\n  content: '\\E801'; }\n\n/* '' */\n.notification {\n  background: #7fd48a;\n  height: 40px;\n  position: fixed;\n  width: 100%; }\n\n.notification--show {\n  bottom: 0;\n  -moz-transition: bottom 0.1s ease-in-out;\n  -webkit-transition: bottom 0.1s ease-in-out;\n  transition: bottom 0.1s ease-in-out;\n  z-index: 10; }\n\n.notification__text {\n  color: #fff;\n  font-size: 14px;\n  line-height: 40px;\n  margin: 0 auto;\n  padding-left: 10px;\n  text-align: left;\n  width: 320px; }\n\nhtml,\nbody {\n  font-family: 'Work Sans', sans-serif;\n  margin: 0; }\n\n* {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box; }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 521 */
+/* 519 */
 /***/ (function(module, exports) {
 
 /*
@@ -50565,31 +50541,31 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 522 */
+/* 520 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "/name=/fonts/jukebox.woff2";
 
 /***/ }),
-/* 523 */
+/* 521 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "/name=/fonts/jukebox.woff";
 
 /***/ }),
-/* 524 */
+/* 522 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "/name=/fonts/jukebox.ttf";
 
 /***/ }),
-/* 525 */
+/* 523 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "/images/jukebox.svg";
 
 /***/ }),
-/* 526 */
+/* 524 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -50645,7 +50621,7 @@ var singleton = null;
 var	singletonCounter = 0;
 var	stylesInsertedAtTop = [];
 
-var	fixUrls = __webpack_require__(527);
+var	fixUrls = __webpack_require__(525);
 
 module.exports = function(list, options) {
 	if (typeof DEBUG !== "undefined" && DEBUG) {
@@ -50961,7 +50937,7 @@ function updateLink (link, options, obj) {
 
 
 /***/ }),
-/* 527 */
+/* 525 */
 /***/ (function(module, exports) {
 
 
@@ -51056,7 +51032,7 @@ module.exports = function (css) {
 
 
 /***/ }),
-/* 528 */
+/* 526 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51146,12 +51122,6 @@ function reduce() {
       return state;
   }
 }
-
-/***/ }),
-/* 529 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__.p + "/images/instruction.png";
 
 /***/ })
 /******/ ]);

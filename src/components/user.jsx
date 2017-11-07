@@ -13,10 +13,6 @@ import InputUri from './atoms/input-uri';
 import Modal from './atoms/modal';
 import Notification from './atoms/notification';
 
-import firstInstruction from '../images/first.png';
-import secondInstruction from '../images/second.png';
-import thirdInstruction from '../images/third.png';
-
 const socket = io();
 
 class User extends Component {
