@@ -64,15 +64,15 @@ io.on('connection', (socket) => {
       })
         .catch(err => console.log(err))
     }, 1000)
-    socket.broadcast.emit('tokens', {
-      token,
-      refresh,
-    });
     axios.get(`https://api.spotify.com/v1/users/${process.env.SPOTIFY_USER_NAME}/playlists/${process.env.SPOTIFY_PLAYLIST_ID}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       }
     }).then(({ data }) => {
+      io.sockets.emit('tokens', {
+        token,
+        refresh,
+      });
       tracks = data.tracks.items.map((item) => {
         return {
           artist: item.track.artists[0].name,

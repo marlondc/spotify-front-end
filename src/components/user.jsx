@@ -24,7 +24,8 @@ class User extends Component {
       notification: {
         type: '',
         text: '',
-      }
+      },
+      validAccessToken: false,
     }
 
     this.props.updateId(uuid());
@@ -41,15 +42,14 @@ class User extends Component {
       token: accessToken,
       refresh: refreshToken,
     });
-
-    socket.on('bad_token', () => {
-      socket.emit('get_playlist', accessToken);
-    })
     
     socket.on('tokens', ({ token, refresh }) => {
       this.props.refreshTokens({
         accessToken: token,
         refreshToken: refresh,
+      });
+      this.setState({
+        validAccessToken: true,
       })
     })
     
@@ -63,7 +63,9 @@ class User extends Component {
     })
 
     socket.on('token_error', (data) => {
-      this.props.clearInvalidTokens();
+      this.setState({
+        validAccessToken: false,
+      });
     })
 
     socket.on('current_song', (song) => {
@@ -122,7 +124,8 @@ class User extends Component {
     } = this.props;
 
     const {
-      notification
+      notification,
+      validAccessToken,
     } = this.state;
 
     if (this.state.loading) {
@@ -132,53 +135,57 @@ class User extends Component {
     }
 
     return (
-      <div className="container">
-        <div className="top">
-          <div className="content">
-            <TopDecoration />
-            <InputUri accessToken={accessToken} addToPlaylist={this.addTrack}/>
-            <Modal />
-          </div>
-        </div>
-        <div className="bottom">
-          <div className="content">
-            <TitleDivider titleText="Currently playing" />
-              {
-                currentTrack
+      validAccessToken
+        ? (
+          <div className="container">
+            <div className="top">
+              <div className="content">
+                <TopDecoration />
+                <InputUri accessToken={accessToken} addToPlaylist={this.addTrack}/>
+                <Modal />
+              </div>
+            </div>
+            <div className="bottom">
+              <div className="content">
+                <TitleDivider titleText="Currently playing" />
+                  {
+                    currentTrack
+                      ? <div>
+                        <div className="track track--current">
+                          <Track track={currentTrack} />
+                        </div>
+                        {
+                          currentTrack.isPlaying
+                            ? <TrackStatus track={currentTrack} />
+                            : <StartButton clickHandler={this.handleStartPlayback} />
+                        }
+                      </div>
+                      : <div>
+                        <p className="track__name">No currently playing track</p>
+                        <StartButton clickHandler={this.handleStartPlayback} />
+                      </div>
+                  }
+                {
+                  tracks.length > 0
                   ? <div>
-                    <div className="track track--current">
-                      <Track track={currentTrack} />
-                    </div>
+                    <TitleDivider titleText="Up next" />
                     {
-                      currentTrack.isPlaying
-                        ? <TrackStatus track={currentTrack} />
-                        : <StartButton clickHandler={this.handleStartPlayback} />
+                      tracks.map(track => (
+                        <div className="track track--in-list" key={track.id}>
+                          <Track track={track} id={this.props.id} handleRemove={this.handleRemove} />
+                        </div>
+                      ))
                     }
                   </div>
-                  : <div>
-                    <p className="track__name">No currently playing track</p>
-                    <StartButton clickHandler={this.handleStartPlayback} />
-                  </div>
-              }
-            {
-              tracks.length > 0
-              ? <div>
-                <TitleDivider titleText="Up next" />
-                {
-                  tracks.map(track => (
-                    <div className="track track--in-list" key={track.id}>
-                      <Track track={track} id={this.props.id} handleRemove={this.handleRemove} />
-                    </div>
-                  ))
+                    : null
                 }
               </div>
-                : null
-            }
+            </div>
+            <Notification type={notification.type} text={notification.text} />
           </div>
-        </div>
-        <Notification type={notification.type} text={notification.text} />
-      </div>
-    );
+        )
+        : null
+    )
   }
 }
 

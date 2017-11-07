@@ -45006,7 +45006,8 @@ var User = function (_Component) {
       notification: {
         type: '',
         text: ''
-      }
+      },
+      validAccessToken: false
     };
 
     _this.props.updateId((0, _uuid2.default)());
@@ -45033,10 +45034,6 @@ var User = function (_Component) {
         refresh: refreshToken
       });
 
-      socket.on('bad_token', function () {
-        socket.emit('get_playlist', accessToken);
-      });
-
       socket.on('tokens', function (_ref) {
         var token = _ref.token,
             refresh = _ref.refresh;
@@ -45044,6 +45041,9 @@ var User = function (_Component) {
         _this2.props.refreshTokens({
           accessToken: token,
           refreshToken: refresh
+        });
+        _this2.setState({
+          validAccessToken: true
         });
       });
 
@@ -45057,7 +45057,9 @@ var User = function (_Component) {
       });
 
       socket.on('token_error', function (data) {
-        _this2.props.clearInvalidTokens();
+        _this2.setState({
+          validAccessToken: false
+        });
       });
 
       socket.on('current_song', function (song) {
@@ -45120,14 +45122,16 @@ var User = function (_Component) {
           accessToken = _props2.accessToken,
           currentTrack = _props2.currentTrack,
           tracks = _props2.tracks;
-      var notification = this.state.notification;
+      var _state = this.state,
+          notification = _state.notification,
+          validAccessToken = _state.validAccessToken;
 
 
       if (this.state.loading) {
         return _react2.default.createElement(_loader2.default, null);
       }
 
-      return _react2.default.createElement(
+      return validAccessToken ? _react2.default.createElement(
         'div',
         { className: 'container' },
         _react2.default.createElement(
@@ -45182,7 +45186,7 @@ var User = function (_Component) {
           )
         ),
         _react2.default.createElement(_notification2.default, { type: notification.type, text: notification.text })
-      );
+      ) : null;
     }
   }]);
 
