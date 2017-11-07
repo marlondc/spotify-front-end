@@ -45021,9 +45021,11 @@ var User = function (_Component) {
 
       socket.on('playlist_tracks', function (tracks) {
         _this2.props.updatePlaylist(tracks);
-        _this2.setState({
-          loading: false
-        });
+        setTimeout(function () {
+          _this2.setState({
+            loading: false
+          });
+        }, 1500);
       });
 
       socket.on('token_error', function (data) {
