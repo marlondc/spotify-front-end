@@ -12371,7 +12371,7 @@ var getTokens = exports.getTokens = function getTokens() {
     dispatch({
       type: REQUEST_TOKENS
     });
-    _axios2.default.get("http://localhost:8000" + '/tokens').then(function (response) {
+    _axios2.default.get("http://mdc-jukebox.herokuapp.com" + '/tokens').then(function (response) {
       dispatch({
         type: RECEIVE_TOKENS,
         data: response.data
@@ -49094,7 +49094,7 @@ var Login = function Login(props) {
           { className: "input input--login" },
           _react2.default.createElement(
             "a",
-            { className: "input__button input__button--login", href: "http://localhost:8000" + "/login", onClick: function onClick() {
+            { className: "input__button input__button--login", href: "http://mdc-jukebox.herokuapp.com" + "/login", onClick: function onClick() {
                 return props.login();
               } },
             "LOGIN"
