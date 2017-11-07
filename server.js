@@ -63,30 +63,34 @@ io.on('connection', (socket) => {
       })
         .catch(err => console.log(err))
     }, 1000)
-    axios.get(`https://api.spotify.com/v1/users/${process.env.SPOTIFY_USER_NAME}/playlists/${process.env.SPOTIFY_PLAYLIST_ID}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    }).then(({ data }) => {
-      io.sockets.emit('tokens', {
-        token,
-        refresh,
-      });
-      tracks = data.tracks.items.map((item) => {
-        return {
-          artist: item.track.artists[0].name,
-          album: item.track.album.name,
-          id: item.track.id,
-          image: item.track.album.images[0].url,
-          name: item.track.name,
-          addedBy: '',
+    if (tracks.length === 0) {
+      axios.get(`https://api.spotify.com/v1/users/${process.env.SPOTIFY_USER_NAME}/playlists/${process.env.SPOTIFY_PLAYLIST_ID}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         }
+      }).then(({ data }) => {
+        io.sockets.emit('tokens', {
+          token,
+          refresh,
+        });
+        tracks = data.tracks.items.map((item) => {
+          return {
+            artist: item.track.artists[0].name,
+            album: item.track.album.name,
+            id: item.track.id,
+            image: item.track.album.images[0].url,
+            name: item.track.name,
+            addedBy: '',
+          }
+        });
+        io.sockets.emit('playlist_tracks', tracks);
+      }).catch((err) => {
+        console.log(err, 'token error');
+        io.sockets.emit('token_error', 'bad_token');
       });
+    } else {
       io.sockets.emit('playlist_tracks', tracks);
-    }).catch((err) => {
-      console.log(err, 'token error');
-      io.sockets.emit('token_error', 'bad_token');
-    });
+    }
   })
 
   socket.on('add_track', ({ spotifyUri, id, token }) => {
