@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 
-import instructionImage from '../../images/instruction.png';
+import instructionImage from '../../images/screen4.jpg';
 
 class Modal extends Component {
   constructor() {
@@ -42,7 +42,7 @@ class Modal extends Component {
             </div>     
           </div>
           <div className="info__modal__top">
-            <h1>HOW DO I FIND A SPOTIFY URL?</h1>
+            <h1>HOW DO I FIND A SPOTIFY SONG LINK?</h1>
             <ol className="info__modal__top__list">
               <li className="info__modal__top__list-item">
                 <p>Hover over a track and click the three dots <br /> (see image below)</p>
@@ -51,7 +51,7 @@ class Modal extends Component {
                 <p>Click <strong>Share ></strong></p>
               </li>
               <li className="info__modal__top__list-item">
-                <p>Click <strong>Spotify Share Link</strong></p>
+                <p>Click <strong>Copy Song Link</strong></p>
               </li>
             </ol>
           </div>
