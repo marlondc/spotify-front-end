@@ -28,37 +28,42 @@ app.get('*', (req, res) => {
 let tracks = [];
 let accessToken;
 let refreshToken;
+polling = false;
 
 io.on('connection', (socket) => {
-  socket.on('get_playlist', ({ token, refresh }) => {
+  socket.on('get_playlist', ({ token, refresh, id }) => {
     accessToken = token;
     refreshToken = refresh;
-    setInterval(() => {
-      axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        }
-      }).then(({ data }) => {
-        const { item } = data;
-        track = tracks.filter((track) => track.id === item.id);
-        const addedBy = track[0]
-          ? track[0].addedBy
-          : ''
-        const song = {
-          album: item.album.name,
-          artist: item.artists[0].name,
-          duration: item.duration_ms,
-          id: item.id,
-          image: item.album.images[0].url,
-          isPlaying: data.is_playing,
-          name: item.name,
-          progress: data.progress_ms,
-          addedBy,
-        }
-        io.sockets.emit('current_song', song);
-      })
-        .catch(err => console.log(err))
-    }, 1000)
+    if (!polling) {
+      polling = true;
+      setInterval(() => {
+        console.log(id)
+        axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          }
+        }).then(({ data }) => {
+          const { item } = data;
+          track = tracks.filter((track) => track.id === item.id);
+          const addedBy = track[0]
+            ? track[0].addedBy
+            : ''
+          const song = {
+            album: item.album.name,
+            artist: item.artists[0].name,
+            duration: item.duration_ms,
+            id: item.id,
+            image: item.album.images[0].url,
+            isPlaying: data.is_playing,
+            name: item.name,
+            progress: data.progress_ms,
+            addedBy,
+          }
+          io.sockets.emit('current_song', song);
+        })
+          .catch(err => console.log(err))
+      }, 4000)
+    }
       axios.get(`https://api.spotify.com/v1/users/${process.env.SPOTIFY_USER_NAME}/playlists/${process.env.SPOTIFY_PLAYLIST_ID}`, {
         headers: {
           Authorization: `Bearer ${token}`,

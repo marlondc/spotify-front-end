@@ -36902,7 +36902,6 @@ var mapStateToProps = function mapStateToProps(_ref) {
   var displayPlaylistTracks = (0, _ramda.filter)(function (track) {
     return displayCurrentTrack.position < track.position;
   }, indexedTracks);
-
   return _extends({}, songs, {
     currentTrack: displayCurrentTrack,
     tracks: (0, _ramda.isEmpty)(displayPlaylistTracks) && !displayCurrentTrack ? songs.tracks : displayPlaylistTracks
@@ -45077,10 +45076,10 @@ var User = function (_Component) {
           refreshToken = _props.refreshToken,
           id = _props.id;
 
-
       socket.emit('get_playlist', {
         token: accessToken,
-        refresh: refreshToken
+        refresh: refreshToken,
+        id: (0, _uuid2.default)()
       });
 
       socket.on('playlist_tracks', function (tracks) {
@@ -45100,7 +45099,6 @@ var User = function (_Component) {
       });
 
       socket.on('current_song', function (song) {
-        console.log(song);
         _this2.props.updateCurrentSong(song);
       });
 
@@ -51158,6 +51156,7 @@ function reduce() {
     case _songs.UPDATE_ID:
       {
         var id = action.id;
+
 
         return _extends({}, state, {
           id: id

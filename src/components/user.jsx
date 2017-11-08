@@ -38,10 +38,10 @@ class User extends Component {
 
   componentWillMount() {
     const { accessToken, refreshToken, id } = this.props;
-
     socket.emit('get_playlist', {
       token: accessToken,
       refresh: refreshToken,
+      id: uuid(),
     });
     
     socket.on('playlist_tracks', (tracks) => {

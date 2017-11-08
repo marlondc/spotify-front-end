@@ -32,7 +32,6 @@ const mapStateToProps = ({ songs }) => {
   const displayPlaylistTracks = filter((track) => (
     displayCurrentTrack.position < track.position
   ), indexedTracks)
-
   return {
     ...songs,
     currentTrack: displayCurrentTrack,

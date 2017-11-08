@@ -67,6 +67,7 @@ export default function reduce(state = initialState, action) {
 
   case UPDATE_ID: {
     const { id } = action;
+
     return {
       ...state,
       id,
