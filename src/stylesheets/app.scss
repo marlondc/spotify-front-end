@@ -1,37 +1,26 @@
 
 .info__modal {
-  -webkit-animation: fadeDownOut 1s;
-  animation: fadeDownOut 1s;
   background-color: #fff;
-  display: none;
-  overflow: auto;
+  bottom: 0;
+  height: 0;
   left: 0;
+  overflow: hidden;
   position: fixed;
-  top: 0;
+  transition: height 0.5s ease-in-out;
+  width: 100%;
   z-index: 2;
 }
 
 .info__modal--show {
   -webkit-animation: fadeUpIn 1s;
   animation: fadeUpIn 1s;
-  bottom: 0;
-  display: block;
   height: 100%;
-  overflow: hidden;
-  top: unset;
-  width: 100%;
 }
 
 @keyframes fadeUpIn /* Safari and Chrome */
 {
   from { height: 0; }
   to { height: 100%; }
-}
-
-@keyframes fadeDownOut /* Safari and Chrome */
-{
-  from { height: 100%; }
-  to { height: 0; }
 }
 
 .info__modal__content {
