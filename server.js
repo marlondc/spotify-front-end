@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
   socket.on('get_playlist', ({ token, refresh }) => {
     accessToken = token;
     refreshToken = refresh;
-    setInterval(() => {
+    setTimeout(() => {
       axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -91,7 +91,6 @@ io.on('connection', (socket) => {
           io.sockets.emit('playlist_tracks', tracks);
         }
       }).catch((err) => {
-        console.log(err, 'token error');
         io.sockets.emit('token_error', 'bad_token');
       });
   })
