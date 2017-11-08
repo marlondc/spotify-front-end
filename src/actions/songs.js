@@ -10,6 +10,7 @@ export const RECEIVE_PLAYLIST = 'RECEIVE_PLAYLIST';
 export const RECEIVE_TOKENS = 'RECEIVE_TOKENS';
 export const RECEIVE_TOKENS_ERROR = 'RECEIVE_TOKENS_ERROR';
 export const UPDATE_ID = 'UPDATE_ID';
+export const UPDATE_ACCESS_TOKEN = 'UPDATE_ACCESS_TOKEN';
 
 export const getTokens = () => (dispatch) => {
   dispatch({
@@ -52,4 +53,9 @@ export const updateCurrentSong = track => ({
 export const updateId = id => ({
   type: UPDATE_ID,
   id,
+})
+
+export const updateAccessToken = accessToken => ({
+  type: UPDATE_ACCESS_TOKEN,
+  accessToken,
 })

@@ -3,6 +3,7 @@ import { isNil } from 'ramda';
 
 import User from './user';
 import Login from './login';
+import Loader from './atoms/loader';
 
 class PageDisplay extends Component {
   componentWillMount() {
@@ -13,9 +14,12 @@ class PageDisplay extends Component {
     const {
       accessToken,
       refreshToken,
+      loading,
     } = this.props
+    
+    if (loading) return <Loader />
 
-    if (isNil(accessToken) && isNil(refreshToken)) return <Login {...this.props} />
+    if (isNil(accessToken) && isNil(refreshToken) && !loading) return <Login {...this.props} />
 
     return <User {...this.props} />
   }

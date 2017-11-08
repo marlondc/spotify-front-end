@@ -6,6 +6,7 @@ import {
   RECEIVE_TOKENS_ERROR,
   REQUEST_TOKENS,
   UPDATE_ID,
+  UPDATE_ACCESS_TOKEN,
 } from '../actions/songs';
 
 const initialState = {
@@ -14,6 +15,7 @@ const initialState = {
   tracks: [],
   currentTrack: {},
   id: '',
+  loading: true,
 };
 
 export default function reduce(state = initialState, action) {
@@ -68,6 +70,14 @@ export default function reduce(state = initialState, action) {
     return {
       ...state,
       id,
+    }
+  }
+
+  case UPDATE_ACCESS_TOKEN: {
+    const { accessToken } = action;
+    return {
+      ...state,
+      accessToken,
     }
   }
 

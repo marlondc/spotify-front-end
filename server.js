@@ -31,10 +31,6 @@ let refreshToken;
 
 io.on('connection', (socket) => {
   socket.on('get_playlist', ({ token, refresh }) => {
-    io.sockets.emit('tokens', {
-      token,
-      refresh,
-    });
     accessToken = token;
     refreshToken = refresh;
     setInterval(() => {
@@ -69,10 +65,6 @@ io.on('connection', (socket) => {
           Authorization: `Bearer ${token}`,
         }
       }).then(({ data }) => {
-        io.sockets.emit('tokens', {
-          token,
-          refresh,
-        });
         tracks = data.tracks.items.map((item) => {
           return {
             artist: item.track.artists[0].name,
@@ -188,6 +180,12 @@ io.on('connection', (socket) => {
       socket.broadcast.emit('token_error', 'start playback');
     })
   });
+
+  socket.on('refresh_token', (refreshToken) => {
+    axios.get('https://mdc-jukebox.herokuapp.com/refresh')
+      .then(({ data }) => io.sockets.emit('new_access_token', data))
+      .catch((err) => io.sockets.emit('token_error', 'refresh error'));
+  })
 });
 
 http.listen(PORT, () => {

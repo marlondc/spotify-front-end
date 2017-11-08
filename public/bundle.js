@@ -12343,7 +12343,7 @@ module.exports = bytesToUuid;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateId = exports.updateCurrentSong = exports.refreshTokens = exports.clearInvalidTokens = exports.updatePlaylist = exports.getTokens = exports.UPDATE_ID = exports.RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS = exports.RECEIVE_PLAYLIST = exports.RECEIVE_CURRENT_TRACK = exports.REQUEST_TOKENS = exports.BAD_TOKEN = undefined;
+exports.updateAccessToken = exports.updateId = exports.updateCurrentSong = exports.refreshTokens = exports.clearInvalidTokens = exports.updatePlaylist = exports.getTokens = exports.UPDATE_ACCESS_TOKEN = exports.UPDATE_ID = exports.RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS = exports.RECEIVE_PLAYLIST = exports.RECEIVE_CURRENT_TRACK = exports.REQUEST_TOKENS = exports.BAD_TOKEN = undefined;
 
 var _axios = __webpack_require__(495);
 
@@ -12365,6 +12365,7 @@ var RECEIVE_PLAYLIST = exports.RECEIVE_PLAYLIST = 'RECEIVE_PLAYLIST';
 var RECEIVE_TOKENS = exports.RECEIVE_TOKENS = 'RECEIVE_TOKENS';
 var RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS_ERROR = 'RECEIVE_TOKENS_ERROR';
 var UPDATE_ID = exports.UPDATE_ID = 'UPDATE_ID';
+var UPDATE_ACCESS_TOKEN = exports.UPDATE_ACCESS_TOKEN = 'UPDATE_ACCESS_TOKEN';
 
 var getTokens = exports.getTokens = function getTokens() {
   return function (dispatch) {
@@ -12415,6 +12416,13 @@ var updateId = exports.updateId = function updateId(id) {
   return {
     type: UPDATE_ID,
     id: id
+  };
+};
+
+var updateAccessToken = exports.updateAccessToken = function updateAccessToken(accessToken) {
+  return {
+    type: UPDATE_ACCESS_TOKEN,
+    accessToken: accessToken
   };
 };
 
@@ -44877,6 +44885,10 @@ var _login = __webpack_require__(494);
 
 var _login2 = _interopRequireDefault(_login);
 
+var _loader = __webpack_require__(484);
+
+var _loader2 = _interopRequireDefault(_loader);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -44904,10 +44916,13 @@ var PageDisplay = function (_Component) {
     value: function render() {
       var _props = this.props,
           accessToken = _props.accessToken,
-          refreshToken = _props.refreshToken;
+          refreshToken = _props.refreshToken,
+          loading = _props.loading;
 
 
-      if ((0, _ramda.isNil)(accessToken) && (0, _ramda.isNil)(refreshToken)) return _react2.default.createElement(_login2.default, this.props);
+      if (loading) return _react2.default.createElement(_loader2.default, null);
+
+      if ((0, _ramda.isNil)(accessToken) && (0, _ramda.isNil)(refreshToken) && !loading) return _react2.default.createElement(_login2.default, this.props);
 
       return _react2.default.createElement(_user2.default, this.props);
     }
@@ -45015,6 +45030,7 @@ var User = function (_Component) {
     _this.addTrack = _this.addTrack.bind(_this);
     _this.handleRemove = _this.handleRemove.bind(_this);
     _this.handleStartPlayback = _this.handleStartPlayback.bind(_this);
+    _this.handleRefreshToken = _this.handleRefreshToken.bind(_this);
     return _this;
   }
 
@@ -45034,24 +45050,12 @@ var User = function (_Component) {
         refresh: refreshToken
       });
 
-      socket.on('tokens', function (_ref) {
-        var token = _ref.token,
-            refresh = _ref.refresh;
-
-        _this2.props.refreshTokens({
-          accessToken: token,
-          refreshToken: refresh
-        });
-        _this2.setState({
-          validAccessToken: true
-        });
-      });
-
       socket.on('playlist_tracks', function (tracks) {
         _this2.props.updatePlaylist(tracks);
         setTimeout(function () {
           _this2.setState({
-            loading: false
+            loading: false,
+            validAccessToken: true
           });
         }, 1500);
       });
@@ -45066,9 +45070,9 @@ var User = function (_Component) {
         _this2.props.updateCurrentSong(song);
       });
 
-      socket.on('notification', function (_ref2) {
-        var type = _ref2.type,
-            text = _ref2.text;
+      socket.on('notification', function (_ref) {
+        var type = _ref.type,
+            text = _ref.text;
 
         _this2.setState({
           notification: {
@@ -45084,6 +45088,12 @@ var User = function (_Component) {
             }
           });
         }, 2000);
+      });
+
+      socket.on('new_access_token', function (_ref2) {
+        var access_token = _ref2.access_token;
+
+        _this2.props.updateAccessToken(access_token);
       });
     }
   }, {
@@ -45112,6 +45122,13 @@ var User = function (_Component) {
         token: this.props.accessToken,
         position: playPosition
       });
+    }
+  }, {
+    key: 'handleRefreshToken',
+    value: function handleRefreshToken() {
+      var refreshToken = this.props.refreshToken;
+
+      socket.emit('refresh_token', refreshToken);
     }
   }, {
     key: 'render',
@@ -45186,7 +45203,30 @@ var User = function (_Component) {
           )
         ),
         _react2.default.createElement(_notification2.default, { type: notification.type, text: notification.text })
-      ) : null;
+      ) : _react2.default.createElement(
+        'div',
+        { className: 'container' },
+        _react2.default.createElement(
+          'div',
+          { className: 'top top--login' },
+          _react2.default.createElement(
+            'div',
+            { className: 'content content--login' },
+            _react2.default.createElement(
+              'div',
+              { className: 'input input--login' },
+              _react2.default.createElement(
+                'button',
+                {
+                  onClick: this.handleRefreshToken,
+                  className: 'input__button input__button--login'
+                },
+                'REFRESH'
+              )
+            )
+          )
+        )
+      );
     }
   }]);
 
@@ -51057,7 +51097,8 @@ var initialState = {
   refreshToken: null,
   tracks: [],
   currentTrack: {},
-  id: ''
+  id: '',
+  loading: true
 };
 
 function reduce() {
@@ -51119,6 +51160,15 @@ function reduce() {
 
         return _extends({}, state, {
           id: id
+        });
+      }
+
+    case _songs.UPDATE_ACCESS_TOKEN:
+      {
+        var _accessToken = action.accessToken;
+
+        return _extends({}, state, {
+          accessToken: _accessToken
         });
       }
 

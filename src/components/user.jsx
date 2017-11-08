@@ -33,6 +33,7 @@ class User extends Component {
     this.addTrack = this.addTrack.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
     this.handleStartPlayback = this.handleStartPlayback.bind(this);
+    this.handleRefreshToken = this.handleRefreshToken.bind(this);
   }
 
   componentWillMount() {
@@ -43,21 +44,12 @@ class User extends Component {
       refresh: refreshToken,
     });
     
-    socket.on('tokens', ({ token, refresh }) => {
-      this.props.refreshTokens({
-        accessToken: token,
-        refreshToken: refresh,
-      });
-      this.setState({
-        validAccessToken: true,
-      })
-    })
-    
     socket.on('playlist_tracks', (tracks) => {
       this.props.updatePlaylist(tracks)
       setTimeout(() => {
         this.setState({
           loading: false,
+          validAccessToken: true,
         })
       }, 1500);
     })
@@ -88,6 +80,10 @@ class User extends Component {
         })
       }, 2000);
     })
+
+    socket.on('new_access_token', ({ access_token }) => {
+      this.props.updateAccessToken(access_token);
+    })
   }
 
   addTrack(spotifyUri) {
@@ -114,6 +110,11 @@ class User extends Component {
       token: this.props.accessToken,
       position: playPosition,
     });
+  }
+
+  handleRefreshToken() {
+    const { refreshToken } = this.props;
+    socket.emit('refresh_token', refreshToken)
   }
 
   render() {
@@ -184,7 +185,20 @@ class User extends Component {
             <Notification type={notification.type} text={notification.text} />
           </div>
         )
-        : null
+        : <div className="container">
+          <div className="top top--login">
+            <div className="content content--login">
+              <div className="input input--login">
+                <button
+                  onClick={this.handleRefreshToken}
+                  className="input__button input__button--login"
+                >
+                  REFRESH
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
     )
   }
 }
