@@ -29,7 +29,7 @@ class Modal extends Component {
     return (
       <div>
         <div className="info">
-          <button onClick={this.handleModal} className="info__text">How do I find a Spotify URI?</button>
+          <button onClick={this.handleModal} className="info__text">How do I find a Spotify Song Link?</button>
         </div>
         <div className={classnames('info__modal', { 'info__modal--show': showModal })}>
           <div className="info__modal__content">
@@ -44,15 +44,24 @@ class Modal extends Component {
           <div className="info__modal__top">
             <h1>HOW DO I FIND A SPOTIFY SONG LINK?</h1>
             <ol className="info__modal__top__list">
-              <li className="info__modal__top__list-item">
-                <p>Hover over a track and click the three dots <br /> (see image below)</p>
-              </li>
-              <li className="info__modal__top__list-item">
+              <div className="info__modal__top__list-item">
+                <p className="info__modal__top__list-item__number">1.</p>
+                <li className="info__modal__top__list-item__text">
+                  <p>Hover over a track and click the three dots <br /> (see image below)</p>
+                </li>
+              </div>
+              <div className="info__modal__top__list-item">
+                <p className="info__modal__top__list-item__number">2.</p>
+                <li className="info__modal__top__list-item__text">
                 <p>Click <strong>Share ></strong></p>
-              </li>
-              <li className="info__modal__top__list-item">
+                </li>
+              </div>
+              <div className="info__modal__top__list-item">
+                <p className="info__modal__top__list-item__number">3.</p>
+                <li className="info__modal__top__list-item__text">
                 <p>Click <strong>Copy Song Link</strong></p>
-              </li>
+                </li>
+              </div>
             </ol>
           </div>
           <div className="info__modal__bottom">
