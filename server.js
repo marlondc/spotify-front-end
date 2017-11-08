@@ -200,7 +200,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on('disconnect', () => {
-    if (io.sockets.clients().length === 0) {
+    if (io.engine.clientsCount === 0) {
       clearInterval(poll);
       polling = false;
     }
