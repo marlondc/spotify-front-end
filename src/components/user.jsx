@@ -61,7 +61,6 @@ class User extends Component {
     })
 
     socket.on('current_song', (song) => {
-      console.log(song);
       this.props.updateCurrentSong(song);
     })
 
