@@ -28,6 +28,7 @@ app.get('*', (req, res) => {
 let tracks = [];
 let accessToken;
 let refreshToken;
+let poll;
 polling = false;
 
 io.on('connection', (socket) => {
@@ -36,7 +37,7 @@ io.on('connection', (socket) => {
     refreshToken = refresh;
     if (!polling) {
       polling = true;
-      setInterval(() => {
+      poll = setInterval(() => {
         axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -186,8 +187,6 @@ io.on('connection', (socket) => {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       }
-    }).then(() => {
-      console.log('start_playback');
     }).catch((err) => {
       socket.emit('token_error', 'start playback');
       socket.broadcast.emit('token_error', 'start playback');
@@ -198,6 +197,13 @@ io.on('connection', (socket) => {
     axios.get('https://mdc-jukebox.herokuapp.com/refresh')
       .then(({ data }) => io.sockets.emit('new_access_token', data))
       .catch((err) => io.sockets.emit('token_error', 'refresh error'));
+  })
+
+  socket.on('disconnect', () => {
+    if (io.sockets.clients().length === 0) {
+      clearInterval(poll);
+      polling = false;
+    }
   })
 });
 
