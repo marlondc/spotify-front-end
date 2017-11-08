@@ -157,7 +157,7 @@ class User extends Component {
                         </div>
                         {
                           currentTrack.isPlaying
-                            ? null
+                            ? <TrackStatus track={currentTrack} />
                             : <StartButton clickHandler={this.handleStartPlayback} />
                         }
                       </div>
