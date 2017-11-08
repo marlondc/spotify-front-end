@@ -45100,6 +45100,7 @@ var User = function (_Component) {
       });
 
       socket.on('current_song', function (song) {
+        console.log(song);
         _this2.props.updateCurrentSong(song);
       });
 
