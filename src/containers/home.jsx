@@ -9,6 +9,7 @@ import {
   refreshTokens,
   updateCurrentSong,
   updateId,
+  updateAccessToken,
  } from '../actions/songs';
 
 const mapStateToProps = ({ songs }) => {
@@ -48,6 +49,7 @@ const mapDispatchToProps = dispatch => ({
   refreshTokens: data => dispatch(refreshTokens(data)),
   updateCurrentSong: song => dispatch(updateCurrentSong(song)),
   updateId: id => dispatch(updateId(id)),
+  updateAccessToken: token => dispatch(updateAccessToken(token))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Page);

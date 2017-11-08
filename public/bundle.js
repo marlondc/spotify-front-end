@@ -36927,6 +36927,9 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     },
     updateId: function updateId(id) {
       return dispatch((0, _songs.updateId)(id));
+    },
+    updateAccessToken: function updateAccessToken(token) {
+      return dispatch((0, _songs.updateAccessToken)(token));
     }
   };
 };
@@ -45092,7 +45095,8 @@ var User = function (_Component) {
 
       socket.on('token_error', function (data) {
         _this2.setState({
-          validAccessToken: false
+          validAccessToken: false,
+          loading: false
         });
       });
 

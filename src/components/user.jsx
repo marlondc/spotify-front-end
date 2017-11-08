@@ -56,6 +56,7 @@ class User extends Component {
     socket.on('token_error', (data) => {
       this.setState({
         validAccessToken: false,
+        loading: false,
       });
     })
 
