@@ -37,7 +37,6 @@ io.on('connection', (socket) => {
     if (!polling) {
       polling = true;
       setInterval(() => {
-        console.log(id)
         axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -62,7 +61,7 @@ io.on('connection', (socket) => {
           io.sockets.emit('current_song', song);
         })
           .catch(err => console.log(err))
-      }, 4000)
+      }, 2000)
     }
       axios.get(`https://api.spotify.com/v1/users/${process.env.SPOTIFY_USER_NAME}/playlists/${process.env.SPOTIFY_PLAYLIST_ID}`, {
         headers: {
