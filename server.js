@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
   socket.on('get_playlist', ({ token, refresh }) => {
     accessToken = token;
     refreshToken = refresh;
-    setInterval(() => {
+    setTimeout(() => {
       axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -59,13 +59,12 @@ io.on('connection', (socket) => {
       })
         .catch(err => console.log(err))
     }, 1000)
-    if (tracks.length === 0) {
       axios.get(`https://api.spotify.com/v1/users/${process.env.SPOTIFY_USER_NAME}/playlists/${process.env.SPOTIFY_PLAYLIST_ID}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         }
       }).then(({ data }) => {
-        tracks = data.tracks.items.map((item) => {
+        const spotifyTracks = data.tracks.items.map((item) => {
           return {
             artist: item.track.artists[0].name,
             album: item.track.album.name,
@@ -75,14 +74,26 @@ io.on('connection', (socket) => {
             addedBy: '',
           }
         });
-        io.sockets.emit('playlist_tracks', tracks);
+        if (tracks.length === 0) {
+          tracks = spotifyTracks
+          io.sockets.emit('playlist_tracks', tracks);
+        }
+        const spotifyTrackNames = spotifyTracks.map(track => track.name);
+        const currentTrackNames = tracks.map(track => track.name);
+        if (tracks.length === spotifyTracks.length) {
+          io.sockets.emit('playlist_tracks', tracks);
+        } else if (tracks.length > spotifyTracks.length) {
+          tracks = tracks.filter(track => spotifyTrackNames.indexOf(track.name) !== -1);
+          io.sockets.emit('playlist_tracks', tracks);
+        } else {
+          const newTracks = spotifyTracks.filter(track => currentTrackNames.indexOf(track.name) !== -1);
+          tracks = newTracks.map(track => tracks.push(newTrack));
+          io.sockets.emit('playlist_tracks', tracks);
+        }
       }).catch((err) => {
         console.log(err, 'token error');
         io.sockets.emit('token_error', 'bad_token');
       });
-    } else {
-      io.sockets.emit('playlist_tracks', tracks);
-    }
   })
 
   socket.on('add_track', ({ spotifyUri, id, token }) => {
@@ -105,7 +116,6 @@ io.on('connection', (socket) => {
           Accept: 'application/json'
         }
       }).then(({ data }) => {
-        console.log(id);
         tracks.push({
           artist: data.artists[0].name,
           album: data.album.name,
