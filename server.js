@@ -139,6 +139,61 @@ io.on('connection', (socket) => {
     });
   })
 
+  socket.on('add_track_and_start_playback', ({ spotifyUri, id, token }) => {
+    const spotifyRegex = /([a-z,A-Z,0-9]{22})$/;
+    const spotifyID = spotifyRegex.exec(spotifyUri)[1];
+    const query = qs.stringify({
+      uris: `spotify:track:${spotifyID}`,
+    })
+    axios(`https://api.spotify.com/v1/users/${process.env.SPOTIFY_USER_NAME}/playlists/${process.env.SPOTIFY_PLAYLIST_ID}/tracks?${query}`, {
+      method: 'post',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json'
+      },
+    }).then(() => {
+      axios(`https://api.spotify.com/v1/tracks/${spotifyID}`, {
+        method: 'get',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json'
+        }
+      }).then(({ data }) => {
+        tracks.push({
+          artist: data.artists[0].name,
+          album: data.album.name,
+          id: data.id,
+          image: data.album.images[0].url,
+          name: data.name,
+          addedBy: id,
+        })
+        io.sockets.emit('notification', {
+          type: 'added track',
+          text: data.name,
+        });
+        io.sockets.emit('playlist_tracks', tracks);
+        axios({
+          method: 'put',
+          url: 'https://api.spotify.com/v1/me/player/play',
+          data: {
+            context_uri: process.env.SPOTIFY_PLAYLIST_URI,
+            offset: {
+              position: tracks.length - 1,
+            }
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          }
+        }).catch((err) => {
+          io.sockets.emit('token_error', 'start_playback');
+        })
+      }).catch((err) => console.log(err));
+    }).catch((err) => {
+      socket.emit('token_error', 'add track');
+    });
+  })
+
   socket.on('remove_track', ({ trackId, userId, token }) => {
     const track = tracks.filter((track) => track.addedBy === userId);
     
@@ -171,26 +226,6 @@ io.on('connection', (socket) => {
         io.sockets.emit('token_error', 'delete track');
       });
     }
-  });
-
-  socket.on('start_playback', ({ token, position }) => {
-    axios({
-      method: 'put',
-      url: 'https://api.spotify.com/v1/me/player/play',
-      data: {
-        context_uri: process.env.SPOTIFY_PLAYLIST_URI,
-        offset: {
-          position,
-        }
-      },
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      }
-    }).catch((err) => {
-      socket.emit('token_error', 'start playback');
-      socket.broadcast.emit('token_error', 'start playback');
-    })
   });
 
   socket.on('refresh_token', (refreshToken) => {
