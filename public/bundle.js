@@ -36898,7 +36898,7 @@ var mapStateToProps = function mapStateToProps(_ref) {
     return track.id === currentTrack.id;
   });
 
-  var newCurrentTrack = currentTrack.isPlaying ? _extends({}, currentTrack, {
+  var newCurrentTrack = currentTrack.isPlaying && tracks.length !== 0 ? _extends({}, currentTrack, {
     position: filterIndexedTracks[0].position
   }) : false;
   var filteredPlaylistTracks = indexedTracks.filter(function (track) {
@@ -45002,6 +45002,10 @@ var _uuid2 = _interopRequireDefault(_uuid);
 
 var _ramda = __webpack_require__(27);
 
+var _axios = __webpack_require__(495);
+
+var _axios2 = _interopRequireDefault(_axios);
+
 var _loader = __webpack_require__(190);
 
 var _loader2 = _interopRequireDefault(_loader);
@@ -45070,6 +45074,7 @@ var User = function (_Component) {
     _this.addTrack = _this.addTrack.bind(_this);
     _this.handleRemove = _this.handleRemove.bind(_this);
     _this.handleRefreshToken = _this.handleRefreshToken.bind(_this);
+    _this.skipCurrentSong = _this.skipCurrentSong.bind(_this);
     return _this;
   }
 
@@ -45164,6 +45169,23 @@ var User = function (_Component) {
       });
     }
   }, {
+    key: 'skipCurrentSong',
+    value: function skipCurrentSong() {
+      var _this3 = this;
+
+      (0, _axios2.default)('https://api.spotify.com/v1/me/player/next', {
+        method: 'post',
+        headers: {
+          Authorization: 'Bearer ' + this.props.accessToken,
+          Accept: 'application/json'
+        }
+      }).catch(function () {
+        return _this3.setState({
+          validAccessToken: false
+        });
+      });
+    }
+  }, {
     key: 'handleRefreshToken',
     value: function handleRefreshToken() {
       var refreshToken = this.props.refreshToken;
@@ -45173,12 +45195,13 @@ var User = function (_Component) {
   }, {
     key: 'render',
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       var _props2 = this.props,
           accessToken = _props2.accessToken,
           currentTrack = _props2.currentTrack,
-          tracks = _props2.tracks;
+          tracks = _props2.tracks,
+          id = _props2.id;
       var _state = this.state,
           notification = _state.notification,
           validAccessToken = _state.validAccessToken;
@@ -45215,7 +45238,7 @@ var User = function (_Component) {
               _react2.default.createElement(
                 'div',
                 { className: 'track track--current' },
-                _react2.default.createElement(_track2.default, { track: currentTrack })
+                _react2.default.createElement(_track2.default, { track: currentTrack, id: (0, _ramda.isEmpty)(tracks) ? '' : id, handleRemove: (0, _ramda.isEmpty)(tracks) ? null : this.skipCurrentSong })
               ),
               currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : null
             ) : _react2.default.createElement(
@@ -45235,7 +45258,7 @@ var User = function (_Component) {
                 return _react2.default.createElement(
                   'div',
                   { className: 'track track--in-list', key: track.id },
-                  _react2.default.createElement(_track2.default, { track: track, id: _this3.props.id, handleRemove: _this3.handleRemove })
+                  _react2.default.createElement(_track2.default, { track: track, id: id, handleRemove: _this4.handleRemove })
                 );
               })
             ) : null

@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import io from 'socket.io-client';
 import uuid from 'uuid';
-import { isNil } from 'ramda';
+import { isNil, isEmpty } from 'ramda';
+import axios from 'axios';
 
 import Loader from './atoms/loader';
 import Track from './atoms/track';
@@ -34,6 +35,7 @@ class User extends Component {
     this.addTrack = this.addTrack.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
     this.handleRefreshToken = this.handleRefreshToken.bind(this);
+    this.skipCurrentSong = this.skipCurrentSong.bind(this);
   }
 
   componentWillMount() {
@@ -113,6 +115,20 @@ class User extends Component {
     }));
   }
 
+  skipCurrentSong() {
+    axios('https://api.spotify.com/v1/me/player/next', {
+      method: 'post',
+      headers: {
+        Authorization: `Bearer ${this.props.accessToken}`,
+        Accept: 'application/json'
+      },
+    }).catch(() => (
+      this.setState({
+        validAccessToken: false,
+      })
+    ));
+  }
+
   handleRefreshToken() {
     const { refreshToken } = this.props;
     socket.emit('refresh_token', refreshToken)
@@ -123,6 +139,7 @@ class User extends Component {
       accessToken,
       currentTrack,
       tracks,
+      id,
     } = this.props;
 
     const {
@@ -154,7 +171,7 @@ class User extends Component {
                     currentTrack
                       ? <div>
                         <div className="track track--current">
-                          <Track track={currentTrack} />
+                          <Track track={currentTrack} id={isEmpty(tracks) ? '' : id} handleRemove={isEmpty(tracks) ? null : this.skipCurrentSong}/>
                         </div>
                         {
                           currentTrack.isPlaying
@@ -173,7 +190,7 @@ class User extends Component {
                     {
                       tracks.map(track => (
                         <div className="track track--in-list" key={track.id}>
-                          <Track track={track} id={this.props.id} handleRemove={this.handleRemove} />
+                          <Track track={track} id={id} handleRemove={this.handleRemove} />
                         </div>
                       ))
                     }
