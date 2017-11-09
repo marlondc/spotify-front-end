@@ -70,7 +70,7 @@ class InputUri extends Component {
         </div>
         <input
           type="submit"
-          value="ADD TO PLAYLIST"
+          value={ this.props.currentTrack ? 'ADD' : 'ADD & PLAY'}
           className={
             classnames('input__button', { 'input__button--disabled': invalidURI(this.state.spotifyURI) })
           }
