@@ -160,18 +160,18 @@ class User extends Component {
             <div className="top">
               <div className="content">
                 <TopDecoration />
-                <InputUri accessToken={accessToken} addToPlaylist={this.addTrack}/>
+                <InputUri accessToken={accessToken} addToPlaylist={this.addTrack} currentTrack={currentTrack} />
                 <Modal />
               </div>
             </div>
             <div className="bottom">
               <div className="content">
-                <TitleDivider titleText="Currently playing" />
                   {
                     currentTrack
-                      ? <div>
+                    ? <div>
+                        <TitleDivider titleText="Currently playing" />
                         <div className="track track--current">
-                          <Track track={currentTrack} id={isEmpty(tracks) ? '' : id} handleRemove={isEmpty(tracks) ? null : this.skipCurrentSong}/>
+                          <Track track={currentTrack} id={isEmpty(tracks) ? 'null' : id} handleRemove={isEmpty(tracks) ? null : this.skipCurrentSong}/>
                         </div>
                         {
                           currentTrack.isPlaying
@@ -179,9 +179,7 @@ class User extends Component {
                             : null
                         }
                       </div>
-                      : <div>
-                        <p className="track__name">No currently playing track</p>
-                      </div>
+                      : null
                   }
                 {
                   tracks.length > 0

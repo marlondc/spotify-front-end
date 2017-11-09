@@ -45221,7 +45221,7 @@ var User = function (_Component) {
             'div',
             { className: 'content' },
             _react2.default.createElement(_topDecoration2.default, null),
-            _react2.default.createElement(_inputUri2.default, { accessToken: accessToken, addToPlaylist: this.addTrack }),
+            _react2.default.createElement(_inputUri2.default, { accessToken: accessToken, addToPlaylist: this.addTrack, currentTrack: currentTrack }),
             _react2.default.createElement(_modal2.default, null)
           )
         ),
@@ -45231,25 +45231,17 @@ var User = function (_Component) {
           _react2.default.createElement(
             'div',
             { className: 'content' },
-            _react2.default.createElement(_titleDivider2.default, { titleText: 'Currently playing' }),
             currentTrack ? _react2.default.createElement(
               'div',
               null,
+              _react2.default.createElement(_titleDivider2.default, { titleText: 'Currently playing' }),
               _react2.default.createElement(
                 'div',
                 { className: 'track track--current' },
-                _react2.default.createElement(_track2.default, { track: currentTrack, id: (0, _ramda.isEmpty)(tracks) ? '' : id, handleRemove: (0, _ramda.isEmpty)(tracks) ? null : this.skipCurrentSong })
+                _react2.default.createElement(_track2.default, { track: currentTrack, id: (0, _ramda.isEmpty)(tracks) ? 'null' : id, handleRemove: (0, _ramda.isEmpty)(tracks) ? null : this.skipCurrentSong })
               ),
               currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : null
-            ) : _react2.default.createElement(
-              'div',
-              null,
-              _react2.default.createElement(
-                'p',
-                { className: 'track__name' },
-                'No currently playing track'
-              )
-            ),
+            ) : null,
             tracks.length > 0 ? _react2.default.createElement(
               'div',
               null,
@@ -48907,7 +48899,7 @@ var InputUri = function (_Component) {
         ),
         _react2.default.createElement('input', {
           type: 'submit',
-          value: 'ADD TO PLAYLIST',
+          value: this.props.currentTrack ? 'ADD' : 'ADD & PLAY',
           className: (0, _classnames2.default)('input__button', { 'input__button--disabled': invalidURI(this.state.spotifyURI) }),
           onClick: this.handleSubmit
         })
