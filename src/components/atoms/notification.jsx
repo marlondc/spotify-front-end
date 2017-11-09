@@ -8,9 +8,17 @@ const Notification = ({ text, type }) => (
       <div
         className={classnames('notification', {
           'notification--show': !isEmpty(text) && !isEmpty(type),
+          'notification--red': type !== 'added track',
         })}
       >
-        <p className="notification__text"><span className="jukebox-ok" />{`${type} `}<strong>{`"${text}"`}</strong></p>
+        <p className="notification__text">
+          <span className={classnames({
+            'jukebox-ok': type === 'added track',
+            'jukebox-cancel': type !== 'added track',
+          })} />
+          {`${type} `}
+          <strong>{`"${text}"`}</strong>
+        </p>
       </div>
     : null
 );

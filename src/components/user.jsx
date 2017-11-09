@@ -80,7 +80,7 @@ class User extends Component {
             text: '',
           }
         })
-      }, 2000);
+      }, 1000);
     })
 
     socket.on('new_access_token', ({ access_token }) => {
@@ -116,17 +116,7 @@ class User extends Component {
   }
 
   skipCurrentSong() {
-    axios('https://api.spotify.com/v1/me/player/next', {
-      method: 'post',
-      headers: {
-        Authorization: `Bearer ${this.props.accessToken}`,
-        Accept: 'application/json'
-      },
-    }).catch(() => (
-      this.setState({
-        validAccessToken: false,
-      })
-    ));
+    socket.emit('skip_current_track', this.props.accessToken);
   }
 
   handleRefreshToken() {

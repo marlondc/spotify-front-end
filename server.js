@@ -234,6 +234,24 @@ io.on('connection', (socket) => {
       .catch((err) => io.sockets.emit('token_error', 'refresh error'));
   })
 
+  socket.on('skip_current_track', (token) => {
+    axios('https://api.spotify.com/v1/me/player/next', {
+      method: 'post',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json'
+      },
+    }).then(() => {
+      io.sockets.emit('notification', {
+        type: 'track skipped',
+        text: 'oh the SHAME!',
+      })
+    }).catch((err) => {
+      console.log(err);
+      io.sockets.emit('token_error', 'skip track')
+    });
+  })
+
   socket.on('disconnect', () => {
     if (io.engine.clientsCount === 0) {
       clearInterval(poll);
