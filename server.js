@@ -167,11 +167,6 @@ io.on('connection', (socket) => {
           name: data.name,
           addedBy: id,
         })
-        io.sockets.emit('notification', {
-          type: 'added track',
-          text: data.name,
-        });
-        io.sockets.emit('playlist_tracks', tracks);
         axios({
           method: 'put',
           url: 'https://api.spotify.com/v1/me/player/play',
@@ -185,6 +180,12 @@ io.on('connection', (socket) => {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           }
+        }).then(() => {
+          io.sockets.emit('notification', {
+            type: 'added track',
+            text: data.name,
+          });
+          io.sockets.emit('playlist_tracks', tracks);
         }).catch((err) => {
           io.sockets.emit('token_error', 'start_playback');
         })
