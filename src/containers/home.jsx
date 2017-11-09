@@ -12,33 +12,35 @@ import {
   updateAccessToken,
  } from '../actions/songs';
 
+const mapIndexed = addIndex(map);
+
 const mapStateToProps = ({ songs }) => {
-  let displayCurrentTrack;
-  const mapIndexed = addIndex(map);
+  const { tracks, currentTrack } = songs;
+
   const indexedTracks = mapIndexed((track, index) => ({
     ...track,
     position: index,
-  }), songs.tracks)
-  const filteredTracks = filter(track => (
-    equals(track.id, songs.currentTrack.id)
-  ), indexedTracks);
+  }), tracks);
+  const filterIndexedTracks = indexedTracks.filter(track => (
+    track.id === currentTrack.id
+  ))
 
-  displayCurrentTrack = isEmpty(filteredTracks)
-    ? false
-    : {
-      ...songs.currentTrack,
-      position: filteredTracks[0].position
-    };
+  const newCurrentTrack = currentTrack.isPlaying
+    ? {
+      ...currentTrack,
+      position: filterIndexedTracks[0].position,
+    }
+    : false;
+  const filteredPlaylistTracks = indexedTracks.filter(track => (
+    track.id !== currentTrack.id &&
+    newCurrentTrack &&
+    track.position > newCurrentTrack.position
+  ))
 
-  const displayPlaylistTracks = filter((track) => (
-    displayCurrentTrack.position < track.position
-  ), indexedTracks)
   return {
     ...songs,
-    currentTrack: displayCurrentTrack,
-    tracks: isEmpty(displayPlaylistTracks) && !displayCurrentTrack
-      ? songs.tracks
-      : displayPlaylistTracks,
+    currentTrack: newCurrentTrack,
+    tracks: filteredPlaylistTracks,
   }
 };
 

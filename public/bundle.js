@@ -36881,30 +36881,33 @@ var _songs = __webpack_require__(191);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var mapIndexed = (0, _ramda.addIndex)(_ramda.map);
+
 var mapStateToProps = function mapStateToProps(_ref) {
   var songs = _ref.songs;
+  var tracks = songs.tracks,
+      currentTrack = songs.currentTrack;
 
-  var displayCurrentTrack = void 0;
-  var mapIndexed = (0, _ramda.addIndex)(_ramda.map);
+
   var indexedTracks = mapIndexed(function (track, index) {
     return _extends({}, track, {
       position: index
     });
-  }, songs.tracks);
-  var filteredTracks = (0, _ramda.filter)(function (track) {
-    return (0, _ramda.equals)(track.id, songs.currentTrack.id);
-  }, indexedTracks);
-
-  displayCurrentTrack = (0, _ramda.isEmpty)(filteredTracks) ? false : _extends({}, songs.currentTrack, {
-    position: filteredTracks[0].position
+  }, tracks);
+  var filterIndexedTracks = indexedTracks.filter(function (track) {
+    return track.id === currentTrack.id;
   });
 
-  var displayPlaylistTracks = (0, _ramda.filter)(function (track) {
-    return displayCurrentTrack.position < track.position;
-  }, indexedTracks);
+  var newCurrentTrack = currentTrack.isPlaying ? _extends({}, currentTrack, {
+    position: filterIndexedTracks[0].position
+  }) : false;
+  var filteredPlaylistTracks = indexedTracks.filter(function (track) {
+    return track.id !== currentTrack.id && newCurrentTrack && track.position > newCurrentTrack.position;
+  });
+
   return _extends({}, songs, {
-    currentTrack: displayCurrentTrack,
-    tracks: (0, _ramda.isEmpty)(displayPlaylistTracks) && !displayCurrentTrack ? songs.tracks : displayPlaylistTracks
+    currentTrack: newCurrentTrack,
+    tracks: filteredPlaylistTracks
   });
 };
 
@@ -44997,6 +45000,8 @@ var _uuid = __webpack_require__(482);
 
 var _uuid2 = _interopRequireDefault(_uuid);
 
+var _ramda = __webpack_require__(27);
+
 var _loader = __webpack_require__(190);
 
 var _loader2 = _interopRequireDefault(_loader);
@@ -45064,7 +45069,6 @@ var User = function (_Component) {
 
     _this.addTrack = _this.addTrack.bind(_this);
     _this.handleRemove = _this.handleRemove.bind(_this);
-    _this.handleStartPlayback = _this.handleStartPlayback.bind(_this);
     _this.handleRefreshToken = _this.handleRefreshToken.bind(_this);
     return _this;
   }
@@ -45127,17 +45131,28 @@ var User = function (_Component) {
       socket.on('new_access_token', function (_ref2) {
         var access_token = _ref2.access_token;
 
+        _this2.setState({
+          validAccessToken: true
+        });
         _this2.props.updateAccessToken(access_token);
       });
     }
   }, {
     key: 'addTrack',
     value: function addTrack(spotifyUri) {
-      socket.emit('add_track', {
-        spotifyUri: spotifyUri,
-        id: this.props.id,
-        token: this.props.accessToken
-      });
+      if (this.props.tracks.length === 0 && !this.props.currentTrack) {
+        socket.emit('add_track_and_start_playback', {
+          spotifyUri: spotifyUri,
+          id: this.props.id,
+          token: this.props.accessToken
+        });
+      } else {
+        socket.emit('add_track', {
+          spotifyUri: spotifyUri,
+          id: this.props.id,
+          token: this.props.accessToken
+        });
+      }
     }
   }, {
     key: 'handleRemove',
@@ -45146,15 +45161,6 @@ var User = function (_Component) {
         trackId: trackId,
         userId: this.props.id,
         token: this.props.accessToken
-      });
-    }
-  }, {
-    key: 'handleStartPlayback',
-    value: function handleStartPlayback() {
-      var playPosition = this.props.currentTrack.position ? this.props.currentTrack.position : 0;
-      socket.emit('start_playback', {
-        token: this.props.accessToken,
-        position: playPosition
       });
     }
   }, {
@@ -45211,7 +45217,7 @@ var User = function (_Component) {
                 { className: 'track track--current' },
                 _react2.default.createElement(_track2.default, { track: currentTrack })
               ),
-              currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : _react2.default.createElement(_startButton2.default, { clickHandler: this.handleStartPlayback })
+              currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : null
             ) : _react2.default.createElement(
               'div',
               null,
@@ -45219,8 +45225,7 @@ var User = function (_Component) {
                 'p',
                 { className: 'track__name' },
                 'No currently playing track'
-              ),
-              _react2.default.createElement(_startButton2.default, { clickHandler: this.handleStartPlayback })
+              )
             ),
             tracks.length > 0 ? _react2.default.createElement(
               'div',

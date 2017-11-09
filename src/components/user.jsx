@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import io from 'socket.io-client';
 import uuid from 'uuid';
+import { isNil } from 'ramda';
 
 import Loader from './atoms/loader';
 import Track from './atoms/track';
@@ -32,7 +33,6 @@ class User extends Component {
 
     this.addTrack = this.addTrack.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
-    this.handleStartPlayback = this.handleStartPlayback.bind(this);
     this.handleRefreshToken = this.handleRefreshToken.bind(this);
   }
 
@@ -82,16 +82,27 @@ class User extends Component {
     })
 
     socket.on('new_access_token', ({ access_token }) => {
+      this.setState({
+        validAccessToken: true,
+      })
       this.props.updateAccessToken(access_token);
     })
   }
 
   addTrack(spotifyUri) {
-    socket.emit('add_track', {
-      spotifyUri,
-      id: this.props.id,
-      token: this.props.accessToken,
-    });
+    if (this.props.tracks.length === 0 && !this.props.currentTrack) {
+      socket.emit('add_track_and_start_playback', {
+        spotifyUri,
+        id: this.props.id,
+        token: this.props.accessToken,
+      })
+    } else {
+      socket.emit('add_track', {
+        spotifyUri,
+        id: this.props.id,
+        token: this.props.accessToken,
+      });
+    }
   }
 
   handleRemove(trackId) {
@@ -100,16 +111,6 @@ class User extends Component {
       userId: this.props.id,
       token: this.props.accessToken,
     }));
-  }
-
-  handleStartPlayback() {
-    const playPosition = this.props.currentTrack.position
-      ? this.props.currentTrack.position
-      : 0
-    socket.emit('start_playback', {
-      token: this.props.accessToken,
-      position: playPosition,
-    });
   }
 
   handleRefreshToken() {
@@ -158,12 +159,11 @@ class User extends Component {
                         {
                           currentTrack.isPlaying
                             ? <TrackStatus track={currentTrack} />
-                            : <StartButton clickHandler={this.handleStartPlayback} />
+                            : null
                         }
                       </div>
                       : <div>
                         <p className="track__name">No currently playing track</p>
-                        <StartButton clickHandler={this.handleStartPlayback} />
                       </div>
                   }
                 {
