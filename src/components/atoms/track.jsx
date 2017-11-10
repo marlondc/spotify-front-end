@@ -18,7 +18,7 @@ const Track = ({ track, id, handleRemove }) => (
           : <p className="track__name">{track.name}</p>
       }
       {
-        track.artist.length > 30
+        track.artist.length > 25
           ? <div className="track__marquee">
             <p className="track__artist">{track.artist}</p>
           </div>

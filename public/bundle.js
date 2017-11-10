@@ -36887,30 +36887,33 @@ var _songs = __webpack_require__(197);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var mapIndexed = (0, _ramda.addIndex)(_ramda.map);
+
 var mapStateToProps = function mapStateToProps(_ref) {
   var songs = _ref.songs;
+  var tracks = songs.tracks,
+      currentTrack = songs.currentTrack;
 
-  var displayCurrentTrack = void 0;
-  var mapIndexed = (0, _ramda.addIndex)(_ramda.map);
+
   var indexedTracks = mapIndexed(function (track, index) {
     return _extends({}, track, {
       position: index
     });
-  }, songs.tracks);
-  var filteredTracks = (0, _ramda.filter)(function (track) {
-    return (0, _ramda.equals)(track.id, songs.currentTrack.id);
-  }, indexedTracks);
-
-  displayCurrentTrack = (0, _ramda.isEmpty)(filteredTracks) ? false : _extends({}, songs.currentTrack, {
-    position: filteredTracks[0].position
+  }, tracks);
+  var filterIndexedTracks = indexedTracks.filter(function (track) {
+    return track.id === currentTrack.id;
   });
 
-  var displayPlaylistTracks = (0, _ramda.filter)(function (track) {
-    return displayCurrentTrack.position < track.position;
-  }, indexedTracks);
+  var newCurrentTrack = currentTrack.isPlaying && tracks.length !== 0 ? _extends({}, currentTrack, {
+    position: filterIndexedTracks[0].position
+  }) : false;
+  var filteredPlaylistTracks = indexedTracks.filter(function (track) {
+    return track.id !== currentTrack.id && newCurrentTrack && track.position > newCurrentTrack.position;
+  });
+
   return _extends({}, songs, {
-    currentTrack: displayCurrentTrack,
-    tracks: (0, _ramda.isEmpty)(displayPlaylistTracks) && !displayCurrentTrack ? songs.tracks : displayPlaylistTracks
+    currentTrack: newCurrentTrack,
+    tracks: filteredPlaylistTracks
   });
 };
 
@@ -45003,6 +45006,12 @@ var _uuid = __webpack_require__(483);
 
 var _uuid2 = _interopRequireDefault(_uuid);
 
+var _ramda = __webpack_require__(27);
+
+var _axios = __webpack_require__(190);
+
+var _axios2 = _interopRequireDefault(_axios);
+
 var _loader = __webpack_require__(196);
 
 var _loader2 = _interopRequireDefault(_loader);
@@ -45070,8 +45079,8 @@ var User = function (_Component) {
 
     _this.addTrack = _this.addTrack.bind(_this);
     _this.handleRemove = _this.handleRemove.bind(_this);
-    _this.handleStartPlayback = _this.handleStartPlayback.bind(_this);
     _this.handleRefreshToken = _this.handleRefreshToken.bind(_this);
+    _this.skipCurrentSong = _this.skipCurrentSong.bind(_this);
     return _this;
   }
 
@@ -45127,23 +45136,34 @@ var User = function (_Component) {
               text: ''
             }
           });
-        }, 2000);
+        }, 1000);
       });
 
       socket.on('new_access_token', function (_ref2) {
         var access_token = _ref2.access_token;
 
+        _this2.setState({
+          validAccessToken: true
+        });
         _this2.props.updateAccessToken(access_token);
       });
     }
   }, {
     key: 'addTrack',
     value: function addTrack(spotifyUri) {
-      socket.emit('add_track', {
-        spotifyUri: spotifyUri,
-        id: this.props.id,
-        token: this.props.accessToken
-      });
+      if (this.props.tracks.length === 0 && !this.props.currentTrack) {
+        socket.emit('add_track_and_start_playback', {
+          spotifyUri: spotifyUri,
+          id: this.props.id,
+          token: this.props.accessToken
+        });
+      } else {
+        socket.emit('add_track', {
+          spotifyUri: spotifyUri,
+          id: this.props.id,
+          token: this.props.accessToken
+        });
+      }
     }
   }, {
     key: 'handleRemove',
@@ -45155,13 +45175,9 @@ var User = function (_Component) {
       });
     }
   }, {
-    key: 'handleStartPlayback',
-    value: function handleStartPlayback() {
-      var playPosition = this.props.currentTrack.position ? this.props.currentTrack.position : 0;
-      socket.emit('start_playback', {
-        token: this.props.accessToken,
-        position: playPosition
-      });
+    key: 'skipCurrentSong',
+    value: function skipCurrentSong() {
+      socket.emit('skip_current_track', this.props.accessToken);
     }
   }, {
     key: 'handleRefreshToken',
@@ -45178,7 +45194,8 @@ var User = function (_Component) {
       var _props2 = this.props,
           accessToken = _props2.accessToken,
           currentTrack = _props2.currentTrack,
-          tracks = _props2.tracks;
+          tracks = _props2.tracks,
+          id = _props2.id;
       var _state = this.state,
           notification = _state.notification,
           validAccessToken = _state.validAccessToken;
@@ -45198,7 +45215,7 @@ var User = function (_Component) {
             'div',
             { className: 'content' },
             _react2.default.createElement(_topDecoration2.default, null),
-            _react2.default.createElement(_inputUri2.default, { accessToken: accessToken, addToPlaylist: this.addTrack }),
+            _react2.default.createElement(_inputUri2.default, { accessToken: accessToken, addToPlaylist: this.addTrack, currentTrack: currentTrack }),
             _react2.default.createElement(_modal2.default, null)
           )
         ),
@@ -45208,26 +45225,17 @@ var User = function (_Component) {
           _react2.default.createElement(
             'div',
             { className: 'content' },
-            _react2.default.createElement(_titleDivider2.default, { titleText: 'Currently playing' }),
             currentTrack ? _react2.default.createElement(
               'div',
               null,
+              _react2.default.createElement(_titleDivider2.default, { titleText: 'Currently playing' }),
               _react2.default.createElement(
                 'div',
                 { className: 'track track--current' },
-                _react2.default.createElement(_track2.default, { track: currentTrack })
+                _react2.default.createElement(_track2.default, { track: currentTrack, id: (0, _ramda.isEmpty)(tracks) ? 'null' : id, handleRemove: (0, _ramda.isEmpty)(tracks) ? null : this.skipCurrentSong })
               ),
-              currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : _react2.default.createElement(_startButton2.default, { clickHandler: this.handleStartPlayback })
-            ) : _react2.default.createElement(
-              'div',
-              null,
-              _react2.default.createElement(
-                'p',
-                { className: 'track__name' },
-                'No currently playing track'
-              ),
-              _react2.default.createElement(_startButton2.default, { clickHandler: this.handleStartPlayback })
-            ),
+              currentTrack.isPlaying ? _react2.default.createElement(_trackStatus2.default, { track: currentTrack }) : null
+            ) : null,
             tracks.length > 0 ? _react2.default.createElement(
               'div',
               null,
@@ -45236,7 +45244,7 @@ var User = function (_Component) {
                 return _react2.default.createElement(
                   'div',
                   { className: 'track track--in-list', key: track.id },
-                  _react2.default.createElement(_track2.default, { track: track, id: _this3.props.id, handleRemove: _this3.handleRemove })
+                  _react2.default.createElement(_track2.default, { track: track, id: id, handleRemove: _this3.handleRemove })
                 );
               })
             ) : null
@@ -49475,7 +49483,7 @@ var Track = function Track(_ref) {
         { className: 'track__name' },
         track.name
       ),
-      track.artist.length > 30 ? _react2.default.createElement(
+      track.artist.length > 25 ? _react2.default.createElement(
         'div',
         { className: 'track__marquee' },
         _react2.default.createElement(
@@ -49769,7 +49777,7 @@ var InputUri = function (_Component) {
         ),
         _react2.default.createElement('input', {
           type: 'submit',
-          value: 'ADD TO PLAYLIST',
+          value: this.props.currentTrack ? 'ADD' : 'ADD & PLAY',
           className: (0, _classnames2.default)('input__button', { 'input__button--disabled': invalidURI(this.state.spotifyURI) }),
           onClick: this.handleSubmit
         })
@@ -50005,13 +50013,17 @@ var Notification = function Notification(_ref) {
     'div',
     {
       className: (0, _classnames2.default)('notification', {
-        'notification--show': !(0, _ramda.isEmpty)(text) && !(0, _ramda.isEmpty)(type)
+        'notification--show': !(0, _ramda.isEmpty)(text) && !(0, _ramda.isEmpty)(type),
+        'notification--red': type !== 'added track'
       })
     },
     _react2.default.createElement(
       'p',
       { className: 'notification__text' },
-      _react2.default.createElement('span', { className: 'jukebox-ok' }),
+      _react2.default.createElement('span', { className: (0, _classnames2.default)({
+          'jukebox-ok': type === 'added track',
+          'jukebox-cancel': type !== 'added track'
+        }) }),
       type + ' ',
       _react2.default.createElement(
         'strong',
@@ -50525,7 +50537,7 @@ exports = module.exports = __webpack_require__(519)(undefined);
 exports.push([module.i, "@import url(https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,500,600,700,800,900);", ""]);
 
 // module
-exports.push([module.i, "@charset \"UTF-8\";\n.loader-container {\n  background: #fef394;\n  height: 100vh;\n  width: 100%; }\n\n.loader {\n  left: 50%;\n  position: absolute;\n  top: 50%;\n  -webkit-transform: translate(-50%, -50%);\n  transform: translate(-50%, -50%); }\n\n.dot {\n  -webkit-animation: fx 1000ms ease infinite 0ms;\n  animation: fx 1000ms ease infinite 0ms;\n  border: 2px solid #ef9783;\n  border-radius: 50%;\n  height: 10px;\n  float: left;\n  margin: 0 5px;\n  -webkit-transform: scale(0);\n  transform: scale(0);\n  width: 10px; }\n\n.dot:nth-child(2) {\n  -webkit-animation: fx 1000ms ease infinite 300ms;\n  animation: fx 1000ms ease infinite 300ms; }\n\n.dot:nth-child(3) {\n  -webkit-animation: fx 1000ms ease infinite 600ms;\n  animation: fx 1000ms ease infinite 600ms; }\n\n@-webkit-keyframes fx {\n  50% {\n    -webkit-transform: scale(1);\n    transform: scale(1);\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes fx {\n  50% {\n    -webkit-transform: scale(1);\n    transform: scale(1);\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n.info__modal {\n  background-color: #fff;\n  bottom: 0;\n  height: 0;\n  left: 0;\n  overflow: hidden;\n  position: fixed;\n  transition: height 0.5s ease-in-out;\n  width: 100%;\n  z-index: 2; }\n\n.info__modal--show {\n  -webkit-animation: fadeUpIn 1s;\n  animation: fadeUpIn 1s;\n  height: 100%; }\n\n@keyframes fadeUpIn /* Safari and Chrome */ {\n  from {\n    height: 0; }\n  to {\n    height: 100%; } }\n\n.info__modal__content {\n  padding: 10px 10px 0; }\n\n.info__modal__image {\n  padding-bottom: 30px;\n  text-align: center; }\n\n.info__modal__cross {\n  display: inline-block;\n  position: absolute;\n  right: 10px;\n  top: 10px; }\n\n.info__modal__top {\n  font-size: 20px;\n  margin: 0 auto;\n  max-width: 320px;\n  padding: 0 15px;\n  text-align: left; }\n\n.info__modal__top__list {\n  list-style: none;\n  margin: 0;\n  padding: 0; }\n\n.info__modal__top__list-item {\n  border-bottom: 1px solid #181818;\n  padding: 15px 0; }\n\n.info__modal__top__list-item:last-of-type {\n  border: 0; }\n\n.info__modal__top__list-item__number {\n  display: inline-block;\n  margin: 0;\n  vertical-align: top;\n  width: 10%; }\n\n.info__modal__top__list-item__text {\n  display: inline-block;\n  width: 90%; }\n\n.info__modal__top__list-item__text p {\n  margin: 0; }\n\n.info__modal__top h1 {\n  border-bottom: 1px solid #181818;\n  font-size: 16px;\n  margin: 0;\n  padding: 20px 0 16px; }\n\n.info__modal__bottom {\n  background: #181818;\n  text-align: center; }\n\n.info__modal__bottom img {\n  width: 320px; }\n\n.container {\n  height: 100%;\n  width: 100%; }\n\n.top {\n  background: #fef394;\n  overflow: hidden;\n  padding: 30px 0 20px;\n  position: relative; }\n\n.top--login {\n  height: 100vh; }\n\n.fixed-height {\n  height: 100vh;\n  overflow: hidden; }\n\n.content {\n  margin: 0 auto;\n  max-width: 320px;\n  padding: 0 15px; }\n\n.content--login {\n  align-items: center;\n  display: flex;\n  height: 100%;\n  justify-content: center; }\n\n.top__decoration {\n  background: #ef9783;\n  border-radius: 15px;\n  height: 50%;\n  position: absolute;\n  width: 10px; }\n\n.top__decoration--1 {\n  left: 20%;\n  top: -80px; }\n\n.top__decoration--2 {\n  right: 14%;\n  bottom: -70px;\n  -ms-transform: rotate(-10deg);\n  -webkit-transform: rotate(-10deg);\n  transform: rotate(-10deg); }\n\n.top__decoration--3 {\n  right: 2%;\n  bottom: -5px;\n  -ms-transform: rotate(-60deg);\n  -webkit-transform: rotate(-60deg);\n  transform: rotate(-60deg); }\n\n.bottom {\n  padding-bottom: 40px; }\n\n.title {\n  margin: 30px 0;\n  position: relative; }\n\n.title__text {\n  background: #fff;\n  color: #000;\n  display: inline-block;\n  margin: 0;\n  padding-right: 8px;\n  position: absolute;\n  top: 4px; }\n\n.title__line {\n  background: #000;\n  display: inline-block;\n  width: 100%;\n  height: 1px; }\n\n.track {\n  width: 100%; }\n\n.track__image {\n  display: inline-block;\n  height: 70px;\n  margin-right: 10px;\n  width: 70px; }\n\n.track__details {\n  display: inline-block;\n  vertical-align: top;\n  width: 210px; }\n\n.track__details p {\n  margin: 0; }\n\n.track__marquee {\n  line-height: 20px;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%; }\n\n.track__marquee p {\n  display: inline-block;\n  padding-left: 100%;\n  animation: marquee 15s linear infinite; }\n\n@keyframes marquee {\n  0% {\n    transform: translate(0, 0); }\n  100% {\n    transform: translate(-100%, 0); } }\n\n.track__name {\n  font-size: 22px;\n  font-weight: bold;\n  padding-bottom: 1px; }\n\n.track__artist {\n  font-size: 16px;\n  padding-bottom: 8px; }\n\n.track__album {\n  color: grey;\n  font-size: 16px; }\n\n.track--in-list {\n  border-bottom: 1px solid grey;\n  padding: 10px 0; }\n\n.track--in-list:first-of-type {\n  padding-top: 0; }\n\n.track--in-list:last-of-type {\n  border: none; }\n\n.track--current {\n  padding-bottom: 20px; }\n\n.track__progress {\n  width: 100%; }\n\n.track__status {\n  position: relative; }\n\n.track__status__progress-bar {\n  background: black;\n  float: left;\n  height: 1px;\n  opacity: 0.5;\n  position: absolute;\n  top: 10px;\n  width: 75%; }\n\n.track__status__progress-bar--fill {\n  background: #ef9783;\n  border-radius: 10px;\n  height: 11px;\n  left: -1px;\n  opacity: 1;\n  top: 5px;\n  z-index: 1; }\n\n.track__status__time {\n  float: right;\n  font-weight: bold;\n  margin: 0; }\n\n.track__status__time span {\n  font-weight: normal; }\n\n.cross__svg {\n  border-radius: 50%;\n  float: right;\n  height: 40px;\n  stroke-width: 3; }\n\n.cross__path {\n  stroke: #ef9783;\n  stroke-dasharray: 48;\n  stroke-dashoffset: 48;\n  transform-origin: 50% 50% 0; }\n\n.cross__path--right {\n  animation: ease 0.8s normal forwards 1 running stroke; }\n\n.cross__path--left {\n  animation: ease 0.8s normal forwards 1 running stroke; }\n\n@keyframes stroke {\n  100% {\n    stroke-dashoffset: 0; } }\n\n.track {\n  align-items: center;\n  display: flex;\n  position: relative; }\n\n.track__remove {\n  align-items: center;\n  background: rgba(255, 255, 255, 0.5);\n  border: 0;\n  color: #808080;\n  cursor: pointer;\n  display: flex;\n  font-size: 16px;\n  height: 20px;\n  justify-content: center;\n  outline: none;\n  position: absolute;\n  right: 0;\n  width: 20px; }\n\n.input {\n  padding-bottom: 35px;\n  position: relative; }\n\n.input--login {\n  padding: 0; }\n\n.input__spotifyURI {\n  border: 0;\n  height: 50px;\n  outline: none;\n  padding: 0 10px;\n  width: 85%; }\n\n.input__button {\n  background: #ef9783;\n  border-radius: 20px;\n  border-style: none;\n  cursor: pointer;\n  font-weight: bold;\n  font-size: 16px;\n  margin: 15px 0 0;\n  outline: none;\n  padding: 12px 20px;\n  -webkit-appearance: none; }\n\n.input__button:hover {\n  text-decoration: underline; }\n\n.input__button--login {\n  color: black;\n  margin: 0;\n  text-decoration: none; }\n\n.input__button--disabled {\n  opacity: 0.4;\n  cursor: auto; }\n\n.input__button--disabled:hover {\n  text-decoration: none; }\n\n.input__button--play {\n  text-align: center; }\n\n.info__text {\n  border: none;\n  background: none;\n  cursor: pointer;\n  font-size: 12px;\n  margin: 0;\n  outline: none;\n  padding: 0;\n  text-decoration: underline; }\n\n.input__field {\n  background: #fff;\n  position: relative; }\n\n.input__tick {\n  color: #7fd48a;\n  display: none; }\n\n.input__cancel {\n  color: #ef9783;\n  display: none; }\n\n.input__tick--show,\n.input__cancel--show {\n  display: block; }\n\n.input__tick,\n.input__cancel {\n  position: absolute;\n  right: 15px;\n  top: 33%; }\n\n@font-face {\n  font-family: 'jukebox';\n  src: url(" + __webpack_require__(200) + ");\n  src: url(" + __webpack_require__(200) + "#iefix) format(\"embedded-opentype\"), url(" + __webpack_require__(520) + ") format(\"woff2\"), url(" + __webpack_require__(521) + ") format(\"woff\"), url(" + __webpack_require__(522) + ") format(\"truetype\"), url(" + __webpack_require__(523) + "#jukebox) format(\"svg\");\n  font-weight: normal;\n  font-style: normal; }\n\n/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */\n/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */\n/*\n@media screen and (-webkit-min-device-pixel-ratio:0) {\n  @font-face {\n    font-family: 'jukebox';\n    src: url('../font/jukebox.svg?1503957#jukebox') format('svg');\n  }\n}\n*/\n[class^=\"jukebox-\"]:before, [class*=\" jukebox-\"]:before {\n  font-family: \"jukebox\";\n  font-style: normal;\n  font-weight: normal;\n  speak: none;\n  display: inline-block;\n  text-decoration: inherit;\n  width: 1em;\n  margin-right: .2em;\n  text-align: center;\n  /* opacity: .8; */\n  /* For safety - reset parent styles, that can break glyph codes*/\n  font-variant: normal;\n  text-transform: none;\n  /* fix buttons height, for twitter bootstrap */\n  line-height: 1em;\n  /* Animation center compensation - margins should be symmetric */\n  /* remove if not needed */\n  margin-left: .2em;\n  /* you can be more comfortable with increased icons size */\n  /* font-size: 120%; */\n  /* Font smoothing. That was taken from TWBS */\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  /* Uncomment for 3D effect */\n  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */ }\n\n.jukebox-ok:before {\n  content: '\\E800'; }\n\n/* '' */\n.jukebox-cancel:before {\n  content: '\\E801'; }\n\n/* '' */\n.notification {\n  background: #7fd48a;\n  height: 40px;\n  position: fixed;\n  width: 100%; }\n\n.notification--show {\n  bottom: 0;\n  -moz-transition: bottom 0.1s ease-in-out;\n  -webkit-transition: bottom 0.1s ease-in-out;\n  transition: bottom 0.1s ease-in-out;\n  z-index: 10; }\n\n.notification__text {\n  color: #fff;\n  font-size: 14px;\n  line-height: 40px;\n  margin: 0 auto;\n  padding-left: 10px;\n  text-align: left;\n  width: 320px; }\n\nhtml,\nbody {\n  font-family: 'Work Sans', sans-serif;\n  margin: 0; }\n\n* {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box; }\n", ""]);
+exports.push([module.i, "@charset \"UTF-8\";\n.loader-container {\n  background: #fef394;\n  height: 100vh;\n  width: 100%; }\n\n.loader {\n  left: 50%;\n  position: absolute;\n  top: 50%;\n  -webkit-transform: translate(-50%, -50%);\n  transform: translate(-50%, -50%); }\n\n.dot {\n  -webkit-animation: fx 1000ms ease infinite 0ms;\n  animation: fx 1000ms ease infinite 0ms;\n  border: 2px solid #ef9783;\n  border-radius: 50%;\n  height: 10px;\n  float: left;\n  margin: 0 5px;\n  -webkit-transform: scale(0);\n  transform: scale(0);\n  width: 10px; }\n\n.dot:nth-child(2) {\n  -webkit-animation: fx 1000ms ease infinite 300ms;\n  animation: fx 1000ms ease infinite 300ms; }\n\n.dot:nth-child(3) {\n  -webkit-animation: fx 1000ms ease infinite 600ms;\n  animation: fx 1000ms ease infinite 600ms; }\n\n@-webkit-keyframes fx {\n  50% {\n    -webkit-transform: scale(1);\n    transform: scale(1);\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes fx {\n  50% {\n    -webkit-transform: scale(1);\n    transform: scale(1);\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n.info__modal {\n  background-color: #fff;\n  bottom: 0;\n  height: 0;\n  left: 0;\n  overflow: hidden;\n  position: fixed;\n  transition: height 0.5s ease-in-out;\n  width: 100%;\n  z-index: 2; }\n\n.info__modal--show {\n  -webkit-animation: fadeUpIn 1s;\n  animation: fadeUpIn 1s;\n  height: 100%; }\n\n@keyframes fadeUpIn /* Safari and Chrome */ {\n  from {\n    height: 0; }\n  to {\n    height: 100%; } }\n\n.info__modal__content {\n  padding: 10px 10px 0; }\n\n.info__modal__image {\n  padding-bottom: 30px;\n  text-align: center; }\n\n.info__modal__cross {\n  display: inline-block;\n  position: absolute;\n  right: 10px;\n  top: 10px; }\n\n.info__modal__top {\n  font-size: 20px;\n  margin: 0 auto;\n  max-width: 320px;\n  padding: 0 15px;\n  text-align: left; }\n\n.info__modal__top__list {\n  list-style: none;\n  margin: 0;\n  padding: 0; }\n\n.info__modal__top__list-item {\n  border-bottom: 1px solid #181818;\n  padding: 15px 0; }\n\n.info__modal__top__list-item:last-of-type {\n  border: 0; }\n\n.info__modal__top__list-item__number {\n  display: inline-block;\n  margin: 0;\n  vertical-align: top;\n  width: 10%; }\n\n.info__modal__top__list-item__text {\n  display: inline-block;\n  width: 90%; }\n\n.info__modal__top__list-item__text p {\n  margin: 0; }\n\n.info__modal__top h1 {\n  border-bottom: 1px solid #181818;\n  font-size: 16px;\n  margin: 0;\n  padding: 20px 0 16px; }\n\n.info__modal__bottom {\n  background: #181818;\n  text-align: center; }\n\n.info__modal__bottom img {\n  width: 320px; }\n\n.container {\n  height: 100%;\n  width: 100%; }\n\n.top {\n  background: #fef394;\n  overflow: hidden;\n  padding: 30px 0 20px;\n  position: fixed;\n  top: 0;\n  width: 100%;\n  z-index: 3; }\n\n.top--login {\n  height: 100vh; }\n\n.fixed-height {\n  height: 100vh;\n  overflow: hidden; }\n\n.content {\n  margin: 0 auto;\n  max-width: 320px;\n  padding: 0 15px; }\n\n.content--login {\n  align-items: center;\n  display: flex;\n  height: 100%;\n  justify-content: center; }\n\n.top__decoration {\n  background: #ef9783;\n  border-radius: 15px;\n  height: 50%;\n  position: absolute;\n  width: 10px; }\n\n.top__decoration--1 {\n  left: 20%;\n  top: -80px; }\n\n.top__decoration--2 {\n  right: 14%;\n  bottom: -70px;\n  -ms-transform: rotate(-10deg);\n  -webkit-transform: rotate(-10deg);\n  transform: rotate(-10deg); }\n\n.top__decoration--3 {\n  right: 2%;\n  bottom: -5px;\n  -ms-transform: rotate(-60deg);\n  -webkit-transform: rotate(-60deg);\n  transform: rotate(-60deg); }\n\n.bottom {\n  padding-bottom: 40px;\n  position: relative;\n  top: 210px; }\n\n.title {\n  margin: 30px 0;\n  position: relative; }\n\n.title__text {\n  background: #fff;\n  color: #000;\n  display: inline-block;\n  margin: 0;\n  padding-right: 8px;\n  position: absolute;\n  top: 4px; }\n\n.title__line {\n  background: #000;\n  display: inline-block;\n  width: 100%;\n  height: 1px; }\n\n.track {\n  align-items: center;\n  display: flex;\n  position: relative;\n  width: 100%; }\n\n.track__image {\n  display: inline-block;\n  height: 70px;\n  margin-right: 10px;\n  width: 70px; }\n\n.track__details {\n  display: inline-block;\n  vertical-align: top;\n  width: 210px; }\n\n.track__details p {\n  margin: 0; }\n\n.track__marquee {\n  line-height: 20px;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%; }\n\n.track__marquee p {\n  display: inline-block;\n  padding-left: 100%;\n  animation: marquee 15s linear infinite; }\n\n@keyframes marquee {\n  0% {\n    transform: translate(0, 0); }\n  100% {\n    transform: translate(-100%, 0); } }\n\n.track__name {\n  font-size: 22px;\n  font-weight: bold;\n  padding-bottom: 1px; }\n\n.track__artist {\n  font-size: 16px;\n  padding-bottom: 8px; }\n\n.track__album {\n  color: grey;\n  font-size: 16px; }\n\n.track--in-list {\n  border-bottom: 1px solid grey;\n  padding: 10px 0; }\n\n.track--in-list:first-of-type {\n  padding-top: 0; }\n\n.track--in-list:last-of-type {\n  border: none; }\n\n.track--current {\n  padding-bottom: 20px; }\n\n.track__progress {\n  width: 100%; }\n\n.track__status {\n  position: relative; }\n\n.track__status__progress-bar {\n  background: black;\n  float: left;\n  height: 1px;\n  opacity: 0.5;\n  position: absolute;\n  top: 10px;\n  width: 75%; }\n\n.track__status__progress-bar--fill {\n  background: #ef9783;\n  border-radius: 10px;\n  height: 11px;\n  left: -1px;\n  opacity: 1;\n  top: 5px;\n  z-index: 1; }\n\n.track__status__time {\n  float: right;\n  font-weight: bold;\n  margin: 0; }\n\n.track__status__time span {\n  font-weight: normal; }\n\n.cross__svg {\n  border-radius: 50%;\n  float: right;\n  height: 40px;\n  stroke-width: 3; }\n\n.cross__path {\n  stroke: #ef9783;\n  stroke-dasharray: 48;\n  stroke-dashoffset: 48;\n  transform-origin: 50% 50% 0; }\n\n.cross__path--right {\n  animation: ease 0.8s normal forwards 1 running stroke; }\n\n.cross__path--left {\n  animation: ease 0.8s normal forwards 1 running stroke; }\n\n@keyframes stroke {\n  100% {\n    stroke-dashoffset: 0; } }\n\n.track__remove {\n  align-items: center;\n  background: rgba(255, 255, 255, 0.5);\n  border: 0;\n  color: #808080;\n  cursor: pointer;\n  display: flex;\n  font-size: 16px;\n  height: 20px;\n  justify-content: center;\n  outline: none;\n  position: absolute;\n  right: 0;\n  width: 20px; }\n\n.input {\n  padding-bottom: 35px;\n  position: relative; }\n\n.input--login {\n  padding: 0; }\n\n.input__spotifyURI {\n  border: 0;\n  height: 50px;\n  outline: none;\n  padding: 0 10px;\n  width: 85%; }\n\n.input__button {\n  background: #ef9783;\n  border-radius: 20px;\n  border-style: none;\n  cursor: pointer;\n  font-weight: bold;\n  font-size: 16px;\n  margin: 15px 0 0;\n  outline: none;\n  padding: 12px 20px;\n  -webkit-appearance: none; }\n\n.input__button:hover {\n  text-decoration: underline; }\n\n.input__button--login {\n  color: black;\n  margin: 0;\n  text-decoration: none; }\n\n.input__button--disabled {\n  opacity: 0.4;\n  cursor: auto; }\n\n.input__button--disabled:hover {\n  text-decoration: none; }\n\n.input__button--play {\n  text-align: center; }\n\n.info__text {\n  border: none;\n  background: none;\n  cursor: pointer;\n  font-size: 12px;\n  margin: 0;\n  outline: none;\n  padding: 0;\n  text-decoration: underline; }\n\n.input__field {\n  background: #fff;\n  position: relative; }\n\n.input__tick {\n  color: #7fd48a;\n  display: none; }\n\n.input__cancel {\n  color: #ef9783;\n  display: none; }\n\n.input__tick--show,\n.input__cancel--show {\n  display: block; }\n\n.input__tick,\n.input__cancel {\n  position: absolute;\n  right: 15px;\n  top: 33%; }\n\n@font-face {\n  font-family: 'jukebox';\n  src: url(" + __webpack_require__(200) + ");\n  src: url(" + __webpack_require__(200) + "#iefix) format(\"embedded-opentype\"), url(" + __webpack_require__(520) + ") format(\"woff2\"), url(" + __webpack_require__(521) + ") format(\"woff\"), url(" + __webpack_require__(522) + ") format(\"truetype\"), url(" + __webpack_require__(523) + "#jukebox) format(\"svg\");\n  font-weight: normal;\n  font-style: normal; }\n\n/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */\n/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */\n/*\n@media screen and (-webkit-min-device-pixel-ratio:0) {\n  @font-face {\n    font-family: 'jukebox';\n    src: url('../font/jukebox.svg?1503957#jukebox') format('svg');\n  }\n}\n*/\n[class^=\"jukebox-\"]:before, [class*=\" jukebox-\"]:before {\n  font-family: \"jukebox\";\n  font-style: normal;\n  font-weight: normal;\n  speak: none;\n  display: inline-block;\n  text-decoration: inherit;\n  width: 1em;\n  margin-right: .2em;\n  text-align: center;\n  /* opacity: .8; */\n  /* For safety - reset parent styles, that can break glyph codes*/\n  font-variant: normal;\n  text-transform: none;\n  /* fix buttons height, for twitter bootstrap */\n  line-height: 1em;\n  /* Animation center compensation - margins should be symmetric */\n  /* remove if not needed */\n  margin-left: .2em;\n  /* you can be more comfortable with increased icons size */\n  /* font-size: 120%; */\n  /* Font smoothing. That was taken from TWBS */\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  /* Uncomment for 3D effect */\n  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */ }\n\n.jukebox-ok:before {\n  content: '\\E800'; }\n\n/* '' */\n.jukebox-cancel:before {\n  content: '\\E801'; }\n\n/* '' */\n.notification {\n  background: #7fd48a;\n  height: 40px;\n  position: fixed;\n  width: 100%; }\n\n.notification--show {\n  bottom: 0;\n  -moz-transition: bottom 0.1s ease-in-out;\n  -webkit-transition: bottom 0.1s ease-in-out;\n  transition: bottom 0.1s ease-in-out;\n  z-index: 10; }\n\n.notification--red {\n  background: #ef9783; }\n\n.notification__text {\n  color: #fff;\n  font-size: 14px;\n  line-height: 40px;\n  margin: 0 auto;\n  padding-left: 10px;\n  text-align: left;\n  width: 320px; }\n\nhtml,\nbody {\n  font-family: 'Work Sans', sans-serif;\n  margin: 0; }\n\n* {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box; }\n", ""]);
 
 // exports
 

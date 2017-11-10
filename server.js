@@ -139,10 +139,66 @@ io.on('connection', (socket) => {
     });
   })
 
+  socket.on('add_track_and_start_playback', ({ spotifyUri, id, token }) => {
+    const spotifyRegex = /([a-z,A-Z,0-9]{22})$/;
+    const spotifyID = spotifyRegex.exec(spotifyUri)[1];
+    const query = qs.stringify({
+      uris: `spotify:track:${spotifyID}`,
+    })
+    axios(`https://api.spotify.com/v1/users/${process.env.SPOTIFY_USER_NAME}/playlists/${process.env.SPOTIFY_PLAYLIST_ID}/tracks?${query}`, {
+      method: 'post',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json'
+      },
+    }).then(() => {
+      axios(`https://api.spotify.com/v1/tracks/${spotifyID}`, {
+        method: 'get',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json'
+        }
+      }).then(({ data }) => {
+        tracks.push({
+          artist: data.artists[0].name,
+          album: data.album.name,
+          id: data.id,
+          image: data.album.images[0].url,
+          name: data.name,
+          addedBy: id,
+        })
+        axios({
+          method: 'put',
+          url: 'https://api.spotify.com/v1/me/player/play',
+          data: {
+            context_uri: process.env.SPOTIFY_PLAYLIST_URI,
+            offset: {
+              position: tracks.length - 1,
+            }
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          }
+        }).then(() => {
+          io.sockets.emit('notification', {
+            type: 'added track',
+            text: data.name,
+          });
+          io.sockets.emit('playlist_tracks', tracks);
+        }).catch((err) => {
+          io.sockets.emit('token_error', 'start_playback');
+        })
+      }).catch((err) => console.log(err));
+    }).catch((err) => {
+      socket.emit('token_error', 'add track');
+    });
+  })
+
   socket.on('remove_track', ({ trackId, userId, token }) => {
     const track = tracks.filter((track) => track.addedBy === userId);
-    
-    if (track.length === 1) {
+
+    if (track.length > 0) {
       const trackToRemove = tracks.filter(playlistTrack => playlistTrack.id === trackId);
       tracks = tracks.filter(playlistTrack => (
         playlistTrack.id !== trackId
@@ -173,30 +229,28 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('start_playback', ({ token, position }) => {
-    axios({
-      method: 'put',
-      url: 'https://api.spotify.com/v1/me/player/play',
-      data: {
-        context_uri: process.env.SPOTIFY_PLAYLIST_URI,
-        offset: {
-          position,
-        }
-      },
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      }
-    }).catch((err) => {
-      socket.emit('token_error', 'start playback');
-      socket.broadcast.emit('token_error', 'start playback');
-    })
-  });
-
   socket.on('refresh_token', (refreshToken) => {
     axios.get('https://mdc-jukebox.herokuapp.com/refresh')
       .then(({ data }) => io.sockets.emit('new_access_token', data))
       .catch((err) => io.sockets.emit('token_error', 'refresh error'));
+  })
+
+  socket.on('skip_current_track', (token) => {
+    axios('https://api.spotify.com/v1/me/player/next', {
+      method: 'post',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json'
+      },
+    }).then(() => {
+      io.sockets.emit('notification', {
+        type: 'track skipped',
+        text: 'oh the SHAME!',
+      })
+    }).catch((err) => {
+      console.log(err);
+      io.sockets.emit('token_error', 'skip track')
+    });
   })
 
   socket.on('disconnect', () => {
