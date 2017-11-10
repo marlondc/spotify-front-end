@@ -197,8 +197,8 @@ io.on('connection', (socket) => {
 
   socket.on('remove_track', ({ trackId, userId, token }) => {
     const track = tracks.filter((track) => track.addedBy === userId);
-    
-    if (track.length === 1) {
+
+    if (track.length > 0) {
       const trackToRemove = tracks.filter(playlistTrack => playlistTrack.id === trackId);
       tracks = tracks.filter(playlistTrack => (
         playlistTrack.id !== trackId
