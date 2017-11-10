@@ -49702,7 +49702,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var invalidURI = function invalidURI(uri) {
-  var spotifyRegex = /^https:\/\/open.spotify.com\/track\/([a-z,A-Z,0-9]{22})$/;
+  var spotifyRegex = /^https:\/\/open.spotify.com\/track\/([a-z,A-Z,0-9]{22})?(\?si)/;
   return !(0, _ramda.test)(spotifyRegex, uri);
 };
 

@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { test, isEmpty } from 'ramda';
 
 const invalidURI = (uri) => {
-  const spotifyRegex = /^https:\/\/open.spotify.com\/track\/([a-z,A-Z,0-9]{22})$/;
+  const spotifyRegex = /^https:\/\/open.spotify.com\/track\/([a-z,A-Z,0-9]{22})?(\?si)/;
   return !test(spotifyRegex, uri)
 }
 
