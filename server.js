@@ -26,6 +26,7 @@ app.get('*', (req, res) => {
 });
 
 let tracks = [];
+let totalNumberOfTracks = 0;
 let accessToken;
 let refreshToken;
 let poll;
@@ -69,6 +70,7 @@ io.on('connection', (socket) => {
           Authorization: `Bearer ${token}`,
         }
       }).then(({ data }) => {
+        totalNumberOfTracks = data.tracks.items.length;
         const spotifyTracks = data.tracks.items.map((item) => {
           return {
             artist: item.track.artists[0].name,
@@ -175,7 +177,7 @@ io.on('connection', (socket) => {
           data: {
             context_uri: process.env.SPOTIFY_PLAYLIST_URI,
             offset: {
-              position: tracks.length - 1,
+              position: totalNumberOfTracks,
             }
           },
           headers: {
