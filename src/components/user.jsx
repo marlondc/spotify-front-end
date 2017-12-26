@@ -130,7 +130,9 @@ class User extends Component {
       currentTrack,
       tracks,
       id,
+      currentTrackInPlaylist,
     } = this.props;
+
     const {
       notification,
       validAccessToken,
@@ -158,7 +160,7 @@ class User extends Component {
                   {
                     !isEmpty(currentTrack)
                     ? <div>
-                        <TitleDivider titleText="Currently playing" />
+                        <TitleDivider titleText="Currently track" currentTrackInPlaylist />
                         <div className="track track--current">
                           <Track track={currentTrack} id={isEmpty(tracks) ? 'null' : id} handleRemove={isEmpty(tracks) ? null : this.skipCurrentSong}/>
                         </div>
@@ -173,7 +175,7 @@ class User extends Component {
                 {
                   tracks.length > 0
                   ? <div>
-                    <TitleDivider titleText="Up next" />
+                    <TitleDivider titleText="Up next" currentTrackInPlaylist={currentTrackInPlaylist} />
                     {
                       tracks.map(track => (
                         <div className="track track--in-list" key={track.id}>

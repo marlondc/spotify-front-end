@@ -35009,6 +35009,7 @@ var mapStateToProps = function mapStateToProps(_ref) {
 
   return _extends({}, songs, {
     currentTrack: currentTrack,
+    currentTrackInPlaylist: (0, _ramda.contains)(currentTrack, tracks),
     tracks: filteredPlaylistTracks
   });
 };
@@ -43289,7 +43290,8 @@ var User = function (_Component) {
           accessToken = _props2.accessToken,
           currentTrack = _props2.currentTrack,
           tracks = _props2.tracks,
-          id = _props2.id;
+          id = _props2.id,
+          currentTrackInPlaylist = _props2.currentTrackInPlaylist;
       var _state = this.state,
           notification = _state.notification,
           validAccessToken = _state.validAccessToken;
@@ -43322,7 +43324,7 @@ var User = function (_Component) {
             !(0, _ramda.isEmpty)(currentTrack) ? _react2.default.createElement(
               'div',
               null,
-              _react2.default.createElement(_titleDivider2.default, { titleText: 'Currently playing' }),
+              _react2.default.createElement(_titleDivider2.default, { titleText: 'Currently track', currentTrackInPlaylist: true }),
               _react2.default.createElement(
                 'div',
                 { className: 'track track--current' },
@@ -43333,7 +43335,7 @@ var User = function (_Component) {
             tracks.length > 0 ? _react2.default.createElement(
               'div',
               null,
-              _react2.default.createElement(_titleDivider2.default, { titleText: 'Up next' }),
+              _react2.default.createElement(_titleDivider2.default, { titleText: 'Up next', currentTrackInPlaylist: currentTrackInPlaylist }),
               tracks.map(function (track) {
                 return _react2.default.createElement(
                   'div',
@@ -48083,14 +48085,24 @@ var _react2 = _interopRequireDefault(_react);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var TitleDivider = function TitleDivider(_ref) {
-  var titleText = _ref.titleText;
-  return _react2.default.createElement(
+  var titleText = _ref.titleText,
+      currentTrackInPlaylist = _ref.currentTrackInPlaylist;
+  return currentTrackInPlaylist ? _react2.default.createElement(
     "div",
     { className: "title" },
     _react2.default.createElement(
       "p",
       { className: "title__text" },
       titleText
+    ),
+    _react2.default.createElement("div", { className: "title__line" })
+  ) : _react2.default.createElement(
+    "div",
+    { className: "title" },
+    _react2.default.createElement(
+      "p",
+      { className: "title__text" },
+      "Start Playlist"
     ),
     _react2.default.createElement("div", { className: "title__line" })
   );

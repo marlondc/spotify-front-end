@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { filter, isEmpty, equals, addIndex, map, indexOf } from 'ramda';
+import { filter, isEmpty, equals, addIndex, map, indexOf, contains } from 'ramda';
 
 import Page from '../components/page';
 import {
@@ -35,6 +35,7 @@ const mapStateToProps = ({ songs }) => {
   return {
     ...songs,
     currentTrack,
+    currentTrackInPlaylist: contains(currentTrack, tracks),
     tracks: filteredPlaylistTracks,
   }
 };
