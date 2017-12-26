@@ -5,7 +5,7 @@ import Page from '../components/page';
 import {
   getTokens,
   updatePlaylist,
-  clearInvalidTokens,
+  invalidToken,
   refreshTokens,
   updateCurrentSong,
   updateId,
@@ -32,7 +32,7 @@ const mapStateToProps = ({ songs }) => {
     }
     : {
       ...currentTrack,
-      position: 0,
+      position: -1,
     };
   const filteredPlaylistTracks = indexedTracks.filter(track => (
     track.id !== currentTrack.id &&
@@ -50,7 +50,7 @@ const mapStateToProps = ({ songs }) => {
 const mapDispatchToProps = dispatch => ({
   getTokens: () => dispatch(getTokens()),
   updatePlaylist: tracks => dispatch(updatePlaylist(tracks)),
-  clearInvalidTokens: () => dispatch(clearInvalidTokens()),
+  invalidToken: () => dispatch(invalidToken()),
   refreshTokens: data => dispatch(refreshTokens(data)),
   updateCurrentSong: song => dispatch(updateCurrentSong(song)),
   updateId: id => dispatch(updateId(id)),

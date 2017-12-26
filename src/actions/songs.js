@@ -3,7 +3,7 @@ import qs from 'qs';
 import { test, isEmpty } from 'ramda';
 
 // our constants
-export const BAD_TOKEN = 'BAD_TOKEN';
+export const INVALID_TOKEN = 'INVALID_TOKEN';
 export const REQUEST_TOKENS = 'REQUEST_TOKENS'
 export const RECEIVE_CURRENT_TRACK = 'RECEIVE_CURRENT_TRACK';
 export const RECEIVE_PLAYLIST = 'RECEIVE_PLAYLIST';
@@ -17,14 +17,17 @@ export const getTokens = () => (dispatch) => {
     type: REQUEST_TOKENS,
   });
   axios
-    .get(`${process.env.BACKEND_LOGIN}/tokens`)
-    .then((response) => {
+    .get(`${process.env.BACKEND_URL}/tokens`)
+    .then(({ data: { tokens } }) => {
       dispatch({
         type: RECEIVE_TOKENS,
-        data: response.data
+        data: {
+          accessToken: tokens[0].accessToken,
+          refreshToken: tokens[0].refreshToken,
+        },
       })
     })
-    .catch(() => {
+    .catch((err) => {
       dispatch({
         type: RECEIVE_TOKENS_ERROR,
       })
@@ -36,8 +39,8 @@ export const updatePlaylist = tracks => ({
   tracks,
 })
 
-export const clearInvalidTokens = () => ({
-  type: BAD_TOKEN,
+export const invalidToken = () => ({
+  type: INVALID_TOKEN,
 });
 
 export const refreshTokens = data => ({
@@ -55,7 +58,15 @@ export const updateId = id => ({
   id,
 })
 
-export const updateAccessToken = accessToken => ({
-  type: UPDATE_ACCESS_TOKEN,
-  accessToken,
-})
+export const updateAccessToken = (accessToken) => {
+  console.log(accessToken);
+  return {
+    type: UPDATE_ACCESS_TOKEN,
+    accessToken,
+  };
+};
+
+// export const updateAccessToken = accessToken => ({
+//   type: UPDATE_ACCESS_TOKEN,
+//   accessToken,
+// })

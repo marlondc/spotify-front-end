@@ -13001,7 +13001,7 @@ exports.default = Loader;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.updateAccessToken = exports.updateId = exports.updateCurrentSong = exports.refreshTokens = exports.clearInvalidTokens = exports.updatePlaylist = exports.getTokens = exports.UPDATE_ACCESS_TOKEN = exports.UPDATE_ID = exports.RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS = exports.RECEIVE_PLAYLIST = exports.RECEIVE_CURRENT_TRACK = exports.REQUEST_TOKENS = exports.BAD_TOKEN = undefined;
+exports.updateAccessToken = exports.updateId = exports.updateCurrentSong = exports.refreshTokens = exports.invalidToken = exports.updatePlaylist = exports.getTokens = exports.UPDATE_ACCESS_TOKEN = exports.UPDATE_ID = exports.RECEIVE_TOKENS_ERROR = exports.RECEIVE_TOKENS = exports.RECEIVE_PLAYLIST = exports.RECEIVE_CURRENT_TRACK = exports.REQUEST_TOKENS = exports.INVALID_TOKEN = undefined;
 
 var _axios = __webpack_require__(192);
 
@@ -13016,7 +13016,7 @@ var _ramda = __webpack_require__(25);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // our constants
-var BAD_TOKEN = exports.BAD_TOKEN = 'BAD_TOKEN';
+var INVALID_TOKEN = exports.INVALID_TOKEN = 'INVALID_TOKEN';
 var REQUEST_TOKENS = exports.REQUEST_TOKENS = 'REQUEST_TOKENS';
 var RECEIVE_CURRENT_TRACK = exports.RECEIVE_CURRENT_TRACK = 'RECEIVE_CURRENT_TRACK';
 var RECEIVE_PLAYLIST = exports.RECEIVE_PLAYLIST = 'RECEIVE_PLAYLIST';
@@ -13030,12 +13030,17 @@ var getTokens = exports.getTokens = function getTokens() {
     dispatch({
       type: REQUEST_TOKENS
     });
-    _axios2.default.get("https://mdc-jukebox.herokuapp.com" + '/tokens').then(function (response) {
+    _axios2.default.get("http://localhost:8000" + '/tokens').then(function (_ref) {
+      var tokens = _ref.data.tokens;
+
       dispatch({
         type: RECEIVE_TOKENS,
-        data: response.data
+        data: {
+          accessToken: tokens[0].accessToken,
+          refreshToken: tokens[0].refreshToken
+        }
       });
-    }).catch(function () {
+    }).catch(function (err) {
       dispatch({
         type: RECEIVE_TOKENS_ERROR
       });
@@ -13050,9 +13055,9 @@ var updatePlaylist = exports.updatePlaylist = function updatePlaylist(tracks) {
   };
 };
 
-var clearInvalidTokens = exports.clearInvalidTokens = function clearInvalidTokens() {
+var invalidToken = exports.invalidToken = function invalidToken() {
   return {
-    type: BAD_TOKEN
+    type: INVALID_TOKEN
   };
 };
 
@@ -13078,11 +13083,17 @@ var updateId = exports.updateId = function updateId(id) {
 };
 
 var updateAccessToken = exports.updateAccessToken = function updateAccessToken(accessToken) {
+  console.log(accessToken);
   return {
     type: UPDATE_ACCESS_TOKEN,
     accessToken: accessToken
   };
 };
+
+// export const updateAccessToken = accessToken => ({
+//   type: UPDATE_ACCESS_TOKEN,
+//   accessToken,
+// })
 
 /***/ }),
 /* 200 */
@@ -34996,7 +35007,7 @@ var mapStateToProps = function mapStateToProps(_ref) {
   var newCurrentTrack = currentTrack.isPlaying && tracks.length !== 0 ? _extends({}, currentTrack, {
     position: filterIndexedTracks[0].position
   }) : _extends({}, currentTrack, {
-    position: 0
+    position: -1
   });
   var filteredPlaylistTracks = indexedTracks.filter(function (track) {
     return track.id !== currentTrack.id && newCurrentTrack && track.position > newCurrentTrack.position;
@@ -35016,8 +35027,8 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     updatePlaylist: function updatePlaylist(tracks) {
       return dispatch((0, _songs.updatePlaylist)(tracks));
     },
-    clearInvalidTokens: function clearInvalidTokens() {
-      return dispatch((0, _songs.clearInvalidTokens)());
+    invalidToken: function invalidToken() {
+      return dispatch((0, _songs.invalidToken)());
     },
     refreshTokens: function refreshTokens(data) {
       return dispatch((0, _songs.refreshTokens)(data));
@@ -43230,9 +43241,7 @@ var User = function (_Component) {
         }, 1000);
       });
 
-      socket.on('new_access_token', function (_ref2) {
-        var access_token = _ref2.access_token;
-
+      socket.on('new_access_token', function (access_token) {
         _this2.setState({
           validAccessToken: true
         });
@@ -43360,7 +43369,7 @@ var User = function (_Component) {
                   onClick: this.handleRefreshToken,
                   className: 'input__button input__button--login'
                 },
-                'REFRESH'
+                'REFRESH TOKEN'
               )
             )
           )
@@ -47996,69 +48005,53 @@ var _ramda = __webpack_require__(25);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Track = function Track(_ref) {
-  var track = _ref.track,
-      id = _ref.id,
-      handleRemove = _ref.handleRemove;
+var Track = function Track() {
   return _react2.default.createElement(
     'div',
-    { className: 'track' },
-    _react2.default.createElement('img', {
-      src: track.image,
-      alt: track.album,
-      className: 'track__image'
-    }),
-    _react2.default.createElement(
-      'div',
-      { className: 'track__details' },
-      track.name.length > 17 ? _react2.default.createElement(
-        'div',
-        { className: 'track__marquee' },
-        _react2.default.createElement(
-          'p',
-          { className: 'track__name' },
-          track.name
-        )
-      ) : _react2.default.createElement(
-        'p',
-        { className: 'track__name' },
-        track.name
-      ),
-      track.artist.length > 25 ? _react2.default.createElement(
-        'div',
-        { className: 'track__marquee' },
-        _react2.default.createElement(
-          'p',
-          { className: 'track__artist' },
-          track.artist
-        )
-      ) : _react2.default.createElement(
-        'p',
-        { className: 'track__artist' },
-        track.artist
-      ),
-      track.album.length > 22 ? _react2.default.createElement(
-        'div',
-        { className: 'track__marquee' },
-        _react2.default.createElement(
-          'p',
-          { className: 'track__album' },
-          track.album
-        )
-      ) : _react2.default.createElement(
-        'p',
-        { className: 'track__album' },
-        track.album
-      )
-    ),
-    track.addedBy === id && !(0, _ramda.isEmpty)(track.addedBy) && !(0, _ramda.isNil)(track.addedBy) ? _react2.default.createElement('button', {
-      onClick: function onClick() {
-        return handleRemove(track.id);
-      },
-      className: 'track__remove jukebox-cancel'
-    }) : null
+    null,
+    'Track'
   );
 };
+// const Track = ({ track, id, handleRemove }) => (
+//   <div className="track">
+//     <img 
+//       src={track.image}
+//       alt={track.album}
+//       className="track__image"
+//     />
+//     <div className="track__details">
+//       {
+//         track.name.length > 17
+//           ? <div className="track__marquee">
+//             <p className="track__name">{track.name}</p>
+//           </div>
+//           : <p className="track__name">{track.name}</p>
+//       }
+//       {
+//         track.artist.length > 25
+//           ? <div className="track__marquee">
+//             <p className="track__artist">{track.artist}</p>
+//           </div>
+//           : <p className="track__artist">{track.artist}</p>
+//       }
+//       {
+//         track.album.length > 22
+//           ? <div className="track__marquee">
+//             <p className="track__album">{track.album}</p>
+//           </div>
+//           : <p className="track__album">{track.album}</p>
+//       }
+//     </div>
+//     {
+//       (track.addedBy === id && !isEmpty(track.addedBy) && !isNil(track.addedBy))
+//         ? <button
+//           onClick={() => handleRemove(track.id)}
+//           className="track__remove jukebox-cancel"
+//         />
+//         : null
+//     }
+//   </div>
+// );
 
 exports.default = Track;
 
@@ -48611,7 +48604,7 @@ var Login = function Login(props) {
           { className: "input input--login" },
           _react2.default.createElement(
             "a",
-            { className: "input__button input__button--login", href: "https://mdc-jukebox.herokuapp.com" + "/login", onClick: function onClick() {
+            { className: "input__button input__button--login", href: "http://localhost:8000" + "/login", onClick: function onClick() {
                 return props.login();
               } },
             "LOGIN"
@@ -49690,11 +49683,10 @@ function reduce() {
 
   switch (action.type) {
 
-    case _songs.BAD_TOKEN:
+    case _songs.INVALID_TOKEN:
       {
         return _extends({}, state, {
-          accessToken: null,
-          refreshToken: null
+          accessToken: null
         });
       }
 
@@ -49751,6 +49743,7 @@ function reduce() {
       {
         var _accessToken = action.accessToken;
 
+        console.log(_accessToken);
         return _extends({}, state, {
           accessToken: _accessToken
         });

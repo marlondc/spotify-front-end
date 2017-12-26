@@ -1,5 +1,5 @@
 import {
-  BAD_TOKEN,
+  INVALID_TOKEN,
   RECEIVE_CURRENT_TRACK,
   RECEIVE_PLAYLIST,
   RECEIVE_TOKENS,
@@ -21,11 +21,10 @@ const initialState = {
 export default function reduce(state = initialState, action) {
   switch (action.type) {
 
-  case BAD_TOKEN: {
+  case INVALID_TOKEN: {
     return {
       ...state,
       accessToken: null,
-      refreshToken: null,
     }
   }
 
@@ -76,6 +75,7 @@ export default function reduce(state = initialState, action) {
 
   case UPDATE_ACCESS_TOKEN: {
     const { accessToken } = action;
+    console.log(accessToken);
     return {
       ...state,
       accessToken,

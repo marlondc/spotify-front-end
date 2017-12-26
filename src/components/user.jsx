@@ -83,7 +83,7 @@ class User extends Component {
       }, 1000);
     })
 
-    socket.on('new_access_token', ({ access_token }) => {
+    socket.on('new_access_token', (access_token) => {
       this.setState({
         validAccessToken: true,
       })
@@ -131,7 +131,6 @@ class User extends Component {
       tracks,
       id,
     } = this.props;
-
     const {
       notification,
       validAccessToken,
@@ -198,7 +197,7 @@ class User extends Component {
                   onClick={this.handleRefreshToken}
                   className="input__button input__button--login"
                 >
-                  REFRESH
+                  REFRESH TOKEN
                 </button>
               </div>
             </div>
