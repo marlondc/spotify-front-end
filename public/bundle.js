@@ -35049,10 +35049,10 @@ var mapStateToProps = function mapStateToProps(_ref) {
   var filteredPlaylistTracks = indexedTracks.filter(function (track) {
     return track.position > (0, _ramda.indexOf)(currentTrack.id, trackIds);
   });
-
+  console.log((0, _ramda.indexOf)(currentTrack.id, trackIds));
   return _extends({}, songs, {
     currentTrack: currentTrack,
-    currentTrackInPlaylist: (0, _ramda.contains)(currentTrack, tracks),
+    currentTrackInPlaylist: (0, _ramda.indexOf)(currentTrack.id, trackIds) !== -1,
     tracks: filteredPlaylistTracks
   });
 };
@@ -43307,12 +43307,24 @@ var User = function (_Component) {
   }, {
     key: 'addToPlaylist',
     value: function addToPlaylist(trackId) {
-      this.props.clearSearchResults();
-      socket.emit('add_track', {
-        trackId: trackId,
-        id: this.props.id,
-        token: this.props.accessToken
-      });
+      var _props2 = this.props,
+          clearSearchResults = _props2.clearSearchResults,
+          currentTrack = _props2.currentTrack;
+
+      clearSearchResults();
+      if ((0, _ramda.isEmpty)(currentTrack) || !currentTrack.isPlaying) {
+        socket.emit('add_track_and_start_playback', {
+          trackId: trackId,
+          id: this.props.id,
+          token: this.props.accessToken
+        });
+      } else {
+        socket.emit('add_track', {
+          trackId: trackId,
+          id: this.props.id,
+          token: this.props.accessToken
+        });
+      }
     }
   }, {
     key: 'addTrack',
@@ -43357,13 +43369,13 @@ var User = function (_Component) {
     value: function render() {
       var _this3 = this;
 
-      var _props2 = this.props,
-          accessToken = _props2.accessToken,
-          currentTrack = _props2.currentTrack,
-          tracks = _props2.tracks,
-          id = _props2.id,
-          currentTrackInPlaylist = _props2.currentTrackInPlaylist,
-          searchResults = _props2.searchResults;
+      var _props3 = this.props,
+          accessToken = _props3.accessToken,
+          currentTrack = _props3.currentTrack,
+          tracks = _props3.tracks,
+          id = _props3.id,
+          currentTrackInPlaylist = _props3.currentTrackInPlaylist,
+          searchResults = _props3.searchResults;
       var _state = this.state,
           notification = _state.notification,
           validAccessToken = _state.validAccessToken;

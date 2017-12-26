@@ -104,12 +104,24 @@ class User extends Component {
   }
 
   addToPlaylist(trackId) {
-    this.props.clearSearchResults();
-    socket.emit('add_track', {
-      trackId,
-      id: this.props.id,
-      token: this.props.accessToken,
-    });
+    const {
+      clearSearchResults,
+      currentTrack,
+    } = this.props;
+    clearSearchResults();
+    if (isEmpty(currentTrack) || !currentTrack.isPlaying) {
+      socket.emit('add_track_and_start_playback', {
+        trackId,
+        id: this.props.id,
+        token: this.props.accessToken,
+      })
+    } else {
+      socket.emit('add_track', {
+        trackId,
+        id: this.props.id,
+        token: this.props.accessToken,
+      })
+    }
   }
 
   addTrack(spotifyUri) {

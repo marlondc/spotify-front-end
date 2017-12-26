@@ -33,11 +33,11 @@ const mapStateToProps = ({ songs }) => {
   const filteredPlaylistTracks = indexedTracks.filter(track => (
     track.position > indexOf(currentTrack.id, trackIds)
   ));
-
+  console.log(indexOf(currentTrack.id, trackIds));
   return {
     ...songs,
     currentTrack,
-    currentTrackInPlaylist: contains(currentTrack, tracks),
+    currentTrackInPlaylist: indexOf(currentTrack.id, trackIds) !== -1,
     tracks: filteredPlaylistTracks,
   }
 };

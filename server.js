@@ -38,7 +38,7 @@ io.on('connection', (socket) => {
     refreshToken = refresh;
     if (!polling) {
       polling = true;
-      poll = setTimeout(() => {
+      poll = setInterval(() => {
         axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -142,9 +142,9 @@ io.on('connection', (socket) => {
     });
   })
 
-  socket.on('add_track_and_start_playback', ({ spotifyUri, id, token }) => {
+  socket.on('add_track_and_start_playback', ({ trackId, id, token }) => {
     const spotifyRegex = /([a-z,A-Z,0-9]{22})/;
-    const spotifyID = spotifyRegex.exec(spotifyUri)[0];
+    const spotifyID = spotifyRegex.exec(trackId)[0];
 
     const query = qs.stringify({
       uris: `spotify:track:${spotifyID}`,
