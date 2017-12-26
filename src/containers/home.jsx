@@ -30,7 +30,10 @@ const mapStateToProps = ({ songs }) => {
       ...currentTrack,
       position: filterIndexedTracks[0].position,
     }
-    : false;
+    : {
+      ...currentTrack,
+      position: 0,
+    };
   const filteredPlaylistTracks = indexedTracks.filter(track => (
     track.id !== currentTrack.id &&
     newCurrentTrack &&
