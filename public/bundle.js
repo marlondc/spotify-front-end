@@ -43137,10 +43137,6 @@ var _inputUri = __webpack_require__(511);
 
 var _inputUri2 = _interopRequireDefault(_inputUri);
 
-var _modal = __webpack_require__(512);
-
-var _modal2 = _interopRequireDefault(_modal);
-
 var _notification = __webpack_require__(514);
 
 var _notification2 = _interopRequireDefault(_notification);
@@ -43175,6 +43171,7 @@ var User = function (_Component) {
     _this.props.updateId((0, _uuid2.default)());
 
     _this.addTrack = _this.addTrack.bind(_this);
+    _this.searchForTrack = _this.searchForTrack.bind(_this);
     _this.handleRemove = _this.handleRemove.bind(_this);
     _this.handleRefreshToken = _this.handleRefreshToken.bind(_this);
     _this.skipCurrentSong = _this.skipCurrentSong.bind(_this);
@@ -43240,8 +43237,17 @@ var User = function (_Component) {
         _this2.setState({
           validAccessToken: true
         });
+        socket.emit('get_playlist', {
+          token: access_token,
+          refresh: _this2.props.refreshToken
+        });
         _this2.props.updateAccessToken(access_token);
       });
+    }
+  }, {
+    key: 'searchForTrack',
+    value: function searchForTrack(value) {
+      _axios2.default.get;
     }
   }, {
     key: 'addTrack',
@@ -43311,8 +43317,7 @@ var User = function (_Component) {
             'div',
             { className: 'content' },
             _react2.default.createElement(_topDecoration2.default, null),
-            _react2.default.createElement(_inputUri2.default, { accessToken: accessToken, addToPlaylist: this.addTrack, currentTrack: currentTrack }),
-            _react2.default.createElement(_modal2.default, null)
+            _react2.default.createElement(_inputUri2.default, { accessToken: accessToken, searchForTrack: this.searchForTrack, currentTrack: currentTrack })
           )
         ),
         _react2.default.createElement(
@@ -48257,13 +48262,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var invalidURI = function invalidURI(uri) {
-  // const spotifyRegex = /^https:\/\/open.spotify.com\/track\/([a-z,A-Z,0-9]{22})/;
-  var spotifyRegex = /([a-z,A-Z,0-9]{22})/;
-  console.log;
-  return !(0, _ramda.test)(spotifyRegex, uri);
-};
-
 var InputUri = function (_Component) {
   _inherits(InputUri, _Component);
 
@@ -48273,11 +48271,11 @@ var InputUri = function (_Component) {
     var _this = _possibleConstructorReturn(this, (InputUri.__proto__ || Object.getPrototypeOf(InputUri)).call(this, props));
 
     _this.state = {
-      spotifyURI: ''
+      searchValue: ''
     };
 
     _this.handleInputChange = _this.handleInputChange.bind(_this);
-    _this.handleSubmit = _this.handleSubmit.bind(_this);
+    _this.handleInputSubmit = _this.handleInputSubmit.bind(_this);
     return _this;
   }
 
@@ -48287,21 +48285,22 @@ var InputUri = function (_Component) {
       var value = event.target.value;
 
       this.setState({
-        spotifyURI: value
+        searchValue: value
       });
     }
   }, {
-    key: 'handleSubmit',
-    value: function handleSubmit() {
+    key: 'handleInputSubmit',
+    value: function handleInputSubmit(event) {
+      event.preventDefault();
       var _props = this.props,
           accessToken = _props.accessToken,
-          addToPlaylist = _props.addToPlaylist;
-      var spotifyURI = this.state.spotifyURI;
+          searchForTrack = _props.searchForTrack;
+      var searchValue = this.state.searchValue;
 
-      if (!invalidURI(spotifyURI)) {
-        addToPlaylist(spotifyURI, accessToken);
+      if (!(0, _ramda.isEmpty)(this.state.searchValue)) {
+        searchForTrack(searchValue, accessToken);
         this.setState({
-          spotifyURI: ''
+          searchValue: ''
         });
       }
     }
@@ -48312,33 +48311,25 @@ var InputUri = function (_Component) {
         'div',
         { className: 'input' },
         _react2.default.createElement(
-          'div',
-          { className: 'input__field' },
+          'form',
+          { onSubmit: this.handleInputSubmit },
           _react2.default.createElement('input', {
             type: 'text',
-            name: 'spotifyURI',
-            className: 'input__spotifyURI',
-            value: this.state.spotifyURI,
-            placeholder: 'Add spotify share link...',
+            name: 'Search for a Track',
+            placeholder: 'Find a Track',
+            value: this.state.searchValue,
+            className: ' input__field input__spotifyURI',
             onChange: this.handleInputChange
           }),
-          _react2.default.createElement('span', {
-            className: (0, _classnames2.default)('jukebox-ok', 'input__tick', {
-              'input__tick--show': !invalidURI(this.state.spotifyURI)
-            })
-          }),
-          _react2.default.createElement('span', {
-            className: (0, _classnames2.default)('jukebox-cancel', 'input__cancel', {
-              'input__cancel--show': invalidURI(this.state.spotifyURI) && !(0, _ramda.isEmpty)(this.state.spotifyURI)
-            })
-          })
-        ),
-        _react2.default.createElement('input', {
-          type: 'submit',
-          value: this.props.currentTrack ? 'ADD' : 'ADD & PLAY',
-          className: (0, _classnames2.default)('input__button', { 'input__button--disabled': invalidURI(this.state.spotifyURI) }),
-          onClick: this.handleSubmit
-        })
+          _react2.default.createElement(
+            'button',
+            {
+              className: (0, _classnames2.default)('input__button', { 'input__button--disabled': (0, _ramda.isEmpty)(this.state.searchValue) }),
+              type: 'submit'
+            },
+            'Search'
+          )
+        )
       );
     }
   }]);
@@ -48349,199 +48340,8 @@ var InputUri = function (_Component) {
 exports.default = InputUri;
 
 /***/ }),
-/* 512 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(3);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _classnames = __webpack_require__(41);
-
-var _classnames2 = _interopRequireDefault(_classnames);
-
-var _screen = __webpack_require__(513);
-
-var _screen2 = _interopRequireDefault(_screen);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Modal = function (_Component) {
-  _inherits(Modal, _Component);
-
-  function Modal() {
-    _classCallCheck(this, Modal);
-
-    var _this = _possibleConstructorReturn(this, (Modal.__proto__ || Object.getPrototypeOf(Modal)).call(this));
-
-    _this.state = {
-      showModal: false
-    };
-
-    _this.handleModal = _this.handleModal.bind(_this);
-    return _this;
-  }
-
-  _createClass(Modal, [{
-    key: 'handleModal',
-    value: function handleModal() {
-      this.setState({
-        showModal: !this.state.showModal
-      });
-
-      this.state.showModal ? document.body.style.overflow = 'auto' : document.body.style.overflow = 'hidden';
-    }
-  }, {
-    key: 'render',
-    value: function render() {
-      var showModal = this.state.showModal;
-
-      return _react2.default.createElement(
-        'div',
-        null,
-        _react2.default.createElement(
-          'div',
-          { className: 'info' },
-          _react2.default.createElement(
-            'button',
-            { onClick: this.handleModal, className: 'info__text' },
-            'How do I find a Spotify Song Link?'
-          )
-        ),
-        _react2.default.createElement(
-          'div',
-          { className: (0, _classnames2.default)('info__modal', { 'info__modal--show': showModal }) },
-          _react2.default.createElement(
-            'div',
-            { className: 'info__modal__content' },
-            _react2.default.createElement(
-              'div',
-              { className: 'info__modal__cross', onClick: this.handleModal },
-              _react2.default.createElement(
-                'svg',
-                { className: 'cross__svg', xmlns: 'http://www.w3.org/2000/svg', viewBox: '0 0 52 52' },
-                _react2.default.createElement('circle', { className: 'cross__circle', cx: '26', cy: '26', r: '25', fill: 'none' }),
-                _react2.default.createElement('path', { className: 'cross__path cross__path--right', fill: 'none', d: 'M16,16 l20,20' }),
-                _react2.default.createElement('path', { className: 'cross__path cross__path--right', fill: 'none', d: 'M16,36 l20,-20' })
-              )
-            )
-          ),
-          _react2.default.createElement(
-            'div',
-            { className: 'info__modal__top' },
-            _react2.default.createElement(
-              'h1',
-              null,
-              'HOW DO I FIND A SPOTIFY SONG LINK?'
-            ),
-            _react2.default.createElement(
-              'ol',
-              { className: 'info__modal__top__list' },
-              _react2.default.createElement(
-                'div',
-                { className: 'info__modal__top__list-item' },
-                _react2.default.createElement(
-                  'p',
-                  { className: 'info__modal__top__list-item__number' },
-                  '1.'
-                ),
-                _react2.default.createElement(
-                  'li',
-                  { className: 'info__modal__top__list-item__text' },
-                  _react2.default.createElement(
-                    'p',
-                    null,
-                    'Hover over a track and click the three dots ',
-                    _react2.default.createElement('br', null),
-                    ' (see image below)'
-                  )
-                )
-              ),
-              _react2.default.createElement(
-                'div',
-                { className: 'info__modal__top__list-item' },
-                _react2.default.createElement(
-                  'p',
-                  { className: 'info__modal__top__list-item__number' },
-                  '2.'
-                ),
-                _react2.default.createElement(
-                  'li',
-                  { className: 'info__modal__top__list-item__text' },
-                  _react2.default.createElement(
-                    'p',
-                    null,
-                    'Click ',
-                    _react2.default.createElement(
-                      'strong',
-                      null,
-                      'Share >'
-                    )
-                  )
-                )
-              ),
-              _react2.default.createElement(
-                'div',
-                { className: 'info__modal__top__list-item' },
-                _react2.default.createElement(
-                  'p',
-                  { className: 'info__modal__top__list-item__number' },
-                  '3.'
-                ),
-                _react2.default.createElement(
-                  'li',
-                  { className: 'info__modal__top__list-item__text' },
-                  _react2.default.createElement(
-                    'p',
-                    null,
-                    'Click ',
-                    _react2.default.createElement(
-                      'strong',
-                      null,
-                      'Copy Song Link'
-                    )
-                  )
-                )
-              )
-            )
-          ),
-          _react2.default.createElement(
-            'div',
-            { className: 'info__modal__bottom' },
-            _react2.default.createElement('img', { src: _screen2.default, alt: 'how to copy spotify URI' })
-          )
-        )
-      );
-    }
-  }]);
-
-  return Modal;
-}(_react.Component);
-
-exports.default = Modal;
-
-/***/ }),
-/* 513 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__.p + "/images/screen4.jpg";
-
-/***/ }),
+/* 512 */,
+/* 513 */,
 /* 514 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -49095,7 +48895,7 @@ exports = module.exports = __webpack_require__(521)(undefined);
 exports.push([module.i, "@import url(https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,500,600,700,800,900);", ""]);
 
 // module
-exports.push([module.i, "@charset \"UTF-8\";\n.loader-container {\n  background: #fef394;\n  height: 100vh;\n  width: 100%; }\n\n.loader {\n  left: 50%;\n  position: absolute;\n  top: 50%;\n  -webkit-transform: translate(-50%, -50%);\n  transform: translate(-50%, -50%); }\n\n.dot {\n  -webkit-animation: fx 1000ms ease infinite 0ms;\n  animation: fx 1000ms ease infinite 0ms;\n  border: 2px solid #ef9783;\n  border-radius: 50%;\n  height: 10px;\n  float: left;\n  margin: 0 5px;\n  -webkit-transform: scale(0);\n  transform: scale(0);\n  width: 10px; }\n\n.dot:nth-child(2) {\n  -webkit-animation: fx 1000ms ease infinite 300ms;\n  animation: fx 1000ms ease infinite 300ms; }\n\n.dot:nth-child(3) {\n  -webkit-animation: fx 1000ms ease infinite 600ms;\n  animation: fx 1000ms ease infinite 600ms; }\n\n@-webkit-keyframes fx {\n  50% {\n    -webkit-transform: scale(1);\n    transform: scale(1);\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes fx {\n  50% {\n    -webkit-transform: scale(1);\n    transform: scale(1);\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n.info__modal {\n  background-color: #fff;\n  bottom: 0;\n  height: 0;\n  left: 0;\n  overflow: hidden;\n  position: fixed;\n  transition: height 0.5s ease-in-out;\n  width: 100%;\n  z-index: 2; }\n\n.info__modal--show {\n  -webkit-animation: fadeUpIn 1s;\n  animation: fadeUpIn 1s;\n  height: 100%; }\n\n@keyframes fadeUpIn /* Safari and Chrome */ {\n  from {\n    height: 0; }\n  to {\n    height: 100%; } }\n\n.info__modal__content {\n  padding: 10px 10px 0; }\n\n.info__modal__image {\n  padding-bottom: 30px;\n  text-align: center; }\n\n.info__modal__cross {\n  display: inline-block;\n  position: absolute;\n  right: 10px;\n  top: 10px; }\n\n.info__modal__top {\n  font-size: 20px;\n  margin: 0 auto;\n  max-width: 320px;\n  padding: 0 15px;\n  text-align: left; }\n\n.info__modal__top__list {\n  list-style: none;\n  margin: 0;\n  padding: 0; }\n\n.info__modal__top__list-item {\n  border-bottom: 1px solid #181818;\n  padding: 15px 0; }\n\n.info__modal__top__list-item:last-of-type {\n  border: 0; }\n\n.info__modal__top__list-item__number {\n  display: inline-block;\n  margin: 0;\n  vertical-align: top;\n  width: 10%; }\n\n.info__modal__top__list-item__text {\n  display: inline-block;\n  width: 90%; }\n\n.info__modal__top__list-item__text p {\n  margin: 0; }\n\n.info__modal__top h1 {\n  border-bottom: 1px solid #181818;\n  font-size: 16px;\n  margin: 0;\n  padding: 20px 0 16px; }\n\n.info__modal__bottom {\n  background: #181818;\n  text-align: center; }\n\n.info__modal__bottom img {\n  width: 320px; }\n\n.container {\n  height: 100%;\n  width: 100%; }\n\n.top {\n  background: #fef394;\n  overflow: hidden;\n  padding: 30px 0 20px;\n  position: fixed;\n  top: 0;\n  width: 100%;\n  z-index: 3; }\n\n.top--login {\n  height: 100vh; }\n\n.fixed-height {\n  height: 100vh;\n  overflow: hidden; }\n\n.content {\n  margin: 0 auto;\n  max-width: 320px;\n  padding: 0 15px; }\n\n.content--login {\n  align-items: center;\n  display: flex;\n  height: 100%;\n  justify-content: center; }\n\n.top__decoration {\n  background: #ef9783;\n  border-radius: 15px;\n  height: 50%;\n  position: absolute;\n  width: 10px; }\n\n.top__decoration--1 {\n  left: 20%;\n  top: -80px; }\n\n.top__decoration--2 {\n  right: 14%;\n  bottom: -70px;\n  -ms-transform: rotate(-10deg);\n  -webkit-transform: rotate(-10deg);\n  transform: rotate(-10deg); }\n\n.top__decoration--3 {\n  right: 2%;\n  bottom: -5px;\n  -ms-transform: rotate(-60deg);\n  -webkit-transform: rotate(-60deg);\n  transform: rotate(-60deg); }\n\n.bottom {\n  padding-bottom: 40px;\n  position: relative;\n  top: 210px; }\n\n.title {\n  margin: 30px 0;\n  position: relative; }\n\n.title__text {\n  background: #fff;\n  color: #000;\n  display: inline-block;\n  margin: 0;\n  padding-right: 8px;\n  position: absolute;\n  top: 4px; }\n\n.title__line {\n  background: #000;\n  display: inline-block;\n  width: 100%;\n  height: 1px; }\n\n.track {\n  align-items: center;\n  display: flex;\n  position: relative;\n  width: 100%; }\n\n.track__image {\n  display: inline-block;\n  height: 70px;\n  margin-right: 10px;\n  width: 70px; }\n\n.track__details {\n  display: inline-block;\n  vertical-align: top;\n  width: 210px; }\n\n.track__details p {\n  margin: 0; }\n\n.track__marquee {\n  line-height: 20px;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%; }\n\n.track__marquee p {\n  display: inline-block;\n  padding-left: 100%;\n  animation: marquee 15s linear infinite; }\n\n@keyframes marquee {\n  0% {\n    transform: translate(0, 0); }\n  100% {\n    transform: translate(-100%, 0); } }\n\n.track__name {\n  font-size: 22px;\n  font-weight: bold;\n  padding-bottom: 1px; }\n\n.track__artist {\n  font-size: 16px;\n  padding-bottom: 8px; }\n\n.track__album {\n  color: grey;\n  font-size: 16px; }\n\n.track--in-list {\n  border-bottom: 1px solid grey;\n  padding: 10px 0; }\n\n.track--in-list:first-of-type {\n  padding-top: 0; }\n\n.track--in-list:last-of-type {\n  border: none; }\n\n.track--current {\n  padding-bottom: 20px; }\n\n.track__progress {\n  width: 100%; }\n\n.track__status {\n  position: relative; }\n\n.track__status__progress-bar {\n  background: black;\n  float: left;\n  height: 1px;\n  opacity: 0.5;\n  position: absolute;\n  top: 10px;\n  width: 75%; }\n\n.track__status__progress-bar--fill {\n  background: #ef9783;\n  border-radius: 10px;\n  height: 11px;\n  left: -1px;\n  opacity: 1;\n  top: 5px;\n  z-index: 1; }\n\n.track__status__time {\n  float: right;\n  font-weight: bold;\n  margin: 0; }\n\n.track__status__time span {\n  font-weight: normal; }\n\n.cross__svg {\n  border-radius: 50%;\n  float: right;\n  height: 40px;\n  stroke-width: 3; }\n\n.cross__path {\n  stroke: #ef9783;\n  stroke-dasharray: 48;\n  stroke-dashoffset: 48;\n  transform-origin: 50% 50% 0; }\n\n.cross__path--right {\n  animation: ease 0.8s normal forwards 1 running stroke; }\n\n.cross__path--left {\n  animation: ease 0.8s normal forwards 1 running stroke; }\n\n@keyframes stroke {\n  100% {\n    stroke-dashoffset: 0; } }\n\n.track__remove {\n  align-items: center;\n  background: rgba(255, 255, 255, 0.5);\n  border: 0;\n  color: #808080;\n  cursor: pointer;\n  display: flex;\n  font-size: 16px;\n  height: 20px;\n  justify-content: center;\n  outline: none;\n  position: absolute;\n  right: 0;\n  width: 20px; }\n\n.input {\n  padding-bottom: 35px;\n  position: relative; }\n\n.input--login {\n  padding: 0; }\n\n.input__spotifyURI {\n  border: 0;\n  height: 50px;\n  outline: none;\n  padding: 0 10px;\n  width: 85%; }\n\n.input__button {\n  background: #ef9783;\n  border-radius: 20px;\n  border-style: none;\n  cursor: pointer;\n  font-weight: bold;\n  font-size: 16px;\n  margin: 15px 0 0;\n  outline: none;\n  padding: 12px 20px;\n  -webkit-appearance: none; }\n\n.input__button:hover {\n  text-decoration: underline; }\n\n.input__button--login {\n  color: black;\n  margin: 0;\n  text-decoration: none; }\n\n.input__button--disabled {\n  opacity: 0.4;\n  cursor: auto; }\n\n.input__button--disabled:hover {\n  text-decoration: none; }\n\n.input__button--play {\n  text-align: center; }\n\n.info__text {\n  border: none;\n  background: none;\n  cursor: pointer;\n  font-size: 12px;\n  margin: 0;\n  outline: none;\n  padding: 0;\n  text-decoration: underline; }\n\n.input__field {\n  background: #fff;\n  position: relative; }\n\n.input__tick {\n  color: #7fd48a;\n  display: none; }\n\n.input__cancel {\n  color: #ef9783;\n  display: none; }\n\n.input__tick--show,\n.input__cancel--show {\n  display: block; }\n\n.input__tick,\n.input__cancel {\n  position: absolute;\n  right: 15px;\n  top: 33%; }\n\n@font-face {\n  font-family: 'jukebox';\n  src: url(" + __webpack_require__(202) + ");\n  src: url(" + __webpack_require__(202) + "#iefix) format(\"embedded-opentype\"), url(" + __webpack_require__(522) + ") format(\"woff2\"), url(" + __webpack_require__(523) + ") format(\"woff\"), url(" + __webpack_require__(524) + ") format(\"truetype\"), url(" + __webpack_require__(525) + "#jukebox) format(\"svg\");\n  font-weight: normal;\n  font-style: normal; }\n\n/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */\n/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */\n/*\n@media screen and (-webkit-min-device-pixel-ratio:0) {\n  @font-face {\n    font-family: 'jukebox';\n    src: url('../font/jukebox.svg?1503957#jukebox') format('svg');\n  }\n}\n*/\n[class^=\"jukebox-\"]:before, [class*=\" jukebox-\"]:before {\n  font-family: \"jukebox\";\n  font-style: normal;\n  font-weight: normal;\n  speak: none;\n  display: inline-block;\n  text-decoration: inherit;\n  width: 1em;\n  margin-right: .2em;\n  text-align: center;\n  /* opacity: .8; */\n  /* For safety - reset parent styles, that can break glyph codes*/\n  font-variant: normal;\n  text-transform: none;\n  /* fix buttons height, for twitter bootstrap */\n  line-height: 1em;\n  /* Animation center compensation - margins should be symmetric */\n  /* remove if not needed */\n  margin-left: .2em;\n  /* you can be more comfortable with increased icons size */\n  /* font-size: 120%; */\n  /* Font smoothing. That was taken from TWBS */\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  /* Uncomment for 3D effect */\n  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */ }\n\n.jukebox-ok:before {\n  content: '\\E800'; }\n\n/* '' */\n.jukebox-cancel:before {\n  content: '\\E801'; }\n\n/* '' */\n.notification {\n  background: #7fd48a;\n  height: 40px;\n  position: fixed;\n  width: 100%; }\n\n.notification--show {\n  bottom: 0;\n  -moz-transition: bottom 0.1s ease-in-out;\n  -webkit-transition: bottom 0.1s ease-in-out;\n  transition: bottom 0.1s ease-in-out;\n  z-index: 10; }\n\n.notification--red {\n  background: #ef9783; }\n\n.notification__text {\n  color: #fff;\n  font-size: 14px;\n  line-height: 40px;\n  margin: 0 auto;\n  padding-left: 10px;\n  text-align: left;\n  width: 320px; }\n\nhtml,\nbody {\n  font-family: 'Work Sans', sans-serif;\n  margin: 0; }\n\n* {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box; }\n", ""]);
+exports.push([module.i, "@charset \"UTF-8\";\n.loader-container {\n  background: #fef394;\n  height: 100vh;\n  width: 100%; }\n\n.loader {\n  left: 50%;\n  position: absolute;\n  top: 50%;\n  -webkit-transform: translate(-50%, -50%);\n  transform: translate(-50%, -50%); }\n\n.dot {\n  -webkit-animation: fx 1000ms ease infinite 0ms;\n  animation: fx 1000ms ease infinite 0ms;\n  border: 2px solid #ef9783;\n  border-radius: 50%;\n  height: 10px;\n  float: left;\n  margin: 0 5px;\n  -webkit-transform: scale(0);\n  transform: scale(0);\n  width: 10px; }\n\n.dot:nth-child(2) {\n  -webkit-animation: fx 1000ms ease infinite 300ms;\n  animation: fx 1000ms ease infinite 300ms; }\n\n.dot:nth-child(3) {\n  -webkit-animation: fx 1000ms ease infinite 600ms;\n  animation: fx 1000ms ease infinite 600ms; }\n\n@-webkit-keyframes fx {\n  50% {\n    -webkit-transform: scale(1);\n    transform: scale(1);\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@keyframes fx {\n  50% {\n    -webkit-transform: scale(1);\n    transform: scale(1);\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n.container {\n  height: 100%;\n  width: 100%; }\n\n.top {\n  background: #fef394;\n  overflow: hidden;\n  padding: 30px 0 20px;\n  position: fixed;\n  top: 0;\n  width: 100%;\n  z-index: 3; }\n\n.top--login {\n  height: 100vh; }\n\n.fixed-height {\n  height: 100vh;\n  overflow: hidden; }\n\n.content {\n  margin: 0 auto;\n  max-width: 320px;\n  padding: 0 15px; }\n\n.content--login {\n  align-items: center;\n  display: flex;\n  height: 100%;\n  justify-content: center; }\n\n.top__decoration {\n  background: #ef9783;\n  border-radius: 15px;\n  height: 50%;\n  position: absolute;\n  width: 10px; }\n\n.top__decoration--1 {\n  left: 20%;\n  top: -80px; }\n\n.top__decoration--2 {\n  right: 14%;\n  bottom: -70px;\n  -ms-transform: rotate(-10deg);\n  -webkit-transform: rotate(-10deg);\n  transform: rotate(-10deg); }\n\n.top__decoration--3 {\n  right: 2%;\n  bottom: -5px;\n  -ms-transform: rotate(-60deg);\n  -webkit-transform: rotate(-60deg);\n  transform: rotate(-60deg); }\n\n.bottom {\n  padding-bottom: 40px;\n  position: relative;\n  top: 210px; }\n\n.title {\n  margin: 30px 0;\n  position: relative; }\n\n.title__text {\n  background: #fff;\n  color: #000;\n  display: inline-block;\n  margin: 0;\n  padding-right: 8px;\n  position: absolute;\n  top: 4px; }\n\n.title__line {\n  background: #000;\n  display: inline-block;\n  width: 100%;\n  height: 1px; }\n\n.track {\n  align-items: center;\n  display: flex;\n  position: relative;\n  width: 100%; }\n\n.track__image {\n  display: inline-block;\n  height: 70px;\n  margin-right: 10px;\n  width: 70px; }\n\n.track__details {\n  display: inline-block;\n  vertical-align: top;\n  width: 210px; }\n\n.track__details p {\n  margin: 0; }\n\n.track__marquee {\n  line-height: 20px;\n  overflow: hidden;\n  white-space: nowrap;\n  width: 100%; }\n\n.track__marquee p {\n  display: inline-block;\n  padding-left: 100%;\n  animation: marquee 15s linear infinite; }\n\n@keyframes marquee {\n  0% {\n    transform: translate(0, 0); }\n  100% {\n    transform: translate(-100%, 0); } }\n\n.track__name {\n  font-size: 22px;\n  font-weight: bold;\n  padding-bottom: 1px; }\n\n.track__artist {\n  font-size: 16px;\n  padding-bottom: 8px; }\n\n.track__album {\n  color: grey;\n  font-size: 16px; }\n\n.track--in-list {\n  border-bottom: 1px solid grey;\n  padding: 10px 0; }\n\n.track--in-list:first-of-type {\n  padding-top: 0; }\n\n.track--in-list:last-of-type {\n  border: none; }\n\n.track--current {\n  padding-bottom: 20px; }\n\n.track__progress {\n  width: 100%; }\n\n.track__status {\n  position: relative; }\n\n.track__status__progress-bar {\n  background: black;\n  float: left;\n  height: 1px;\n  opacity: 0.5;\n  position: absolute;\n  top: 10px;\n  width: 75%; }\n\n.track__status__progress-bar--fill {\n  background: #ef9783;\n  border-radius: 10px;\n  height: 11px;\n  left: -1px;\n  opacity: 1;\n  top: 5px;\n  z-index: 1; }\n\n.track__status__time {\n  float: right;\n  font-weight: bold;\n  margin: 0; }\n\n.track__status__time span {\n  font-weight: normal; }\n\n.cross__svg {\n  border-radius: 50%;\n  float: right;\n  height: 40px;\n  stroke-width: 3; }\n\n.cross__path {\n  stroke: #ef9783;\n  stroke-dasharray: 48;\n  stroke-dashoffset: 48;\n  transform-origin: 50% 50% 0; }\n\n.cross__path--right {\n  animation: ease 0.8s normal forwards 1 running stroke; }\n\n.cross__path--left {\n  animation: ease 0.8s normal forwards 1 running stroke; }\n\n@keyframes stroke {\n  100% {\n    stroke-dashoffset: 0; } }\n\n.track__remove {\n  align-items: center;\n  background: rgba(255, 255, 255, 0.5);\n  border: 0;\n  color: #808080;\n  cursor: pointer;\n  display: flex;\n  font-size: 16px;\n  height: 20px;\n  justify-content: center;\n  outline: none;\n  position: absolute;\n  right: 0;\n  width: 20px; }\n\n.input {\n  padding-bottom: 35px;\n  position: relative; }\n\n.input--login {\n  padding: 0; }\n\n.input__spotifyURI {\n  border: 0;\n  height: 50px;\n  outline: none;\n  padding: 0 10px;\n  width: 85%; }\n\n.input__button {\n  background: #ef9783;\n  border-radius: 20px;\n  border-style: none;\n  cursor: pointer;\n  font-weight: bold;\n  font-size: 16px;\n  margin: 15px 0 0;\n  outline: none;\n  padding: 12px 20px;\n  -webkit-appearance: none; }\n\n.input__button:hover {\n  text-decoration: underline; }\n\n.input__button--login {\n  color: black;\n  margin: 0;\n  text-decoration: none; }\n\n.input__button--disabled {\n  opacity: 0.4;\n  cursor: auto; }\n\n.input__button--disabled:hover {\n  text-decoration: none; }\n\n.input__button--play {\n  text-align: center; }\n\n.info__text {\n  border: none;\n  background: none;\n  cursor: pointer;\n  font-size: 12px;\n  margin: 0;\n  outline: none;\n  padding: 0;\n  text-decoration: underline; }\n\n.input__field {\n  background: #fff;\n  position: relative; }\n\n.input__tick {\n  color: #7fd48a;\n  display: none; }\n\n.input__cancel {\n  color: #ef9783;\n  display: none; }\n\n.input__tick--show,\n.input__cancel--show {\n  display: block; }\n\n.input__tick,\n.input__cancel {\n  position: absolute;\n  right: 15px;\n  top: 33%; }\n\n@font-face {\n  font-family: 'jukebox';\n  src: url(" + __webpack_require__(202) + ");\n  src: url(" + __webpack_require__(202) + "#iefix) format(\"embedded-opentype\"), url(" + __webpack_require__(522) + ") format(\"woff2\"), url(" + __webpack_require__(523) + ") format(\"woff\"), url(" + __webpack_require__(524) + ") format(\"truetype\"), url(" + __webpack_require__(525) + "#jukebox) format(\"svg\");\n  font-weight: normal;\n  font-style: normal; }\n\n/* Chrome hack: SVG is rendered more smooth in Windozze. 100% magic, uncomment if you need it. */\n/* Note, that will break hinting! In other OS-es font will be not as sharp as it could be */\n/*\n@media screen and (-webkit-min-device-pixel-ratio:0) {\n  @font-face {\n    font-family: 'jukebox';\n    src: url('../font/jukebox.svg?1503957#jukebox') format('svg');\n  }\n}\n*/\n[class^=\"jukebox-\"]:before, [class*=\" jukebox-\"]:before {\n  font-family: \"jukebox\";\n  font-style: normal;\n  font-weight: normal;\n  speak: none;\n  display: inline-block;\n  text-decoration: inherit;\n  width: 1em;\n  margin-right: .2em;\n  text-align: center;\n  /* opacity: .8; */\n  /* For safety - reset parent styles, that can break glyph codes*/\n  font-variant: normal;\n  text-transform: none;\n  /* fix buttons height, for twitter bootstrap */\n  line-height: 1em;\n  /* Animation center compensation - margins should be symmetric */\n  /* remove if not needed */\n  margin-left: .2em;\n  /* you can be more comfortable with increased icons size */\n  /* font-size: 120%; */\n  /* Font smoothing. That was taken from TWBS */\n  -webkit-font-smoothing: antialiased;\n  -moz-osx-font-smoothing: grayscale;\n  /* Uncomment for 3D effect */\n  /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */ }\n\n.jukebox-ok:before {\n  content: '\\E800'; }\n\n/* '' */\n.jukebox-cancel:before {\n  content: '\\E801'; }\n\n/* '' */\n.notification {\n  background: #7fd48a;\n  height: 40px;\n  position: fixed;\n  width: 100%; }\n\n.notification--show {\n  bottom: 0;\n  -moz-transition: bottom 0.1s ease-in-out;\n  -webkit-transition: bottom 0.1s ease-in-out;\n  transition: bottom 0.1s ease-in-out;\n  z-index: 10; }\n\n.notification--red {\n  background: #ef9783; }\n\n.notification__text {\n  color: #fff;\n  font-size: 14px;\n  line-height: 40px;\n  margin: 0 auto;\n  padding-left: 10px;\n  text-align: left;\n  width: 320px; }\n\nhtml,\nbody {\n  font-family: 'Work Sans', sans-serif;\n  margin: 0; }\n\n* {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box; }\n", ""]);
 
 // exports
 

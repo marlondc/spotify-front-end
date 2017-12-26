@@ -239,7 +239,6 @@ io.on('connection', (socket) => {
     });
     axios.get(`${process.env.BACKEND_URL}/refresh?${query}`)
       .then(({ data }) => {
-        console.log(data);
         io.sockets.emit('new_access_token', data);
       })
       .catch((err) => io.sockets.emit('token_error', 'refresh error'));

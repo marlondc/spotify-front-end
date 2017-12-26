@@ -12,7 +12,6 @@ import TrackStatus from './atoms/track-status';
 import StartButton from './atoms/start-button';
 import TopDecoration from './atoms/top-decoration';
 import InputUri from './atoms/input-uri';
-import Modal from './atoms/modal';
 import Notification from './atoms/notification';
 
 const socket = io();
@@ -33,6 +32,7 @@ class User extends Component {
     this.props.updateId(uuid());
 
     this.addTrack = this.addTrack.bind(this);
+    this.searchForTrack = this.searchForTrack.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
     this.handleRefreshToken = this.handleRefreshToken.bind(this);
     this.skipCurrentSong = this.skipCurrentSong.bind(this);
@@ -87,8 +87,16 @@ class User extends Component {
       this.setState({
         validAccessToken: true,
       })
+      socket.emit('get_playlist', {
+        token: access_token,
+        refresh: this.props.refreshToken,
+      });
       this.props.updateAccessToken(access_token);
     })
+  }
+
+  searchForTrack(value) {
+    axios.get
   }
 
   addTrack(spotifyUri) {
@@ -151,8 +159,7 @@ class User extends Component {
             <div className="top">
               <div className="content">
                 <TopDecoration />
-                <InputUri accessToken={accessToken} addToPlaylist={this.addTrack} currentTrack={currentTrack} />
-                <Modal />
+                <InputUri accessToken={accessToken} searchForTrack={this.searchForTrack} currentTrack={currentTrack} />
               </div>
             </div>
             <div className="bottom">
