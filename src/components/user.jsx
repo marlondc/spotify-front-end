@@ -160,7 +160,7 @@ class User extends Component {
                   {
                     !isEmpty(currentTrack)
                     ? <div>
-                        <TitleDivider titleText="Currently track" currentTrackInPlaylist />
+                        <TitleDivider titleText="Current track" currentTrackInPlaylist />
                         <div className="track track--current">
                           <Track track={currentTrack} id={isEmpty(tracks) ? 'null' : id} handleRemove={isEmpty(tracks) ? null : this.skipCurrentSong}/>
                         </div>

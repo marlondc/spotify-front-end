@@ -43324,7 +43324,7 @@ var User = function (_Component) {
             !(0, _ramda.isEmpty)(currentTrack) ? _react2.default.createElement(
               'div',
               null,
-              _react2.default.createElement(_titleDivider2.default, { titleText: 'Currently track', currentTrackInPlaylist: true }),
+              _react2.default.createElement(_titleDivider2.default, { titleText: 'Current track', currentTrackInPlaylist: true }),
               _react2.default.createElement(
                 'div',
                 { className: 'track track--current' },
