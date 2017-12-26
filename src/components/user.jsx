@@ -156,7 +156,7 @@ class User extends Component {
             <div className="bottom">
               <div className="content">
                   {
-                    currentTrack
+                    !isEmpty(currentTrack)
                     ? <div>
                         <TitleDivider titleText="Currently playing" />
                         <div className="track track--current">

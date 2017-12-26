@@ -13083,17 +13083,11 @@ var updateId = exports.updateId = function updateId(id) {
 };
 
 var updateAccessToken = exports.updateAccessToken = function updateAccessToken(accessToken) {
-  console.log(accessToken);
   return {
     type: UPDATE_ACCESS_TOKEN,
     accessToken: accessToken
   };
 };
-
-// export const updateAccessToken = accessToken => ({
-//   type: UPDATE_ACCESS_TOKEN,
-//   accessToken,
-// })
 
 /***/ }),
 /* 200 */
@@ -35004,17 +34998,12 @@ var mapStateToProps = function mapStateToProps(_ref) {
     return track.id === currentTrack.id;
   });
 
-  var newCurrentTrack = currentTrack.isPlaying && tracks.length !== 0 ? _extends({}, currentTrack, {
-    position: filterIndexedTracks[0].position
-  }) : _extends({}, currentTrack, {
-    position: -1
-  });
   var filteredPlaylistTracks = indexedTracks.filter(function (track) {
     return track.id !== currentTrack.id && newCurrentTrack && track.position > newCurrentTrack.position;
   });
 
   return _extends({}, songs, {
-    currentTrack: newCurrentTrack,
+    currentTrack: currentTrack,
     tracks: filteredPlaylistTracks
   });
 };
@@ -43325,7 +43314,7 @@ var User = function (_Component) {
           _react2.default.createElement(
             'div',
             { className: 'content' },
-            currentTrack ? _react2.default.createElement(
+            !(0, _ramda.isEmpty)(currentTrack) ? _react2.default.createElement(
               'div',
               null,
               _react2.default.createElement(_titleDivider2.default, { titleText: 'Currently playing' }),
@@ -48005,53 +47994,69 @@ var _ramda = __webpack_require__(25);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var Track = function Track() {
+var Track = function Track(_ref) {
+  var track = _ref.track,
+      id = _ref.id,
+      handleRemove = _ref.handleRemove;
   return _react2.default.createElement(
     'div',
-    null,
-    'Track'
+    { className: 'track' },
+    _react2.default.createElement('img', {
+      src: track.image,
+      alt: track.album,
+      className: 'track__image'
+    }),
+    _react2.default.createElement(
+      'div',
+      { className: 'track__details' },
+      track.name.length > 17 ? _react2.default.createElement(
+        'div',
+        { className: 'track__marquee' },
+        _react2.default.createElement(
+          'p',
+          { className: 'track__name' },
+          track.name
+        )
+      ) : _react2.default.createElement(
+        'p',
+        { className: 'track__name' },
+        track.name
+      ),
+      track.artist.length > 25 ? _react2.default.createElement(
+        'div',
+        { className: 'track__marquee' },
+        _react2.default.createElement(
+          'p',
+          { className: 'track__artist' },
+          track.artist
+        )
+      ) : _react2.default.createElement(
+        'p',
+        { className: 'track__artist' },
+        track.artist
+      ),
+      track.album.length > 22 ? _react2.default.createElement(
+        'div',
+        { className: 'track__marquee' },
+        _react2.default.createElement(
+          'p',
+          { className: 'track__album' },
+          track.album
+        )
+      ) : _react2.default.createElement(
+        'p',
+        { className: 'track__album' },
+        track.album
+      )
+    ),
+    track.addedBy === id && !(0, _ramda.isEmpty)(track.addedBy) && !(0, _ramda.isNil)(track.addedBy) ? _react2.default.createElement('button', {
+      onClick: function onClick() {
+        return handleRemove(track.id);
+      },
+      className: 'track__remove jukebox-cancel'
+    }) : null
   );
 };
-// const Track = ({ track, id, handleRemove }) => (
-//   <div className="track">
-//     <img 
-//       src={track.image}
-//       alt={track.album}
-//       className="track__image"
-//     />
-//     <div className="track__details">
-//       {
-//         track.name.length > 17
-//           ? <div className="track__marquee">
-//             <p className="track__name">{track.name}</p>
-//           </div>
-//           : <p className="track__name">{track.name}</p>
-//       }
-//       {
-//         track.artist.length > 25
-//           ? <div className="track__marquee">
-//             <p className="track__artist">{track.artist}</p>
-//           </div>
-//           : <p className="track__artist">{track.artist}</p>
-//       }
-//       {
-//         track.album.length > 22
-//           ? <div className="track__marquee">
-//             <p className="track__album">{track.album}</p>
-//           </div>
-//           : <p className="track__album">{track.album}</p>
-//       }
-//     </div>
-//     {
-//       (track.addedBy === id && !isEmpty(track.addedBy) && !isNil(track.addedBy))
-//         ? <button
-//           onClick={() => handleRemove(track.id)}
-//           className="track__remove jukebox-cancel"
-//         />
-//         : null
-//     }
-//   </div>
-// );
 
 exports.default = Track;
 
@@ -49743,7 +49748,6 @@ function reduce() {
       {
         var _accessToken = action.accessToken;
 
-        console.log(_accessToken);
         return _extends({}, state, {
           accessToken: _accessToken
         });

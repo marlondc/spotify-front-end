@@ -58,15 +58,7 @@ export const updateId = id => ({
   id,
 })
 
-export const updateAccessToken = (accessToken) => {
-  console.log(accessToken);
-  return {
-    type: UPDATE_ACCESS_TOKEN,
-    accessToken,
-  };
-};
-
-// export const updateAccessToken = accessToken => ({
-//   type: UPDATE_ACCESS_TOKEN,
-//   accessToken,
-// })
+export const updateAccessToken = accessToken => ({
+  type: UPDATE_ACCESS_TOKEN,
+  accessToken,
+})

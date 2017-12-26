@@ -75,7 +75,6 @@ export default function reduce(state = initialState, action) {
 
   case UPDATE_ACCESS_TOKEN: {
     const { accessToken } = action;
-    console.log(accessToken);
     return {
       ...state,
       accessToken,
