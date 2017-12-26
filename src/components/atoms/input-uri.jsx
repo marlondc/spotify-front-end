@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { test, isEmpty } from 'ramda';
 
+import Track from './track';
+
 class InputUri extends Component {
   constructor(props) {
     super(props);
@@ -12,6 +14,7 @@ class InputUri extends Component {
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleInputSubmit = this.handleInputSubmit.bind(this);
+    this.handleAddClick = this.handleAddClick.bind(this);
   }
 
   handleInputChange(event) {
@@ -25,19 +28,23 @@ class InputUri extends Component {
   handleInputSubmit(event) {
     event.preventDefault();
     const {
-      accessToken,
       searchForTrack,
     } = this.props
     const { searchValue } = this.state;
     if (!isEmpty(this.state.searchValue)) {
-      searchForTrack(searchValue, accessToken)
+      searchForTrack(searchValue)
       this.setState({
         searchValue: '',
       })
     }
   }
 
+  handleAddClick(trackId) {
+    this.props.addToPlaylist(trackId);
+  }
+
   render() {
+    const { searchResults } = this.props;
     return (
       <div className="input">
         <form onSubmit={this.handleInputSubmit}>
@@ -57,6 +64,13 @@ class InputUri extends Component {
           >
             Search
           </button>
+          {
+            !isEmpty(searchResults) && searchResults.map(track => (
+              <div className="track track--in-list track--search" key={track.id} onClick={() => this.handleAddClick(track.id)}>
+                <Track track={track} id={track.id} handleRemove={this.handleRemove} />
+              </div>
+            ))
+          }
         </form>
       </div>
     )
