@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { filter, isEmpty, equals, addIndex, map } from 'ramda';
+import { filter, isEmpty, equals, addIndex, map, indexOf } from 'ramda';
 
 import Page from '../components/page';
 import {
@@ -21,15 +21,16 @@ const mapStateToProps = ({ songs }) => {
     ...track,
     position: index,
   }), tracks);
+
+  const trackIds = map(track => track.id, tracks)
+
   const filterIndexedTracks = indexedTracks.filter(track => (
-    track.id === currentTrack.id
-  ))
- 
+    track.id !== currentTrack.id
+  ));
+
   const filteredPlaylistTracks = indexedTracks.filter(track => (
-    track.id !== currentTrack.id &&
-    newCurrentTrack &&
-    track.position > newCurrentTrack.position
-  ))
+    track.position > indexOf(currentTrack.id, trackIds)
+  ));
 
   return {
     ...songs,

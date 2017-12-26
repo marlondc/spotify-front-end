@@ -34994,12 +34994,17 @@ var mapStateToProps = function mapStateToProps(_ref) {
       position: index
     });
   }, tracks);
+
+  var trackIds = (0, _ramda.map)(function (track) {
+    return track.id;
+  }, tracks);
+
   var filterIndexedTracks = indexedTracks.filter(function (track) {
-    return track.id === currentTrack.id;
+    return track.id !== currentTrack.id;
   });
 
   var filteredPlaylistTracks = indexedTracks.filter(function (track) {
-    return track.id !== currentTrack.id && newCurrentTrack && track.position > newCurrentTrack.position;
+    return track.position > (0, _ramda.indexOf)(currentTrack.id, trackIds);
   });
 
   return _extends({}, songs, {
