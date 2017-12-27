@@ -13033,13 +13033,15 @@ var getTokens = exports.getTokens = function getTokens() {
       type: REQUEST_TOKENS
     });
     _axios2.default.get("http://localhost:8000" + '/tokens').then(function (_ref) {
-      var tokens = _ref.data.tokens;
+      var _ref$data$tokens = _ref.data.tokens,
+          accessToken = _ref$data$tokens.accessToken,
+          refreshToken = _ref$data$tokens.refreshToken;
 
       dispatch({
         type: RECEIVE_TOKENS,
         data: {
-          accessToken: tokens[0].accessToken,
-          refreshToken: tokens[0].refreshToken
+          accessToken: accessToken,
+          refreshToken: refreshToken
         }
       });
     }).catch(function (err) {
@@ -35049,7 +35051,7 @@ var mapStateToProps = function mapStateToProps(_ref) {
   var filteredPlaylistTracks = indexedTracks.filter(function (track) {
     return track.position > (0, _ramda.indexOf)(currentTrack.id, trackIds);
   });
-  console.log((0, _ramda.indexOf)(currentTrack.id, trackIds));
+
   return _extends({}, songs, {
     currentTrack: currentTrack,
     currentTrackInPlaylist: (0, _ramda.indexOf)(currentTrack.id, trackIds) !== -1,
