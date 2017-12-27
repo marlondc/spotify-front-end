@@ -21,12 +21,11 @@ export const getTokens = () => (dispatch) => {
   axios
     .get(`${process.env.BACKEND_URL}/tokens`)
     .then(({ data: { tokens } }) => {
-      const { accessToken, refreshToken } = tokens[0];
       dispatch({
         type: RECEIVE_TOKENS,
         data: {
-          accessToken,
-          refreshToken,
+          accessToken: tokens[0].accessToken,
+          refreshToken: tokens[0].refreshToken,
         },
       })
     })
