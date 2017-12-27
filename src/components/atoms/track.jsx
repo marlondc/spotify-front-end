@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { isEmpty, isNil } from 'ramda';
 
-const Track = ({ track, id, handleRemove }) => (
+const Track = ({ track, id, handleRemove, searchTrack }) => (
   <div className="track">
     <img 
       src={track.image}

@@ -12,7 +12,6 @@ import TrackStatus from './atoms/track-status';
 import StartButton from './atoms/start-button';
 import TopDecoration from './atoms/top-decoration';
 import InputUri from './atoms/input-uri';
-import Modal from './atoms/modal';
 import Notification from './atoms/notification';
 
 const socket = io();
@@ -33,6 +32,8 @@ class User extends Component {
     this.props.updateId(uuid());
 
     this.addTrack = this.addTrack.bind(this);
+    this.searchForTrack = this.searchForTrack.bind(this);
+    this.addToPlaylist = this.addToPlaylist.bind(this);
     this.handleRemove = this.handleRemove.bind(this);
     this.handleRefreshToken = this.handleRefreshToken.bind(this);
     this.skipCurrentSong = this.skipCurrentSong.bind(this);
@@ -87,8 +88,40 @@ class User extends Component {
       this.setState({
         validAccessToken: true,
       })
+      socket.emit('get_playlist', {
+        token: access_token,
+        refresh: this.props.refreshToken,
+      });
       this.props.updateAccessToken(access_token);
     })
+  }
+
+  searchForTrack(query) {
+    this.props.searchForTrack({
+      query,
+      accessToken: this.props.accessToken,
+    });
+  }
+
+  addToPlaylist(trackId) {
+    const {
+      clearSearchResults,
+      currentTrack,
+    } = this.props;
+    clearSearchResults();
+    if (isEmpty(currentTrack) || !currentTrack.isPlaying) {
+      socket.emit('add_track_and_start_playback', {
+        trackId,
+        id: this.props.id,
+        token: this.props.accessToken,
+      })
+    } else {
+      socket.emit('add_track', {
+        trackId,
+        id: this.props.id,
+        token: this.props.accessToken,
+      })
+    }
   }
 
   addTrack(spotifyUri) {
@@ -131,6 +164,7 @@ class User extends Component {
       tracks,
       id,
       currentTrackInPlaylist,
+      searchResults,
     } = this.props;
 
     const {
@@ -143,7 +177,6 @@ class User extends Component {
         <Loader />
       );
     }
-
     return (
       validAccessToken
         ? (
@@ -151,8 +184,13 @@ class User extends Component {
             <div className="top">
               <div className="content">
                 <TopDecoration />
-                <InputUri accessToken={accessToken} addToPlaylist={this.addTrack} currentTrack={currentTrack} />
-                <Modal />
+                <InputUri
+                  accessToken={accessToken}
+                  searchForTrack={this.searchForTrack}
+                  addToPlaylist={this.addToPlaylist}
+                  currentTrack={currentTrack}
+                  searchResults={searchResults}
+                />
               </div>
             </div>
             <div className="bottom">
@@ -179,7 +217,7 @@ class User extends Component {
                     {
                       tracks.map(track => (
                         <div className="track track--in-list" key={track.id}>
-                          <Track track={track} id={id} handleRemove={this.handleRemove} />
+                          <Track track={track} id={track.id} handleRemove={this.handleRemove} />
                         </div>
                       ))
                     }

@@ -2,82 +2,76 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { test, isEmpty } from 'ramda';
 
-const invalidURI = (uri) => {
-  // const spotifyRegex = /^https:\/\/open.spotify.com\/track\/([a-z,A-Z,0-9]{22})/;
-  const spotifyRegex = /([a-z,A-Z,0-9]{22})/;
-  console.log
-  return !test(spotifyRegex, uri)
-}
+import Track from './track';
 
 class InputUri extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      spotifyURI: '',
+      searchValue: '',
     }
 
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleInputSubmit = this.handleInputSubmit.bind(this);
+    this.handleAddClick = this.handleAddClick.bind(this);
   }
 
   handleInputChange(event) {
     const value = event.target.value;
 
     this.setState({
-      spotifyURI: value
+      searchValue: value,
     });
   }
 
-  handleSubmit() {
+  handleInputSubmit(event) {
+    event.preventDefault();
     const {
-      accessToken,
-      addToPlaylist,
+      searchForTrack,
     } = this.props
-    const { spotifyURI } = this.state;
-    if (!invalidURI(spotifyURI)) {
-      addToPlaylist(spotifyURI, accessToken)
+    const { searchValue } = this.state;
+    if (!isEmpty(this.state.searchValue)) {
+      searchForTrack(searchValue)
       this.setState({
-        spotifyURI: '',
+        searchValue: '',
       })
     }
   }
 
+  handleAddClick(trackId) {
+    this.props.addToPlaylist(trackId);
+  }
+
   render() {
+    const { searchResults } = this.props;
     return (
       <div className="input">
-        <div className="input__field">
+        <form onSubmit={this.handleInputSubmit}>
           <input
             type="text"
-            name="spotifyURI"
-            className="input__spotifyURI"
-            value={this.state.spotifyURI}
-            placeholder="Add spotify share link..."
+            name="Search for a Track"
+            placeholder="Find a Track"
+            value={this.state.searchValue}
+            className=" input__field input__spotifyURI"
             onChange={this.handleInputChange}
           />
-          <span
+          <button
             className={
-              classnames('jukebox-ok', 'input__tick', {
-                'input__tick--show': !invalidURI(this.state.spotifyURI),
-              })
+              classnames('input__button', { 'input__button--disabled': isEmpty(this.state.searchValue) })
             }
-          />
-          <span
-            className={
-              classnames('jukebox-cancel', 'input__cancel', {
-                'input__cancel--show': invalidURI(this.state.spotifyURI) && !isEmpty(this.state.spotifyURI),
-              })
-            }
-          />
-        </div>
-        <input
-          type="submit"
-          value={ this.props.currentTrack ? 'ADD' : 'ADD & PLAY'}
-          className={
-            classnames('input__button', { 'input__button--disabled': invalidURI(this.state.spotifyURI) })
+            type="submit"
+          >
+            Search
+          </button>
+          {
+            !isEmpty(searchResults) && searchResults.map(track => (
+              <div className="track track--in-list track--search" key={track.id} onClick={() => this.handleAddClick(track.id)}>
+                <Track track={track} id={track.id} handleRemove={this.handleRemove} />
+              </div>
+            ))
           }
-          onClick={this.handleSubmit}
-        />
+        </form>
       </div>
     )
   }

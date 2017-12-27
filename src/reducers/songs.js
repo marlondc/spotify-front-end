@@ -1,7 +1,9 @@
 import {
+  CLEAR_SEARCH_RESULTS,
   INVALID_TOKEN,
   RECEIVE_CURRENT_TRACK,
   RECEIVE_PLAYLIST,
+  RECEIVE_SEARCH_RESULTS,
   RECEIVE_TOKENS,
   RECEIVE_TOKENS_ERROR,
   REQUEST_TOKENS,
@@ -16,6 +18,7 @@ const initialState = {
   currentTrack: {},
   id: '',
   loading: true,
+  searchResults: [],
 };
 
 export default function reduce(state = initialState, action) {
@@ -25,6 +28,13 @@ export default function reduce(state = initialState, action) {
     return {
       ...state,
       accessToken: null,
+    }
+  }
+
+  case CLEAR_SEARCH_RESULTS: {
+    return {
+      ...state,
+      searchResults: [],
     }
   }
 
@@ -44,6 +54,14 @@ export default function reduce(state = initialState, action) {
     return {
       ...state,
       tracks,
+    }
+  }
+
+  case RECEIVE_SEARCH_RESULTS: {
+    const { searchResults } = action;
+    return {
+      ...state,
+      searchResults,
     }
   }
 

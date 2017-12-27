@@ -3,6 +3,7 @@ import { filter, isEmpty, equals, addIndex, map, indexOf, contains } from 'ramda
 
 import Page from '../components/page';
 import {
+  clearSearchResults,
   getTokens,
   updatePlaylist,
   invalidToken,
@@ -10,6 +11,7 @@ import {
   updateCurrentSong,
   updateId,
   updateAccessToken,
+  searchForTrack,
  } from '../actions/songs';
 
 const mapIndexed = addIndex(map);
@@ -35,7 +37,7 @@ const mapStateToProps = ({ songs }) => {
   return {
     ...songs,
     currentTrack,
-    currentTrackInPlaylist: contains(currentTrack, tracks),
+    currentTrackInPlaylist: indexOf(currentTrack.id, trackIds) !== -1,
     tracks: filteredPlaylistTracks,
   }
 };
@@ -45,9 +47,11 @@ const mapDispatchToProps = dispatch => ({
   updatePlaylist: tracks => dispatch(updatePlaylist(tracks)),
   invalidToken: () => dispatch(invalidToken()),
   refreshTokens: data => dispatch(refreshTokens(data)),
+  searchForTrack: ({ query, accessToken }) => dispatch(searchForTrack({ query, accessToken })),
   updateCurrentSong: song => dispatch(updateCurrentSong(song)),
   updateId: id => dispatch(updateId(id)),
-  updateAccessToken: token => dispatch(updateAccessToken(token))
+  updateAccessToken: token => dispatch(updateAccessToken(token)),
+  clearSearchResults: () => dispatch(clearSearchResults()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Page);
