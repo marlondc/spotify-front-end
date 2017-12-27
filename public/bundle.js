@@ -13033,9 +13033,10 @@ var getTokens = exports.getTokens = function getTokens() {
       type: REQUEST_TOKENS
     });
     _axios2.default.get("http://localhost:8000" + '/tokens').then(function (_ref) {
-      var _ref$data$tokens = _ref.data.tokens,
-          accessToken = _ref$data$tokens.accessToken,
-          refreshToken = _ref$data$tokens.refreshToken;
+      var tokens = _ref.data.tokens;
+      var _tokens$ = tokens[0],
+          accessToken = _tokens$.accessToken,
+          refreshToken = _tokens$.refreshToken;
 
       dispatch({
         type: RECEIVE_TOKENS,
