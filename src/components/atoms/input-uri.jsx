@@ -44,17 +44,18 @@ class InputUri extends Component {
   }
 
   render() {
-    const { searchResults } = this.props;
+    const { searchResults, isPlaying, cancelSearch } = this.props;
     return (
       <div className="input">
         <form onSubmit={this.handleInputSubmit}>
           <input
-            type="text"
-            name="Search for a Track"
-            placeholder="Find a Track"
-            value={this.state.searchValue}
+          autoComplete="off"
             className=" input__field input__spotifyURI"
+            name="Search for a Track"
             onChange={this.handleInputChange}
+            placeholder="Find a Track"
+            type="text"
+            value={this.state.searchValue}
           />
           <button
             className={
@@ -66,10 +67,19 @@ class InputUri extends Component {
           </button>
           {
             !isEmpty(searchResults) && searchResults.map(track => (
-              <div className="track track--in-list track--search" key={track.id} onClick={() => this.handleAddClick(track.id)}>
+              <div
+                className={classnames("track track--in-list track__search", {
+                  'track__search--start_play': !isPlaying,
+                })}
+                key={track.id}
+                onClick={() => this.handleAddClick(track.id)}
+              >
                 <Track track={track} id={track.id} handleRemove={this.handleRemove} />
               </div>
             ))
+          }
+          {
+            !isEmpty(searchResults) && <button type="submit" onClick={cancelSearch} className="input__cross" />
           }
         </form>
       </div>

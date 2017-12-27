@@ -145,7 +145,7 @@ io.on('connection', (socket) => {
   socket.on('add_track_and_start_playback', ({ trackId, id, token }) => {
     const spotifyRegex = /([a-z,A-Z,0-9]{22})/;
     const spotifyID = spotifyRegex.exec(trackId)[0];
-
+    console.log(token);
     const query = qs.stringify({
       uris: `spotify:track:${spotifyID}`,
     })
@@ -195,6 +195,7 @@ io.on('connection', (socket) => {
         })
       }).catch((err) => console.log(err));
     }).catch((err) => {
+      console.log(err);
       socket.emit('token_error', 'add track');
     });
   })

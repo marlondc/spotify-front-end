@@ -7,7 +7,7 @@ const TitleDivider = ({ titleText, currentTrackInPlaylist }) => (
     <div className="title__line"></div>
   </div>
   : <div className="title">
-    <p className="title__text">Start Playlist</p>
+    <p className="title__text">Current Playlist</p>
     <div className="title__line"></div>
   </div>
 );

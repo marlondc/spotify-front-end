@@ -99,7 +99,7 @@
   width: 100%;
 }
 
-.track--search:hover {
+.track__search:hover {
  &::after {
    align-items: center;
    background: #000;
@@ -115,6 +115,12 @@
    position: absolute;
    width: 100%;
  }
+}
+
+.track__search--start_play:hover {
+  &::after {
+    content: 'Play';
+  }
 }
 
 .track__image {

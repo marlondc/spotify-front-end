@@ -37,6 +37,7 @@ class User extends Component {
     this.handleRemove = this.handleRemove.bind(this);
     this.handleRefreshToken = this.handleRefreshToken.bind(this);
     this.skipCurrentSong = this.skipCurrentSong.bind(this);
+    this.cancelSearch = this.cancelSearch.bind(this);
   }
 
   componentWillMount() {
@@ -140,6 +141,10 @@ class User extends Component {
     }
   }
 
+  cancelSearch() {
+    this.props.clearSearchResults();
+  }
+
   handleRemove(trackId) {
     socket.emit('remove_track', ({
       trackId,
@@ -190,6 +195,8 @@ class User extends Component {
                   addToPlaylist={this.addToPlaylist}
                   currentTrack={currentTrack}
                   searchResults={searchResults}
+                  isPlaying={currentTrack.isPlaying}
+                  cancelSearch={this.cancelSearch}
                 />
               </div>
             </div>
