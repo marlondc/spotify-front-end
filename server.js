@@ -33,34 +33,32 @@ let poll;
 polling = false;
 
 io.on('connection', (socket) => {
-  socket.on('get_playlist', ({ token, refresh, id }) => {
+  socket.on('get_playlist', ({ token, refresh }) => {
     accessToken = token;
     refreshToken = refresh;
     if (!polling) {
       polling = true;
-      poll = setInterval(() => {
+      poll = setTimeout(() => {
         axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           }
         }).then(({ data }) => {
           const { item } = data;
-          track = tracks.filter((track) => track.id === item.id);
-          const addedBy = track[0]
-            ? track[0].addedBy
-            : ''
-          const song = {
-            album: item.album.name,
-            artist: item.artists[0].name,
-            duration: item.duration_ms,
-            id: item.id,
-            image: item.album.images[0].url,
-            isPlaying: data.is_playing,
-            name: item.name,
-            progress: data.progress_ms,
-            addedBy,
+          if (!R.isEmpty(data)) {
+            track = tracks.filter((track) => track.id === item.id);
+            const song = {
+              album: item.album.name,
+              artist: item.artists[0].name,
+              duration: item.duration_ms,
+              id: item.id,
+              image: item.album.images[0].url,
+              isPlaying: data.is_playing,
+              name: item.name,
+              progress: data.progress_ms,
+            }
+            io.sockets.emit('current_song', song);
           }
-          io.sockets.emit('current_song', song);
         })
           .catch(err => console.log(err))
       }, 1000)
@@ -78,7 +76,6 @@ io.on('connection', (socket) => {
             id: item.track.id,
             image: item.track.album.images[0].url,
             name: item.track.name,
-            addedBy: '',
           }
         });
         if (tracks.length === 0) {
@@ -129,7 +126,6 @@ io.on('connection', (socket) => {
           id: data.id,
           image: data.album.images[0].url,
           name: data.name,
-          addedBy: id,
         })
         io.sockets.emit('notification', {
           type: 'added track',
@@ -145,7 +141,6 @@ io.on('connection', (socket) => {
   socket.on('add_track_and_start_playback', ({ trackId, id, token }) => {
     const spotifyRegex = /([a-z,A-Z,0-9]{22})/;
     const spotifyID = spotifyRegex.exec(trackId)[0];
-    console.log(token);
     const query = qs.stringify({
       uris: `spotify:track:${spotifyID}`,
     })

@@ -244,7 +244,7 @@ class User extends Component {
                   onClick={this.handleRefreshToken}
                   className="input__button input__button--login"
                 >
-                  REFRESH TOKEN
+                  REFRESH
                 </button>
               </div>
             </div>

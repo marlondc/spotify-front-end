@@ -43545,7 +43545,7 @@ var User = function (_Component) {
                   onClick: this.handleRefreshToken,
                   className: 'input__button input__button--login'
                 },
-                'REFRESH TOKEN'
+                'REFRESH'
               )
             )
           )
