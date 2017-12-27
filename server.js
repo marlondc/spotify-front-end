@@ -38,7 +38,7 @@ io.on('connection', (socket) => {
     refreshToken = refresh;
     if (!polling) {
       polling = true;
-      poll = setTimeout(() => {
+      poll = setInterval(() => {
         axios.get('https://api.spotify.com/v1/me/player/currently-playing', {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -127,6 +127,7 @@ io.on('connection', (socket) => {
           image: data.album.images[0].url,
           name: data.name,
         })
+        totalNumberOfTracks = tracks.items.length;
         io.sockets.emit('notification', {
           type: 'added track',
           text: data.name,
@@ -186,11 +187,14 @@ io.on('connection', (socket) => {
           });
           io.sockets.emit('playlist_tracks', tracks);
         }).catch((err) => {
-          io.sockets.emit('token_error', 'start_playback');
+          io.sockets.emit('500_error', 'start_playback');
+          io.sockets.emit('notification', {
+            type: 'error',
+            text: 'Open a spotify app',
+          });
         })
       }).catch((err) => console.log(err));
     }).catch((err) => {
-      console.log(err);
       socket.emit('token_error', 'add track');
     });
   })
