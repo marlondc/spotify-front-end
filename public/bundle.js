@@ -35131,11 +35131,13 @@ var mapStateToProps = function mapStateToProps(_ref) {
   });
 
   var filteredPlaylistTracks = indexedTracks.filter(function (track) {
-    return track.position > (0, _ramda.indexOf)(currentTrack.id, trackIds);
+    return track.position > (0, _ramda.indexOf)(currentTrack.id, trackIds) && currentTrack.isPlaying;
   });
 
+  var currentTrackReturn = currentTrack.isPlaying ? currentTrack : {};
+
   return _extends({}, songs, {
-    currentTrack: currentTrack,
+    currentTrack: currentTrackReturn,
     currentTrackInPlaylist: (0, _ramda.indexOf)(currentTrack.id, trackIds) !== -1,
     tracks: filteredPlaylistTracks
   });
