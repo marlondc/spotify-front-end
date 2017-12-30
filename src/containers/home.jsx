@@ -31,10 +31,11 @@ const mapStateToProps = ({ songs }) => {
   ));
 
   const filteredPlaylistTracks = indexedTracks.filter(track => (
-    track.position > indexOf(currentTrack.id, trackIds) && currentTrack.isPlaying
+    track.position > indexOf(currentTrack.id, trackIds) && currentTrack.isPlaying &&
+    contains(currentTrack.id, trackIds)
   ));
 
-  const currentTrackReturn = currentTrack.isPlaying ? currentTrack : {};
+  const currentTrackReturn = currentTrack.isPlaying && contains(currentTrack.id, trackIds) ? currentTrack : {};
 
   return {
     ...songs,
