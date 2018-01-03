@@ -127,7 +127,8 @@ io.on('connection', (socket) => {
           image: data.album.images[0].url,
           name: data.name,
         })
-        totalNumberOfTracks = tracks.items.length;
+        console.log(tracks);
+        totalNumberOfTracks = tracks.length;
         io.sockets.emit('notification', {
           type: 'added track',
           text: data.name,
